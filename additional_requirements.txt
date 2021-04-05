@@ -1,0 +1,1 @@
+mysqlclient and django-mysql or some other db
