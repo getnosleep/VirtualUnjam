@@ -118,3 +118,65 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# CUSTOM AUTH
+"""
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'tokenauth.authbackends.TokenAuthBackend'
+)
+"""
+
+## REST
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )#,
+    #'DEFAULT_AUTHENTICATION_CLASSES': (
+    #    ## we need this for the browsable API to work
+    #    'rest_framework.authentication.SessionAuthentication',
+    #    'tokenauth.authbackends.RESTTokenAuthBackend',
+    #)
+}
+
+# Services:
+
+## Service base urls without a trailing slash:
+USER_SERVICE_BASE_URL = 'http://staging.userservice.tangentme.com'
+
+"""
+JENKINS_TASKS = (
+    'django_jenkins.tasks.run_pylint',
+    'django_jenkins.tasks.with_coverage',
+    # 'django_jenkins.tasks.run_sloccount',
+    # 'django_jenkins.tasks.run_graphmodels'
+)
+"""
+
+PROJECT_APPS = (
+    'api',
+)
+
+INSTALLED_APPS = (
+    ...
+
+    ## 3rd party
+    'rest_framework',
+    'rest_framework_swagger',
+
+    ## custom
+    'api',
+
+    # testing etc:
+    'django_extensions',
+    'corsheaders',
+)
+
+MIDDLEWARE_CLASSES = (
+    ## add this:
+    #'tokenauth.middleware.TokenAuthMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+)
+
+
