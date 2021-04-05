@@ -10,3 +10,5 @@ A Microservice of a simulation for preventing traffic jams
   - pyyaml
   - django
   - djangorestframework
+  - django-cors-headers
+  - (pika)
