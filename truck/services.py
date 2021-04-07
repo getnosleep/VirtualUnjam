@@ -11,7 +11,7 @@ class service:
     """
 
     # Function changing truck identificator.
-    def changeTruckIdentificator(self, truckId, newTruckId):
+    def changeTruckIdentificator(truckId, newTruckId):
         """[Docstring] Change identificator of a truck.
         
         Inputs: Integer truckId, Integer newTruckId.
@@ -28,7 +28,7 @@ class service:
             return False
     
     # Function changing truck's position in convoy reference.
-    def changeConvoyPosition(self, truckId, newConvoyPosition):
+    def changeConvoyPosition(truckId, newConvoyPosition):
         """[Docstring] Change convoy position reference of a truck.
         
         Inputs: Integer truckId, Integer newConvoyPosition.
@@ -45,7 +45,7 @@ class service:
             return False
 
     # Function changing truck's convoy leader reference.
-    def changeConvoyLeader(self, truckId, newConvoyLeaderId):
+    def changeConvoyLeader(truckId, newConvoyLeaderId):
         """[Docstring] Change convoy's leader reference of a truck.
         
         Inputs: Integer truckId, Integer newConvoyLeaderId.
@@ -62,7 +62,7 @@ class service:
             return False
 
     # Function evaluating speed change and setting speed of a truck.
-    def changeSpeed(self, truckId, speedOffset):
+    def changeSpeed(truckId, speedOffset):
         """[Docstring] Change driving speed of a truck.
         
         Inputs: Integer truckId, Integer speedOffset.

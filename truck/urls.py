@@ -17,7 +17,7 @@ urlpatterns = [
     path('liferequest', TruckBehaviour.as_view({
         'get': 'alive'
     })),
-    path('', TruckMonitoring.as_view({
+    path('data', TruckMonitoring.as_view({
         'get': 'retrieve'
     }))
 ]
