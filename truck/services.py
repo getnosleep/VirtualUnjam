@@ -1,4 +1,4 @@
-from . import models
+from .models import Truck
 from validation import (
     validate_int, validate_float,
     validate_structure,
@@ -28,7 +28,7 @@ class service:
     """
 
     # Function validating truck object's structure
-    def validateTruckObjectStructure(self, truckId):
+    def validateTruckObjectStructure(self, truckId: int, maxSpeed: float):
         """[Docstring] Validates structure of a truck object.
         
         Inputs:
@@ -39,29 +39,36 @@ class service:
 
             True - In case the truck's truckId reference could be set.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if the truck object referenced by the truckId input, has a valid structure.
+            1.  Validates Inputs.
 
-                1.1.0 Signals success, in case the truck object's structure is valid, the truck's truckId reference will be set according
-                      to the newTruckId input.
+            2.  Binds truck model object to variable referenced by its' truckId.
 
-                1.1.1 Signals failure, in case the truck object's structure is invalid.
-        """        
-        # Structure validation: If truckId is an integers and 
-        # referenced truck object has the desired structure, function will signal success.
-        if validate_int(truckId) and validate_structure(models.Truck.objects().get(truckId = truckId).values(), schema={"id": validate_int(min_value = 0), "truckId": validate_int(min_value = 0), "convoyPosition": validate_int(min_value = 0), "convoyLeaderId": validate_int(min_value = 0), "maxSpeed": validate_float(min_value = 0), "speed": validate_float(min_value = 0, max_value = models.Truck.objects().get(truckId = truckId).maxSpeed)}):
-            # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+            3.  Validates truck model object's structure.
 
-    # Function validating truck object's convoy leadership
-    def validateConvoyLeadership(self, truckId):
+            3.1 Signals success on valid structure, via returning true.
+
+            3.2 Signals failure on invalid structure, via returning false.
+        """
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Validate object's structure and serve function call accordingly.
+        return validate_structure(truck.values(), schema={
+                                                          "id": validate_int(min_value = 0),
+                                                          "truckId": validate_int(min_value = 0),
+                                                          "convoyPosition": validate_int(min_value = 0),
+                                                          "convoyLeaderId": validate_int(min_value = 0),
+                                                          "maxSpeed": validate_float(min_value = 0),
+                                                          "speed": validate_float(min_value = 0, max_value = maxSpeed)
+                                                        })
+
+    # Function validating truck object's convoy leadership.
+    def validateConvoyLeadership(self, truckId: int):
         """[Docstring] Validates convoy leadership of a truck object.
         
         Inputs:
@@ -72,29 +79,30 @@ class service:
 
             True - In case the truck object is its' convoy's leader.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if the truck object referenced by the truckId input, is leader of its' convoy.
+            1.  Validates Inputs.
 
-                1.1.0 Signals success, in case the truck object's is validated as its' convoy's leader, the truck's truckId reference will
-                      be set according to the newTruckId input.
+            2.  Binds truck model object to variable referenced by its' truckId.
 
-                1.1.1 Signals failure, in case the truck object in not leader of its' convoy.
-        """        
-        # Structure validation: If truckId is an integers and 
-        # referenced truck object has the desired structure, function will signal success.
-        if validate_int(truckId) and models.Truck.objects.get(truckId = truckId).truckId == models.Truck.objects.get(truckId = truckId).convoyLeaderId:
-            # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+            3.  Validates equality of truck's id and convoy leader's id.
+
+            3.1 Signals success on valid update, via returning true.
+
+            3.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Validate if truck is the leader of its' convoy and serve function call accordingly.
+        return truck.truckId == truck.convoyLeaderId
+       
 
     # Function changing truck identificator.
-    def changeTruckIdentificator(self, truckId, newTruckId):
+    def changeTruckIdentificator(self, truckId: int, newTruckId: int):
         """[Docstring] Changes identificator of a truck.
         
         Inputs:
@@ -105,31 +113,35 @@ class service:
 
             True - In case the truck's truckId reference could be set.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if truckId and newTruckId are integer.
+            1.  Validates Inputs.
 
-                1.1.0 In case the inputs are valid, the truck's truckId reference will be set according to the newTruckId input.
+            2.  Binds truck model object to variable referenced by its' truckId.
 
-                1.1.1 Signals success.
-        
-                1.2.0 Signals failure, in case inputs are invalid.
+            3.  Sets new truck id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
         """
-        # Id validation: If truck's old and new id are integers, new id will be set and success signaled.
-        if validate_int(truckId) and validate_int(newTruckId):
-            # Set new id on truck object referenced by the old id.
-            models.Truck.objects.get(truckId=truckId).truckId = newTruckId
-            # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new truckId as truck's respective reference.
+        truck.truckId.set(newTruckId) 
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.truckId == newTruckId
     
     # Function changing truck's position in convoy reference.
-    def changeConvoyPosition(self, truckId, newConvoyPosition):
+    def changeConvoyPosition(self, truckId: int, newConvoyPosition: int):
         """[Docstring] Changes convoy position reference of a truck.
         
         Inputs: 
@@ -140,32 +152,35 @@ class service:
 
             True - In case the truck's convoyPosition reference could be set.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if truckId and newConvoyPosition are integers.
+            1.  Validates Inputs.
 
-                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set according to the newConvoyLeaderId
-                      input.
+            2.  Binds truck model object to variable referenced by its' truckId.
 
-                1.1.1 Signals success.
-        
-                1.2.0 Will signal failure, in case inputs are invalid.
+            3.  Sets new convoy leader's id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
         """
-        # Position validation: If truck's id and new position are integers (unnecessary: and the truck's new position is not the old one), function will set new position in convoy.
-        if validate_int(truckId) and validate_int(newConvoyPosition):
-            # Set new position on truck object referenced by its' truck id.
-            models.Truck.objects.get(truckId=truckId).convoyPosition = newConvoyPosition
-            # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+        # Bind truck object to reference
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy position as truck's respective reference.
+        truck.convoyPosition.set(newConvoyPosition) 
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.convoyPosition == newConvoyPosition
 
     # Function changing truck's convoy leader reference.
-    def changeConvoyLeader(self, truckId, newConvoyLeaderId):
+    def changeConvoyLeader(self, truckId: int, newConvoyLeaderId: int):
         """[Docstring] Change convoy's leader reference of a truck.
         
         Inputs: 
@@ -176,33 +191,74 @@ class service:
 
             True - In case the truck's convoyLeaderId reference could be set.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if truckId is an integer and newConvoyLeaderId is an integer.
+            1.  Validates Inputs.
 
-                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set to the newConvoyLeaderId input
-                      accordingly.
+            2.  Binds truck model object to variable referenced by its' truckId.
 
-                1.1.1 Signals success.
-        
-                1.2.0 Will signal failure, in case inputs are invalid.
+            3.  Sets new convoy leader's id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
         """
+        # Bind truck object to reference
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy leader's id as truck's respective reference.
+        truck.convoyLeaderId.set(newConvoyLeaderId)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.convoyPosition == newConvoyLeaderId
+    
+    # Function stopping truck.
+    def stopTruck(self, truckId: int, newConvoyLeaderId: int):
+        """[Docstring] Stopps truck entirely.
+        
+        Inputs: 
+        
+            Integer truckId, Integer newConvoyLeaderId.
 
-        # Leader validation: If truck's id and the new convoy leader's id are integers, function will set new leader's id.
-        if validate_int(truckId) and validate_int(newConvoyLeaderId):
-            # Set new convoy leader's id on truck object referenced by its' truck id.
-            models.Truck.objects.get(truckId=truckId).convoyLeaderId = newConvoyLeaderId
-        # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+        Results:
+
+            True - In case the truck's convoyLeaderId reference could be set.
+
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
+
+        Logic:
+
+            1.  Validates Inputs.
+
+            2.  Binds truck model object to variable referenced by its' truckId.
+
+            3.  Sets truck's speed to 0.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy leader's id as truck's respective reference.
+        truck.speed.set(0)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.speed == 0
 
     # Function evaluating speed change and setting speed of a truck.
-    def changeSpeed(self, truckId, speedOffset, maxSpeed):
+    def changeSpeed(self, truckId: int, speedOffset: float, maxSpeed: float):
         """[Docstring] Changes driving speed of a truck.
         
         Inputs:
@@ -213,49 +269,51 @@ class service:
 
             True - In case the truck's new speed could be set.
 
-            False - In case the input validation went wrong.
+            False - In case the update validation went wrong.
+
+            Exception - In case the input validation went wrong.
 
         Logic:
 
-            1. Checks if truckId is integer and speedOffset is float.
+            1.  Validates Inputs.
 
-                1.1 In case the inputs are valid, evaluate the new speed the truck will reach.
+            2.  Binds truck model object to variable referenced by its' truckId.
         
-                    2.1.0 If the truck reaches a negative velocity, its' speed will be set to 0.
+            3.  Calculates truck's new speed.
         
-                    2.1.1 Signals success.
-        
-                    2.2.0 If the truck goes faster than its' terminal velocity, the truck's speed will be set to that terminal velocity.
+            4.1 If new speed is inbetween 0 and maxSpeed input, keep new speed as speed to set
 
-                    2.2.1 Signals success.
+            4.2 If new speed is below 0, set 0 as new speed
         
-                    2.3.0 Does the truck not reach a negative velocity or does not go faster than it can, its' speed will be set to 
-                          {speed = speedOffset + oldSpeed: 0 <= speed <= maxSpeed}.
-        
-                    2.3.1 Signals success.
-        
-                1.2 Will signal failure, in case inputs are invalid.
+            4.3 If the truck goes faster than its' terminal velocity, new speed will be set to that terminal velocity.
+
+            5.  Saves evaluated new speed as truck's speed.
+
+            6.  Validates value update.
+
+            6.1 Signals success on valid update, via returning true.
+
+            6.2 Signals failure on invalid update, via returning false.
         """
-        # Speed validation: If truck's id is an integer, the speed offset is a float, set truck's speed, according to its' max speed and signal success.
-        if validate_int(truckId) and validate_float(speedOffset) and validate_float(maxSpeed):
-            # Set truck's speed, according to its' max speed, referenced by its' id.
-            # bind new speed of the truck for performance reasons
-            newSpeed = float(speedOffset + models.Truck.objects.get(truckId = truckId).speed)
-            # If new speed is inbetween 0 and max speed, set new speed.
-            if newSpeed < maxSpeed and newSpeed >= 0:
-                # Set new speed on truck object referenced by its' id.
-                models.Truck.objects.get(truckId = truckId).speed = newSpeed
-            # If new speed is lower 0, 0 will be as new speed.
-            elif newSpeed < 0:
-                # Set new speed on truck object accordingly, referenced by its' id
-                models.Truck.objects.get(truckId = truckId).speed = 0
-            # If new speed is above truck's max speed, max speed will be set as new speed
-            elif newSpeed > maxSpeed:
-                # Set new speed on truck object accordingly, referenced by its' id
-                models.Truck.objects.get(truckId = truckId).speed = maxSpeed
-            # Signal success, via returning true.
-            return True
-        # If validation went wrong, function will signal failure.
-        else: 
-            # Signal failure, via returning false.
-            return False
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Calculate truck's new speed.
+        newSpeed = truck.speed + speedOffset
+        # If truck's new speed is inbetween 0 and maxSpeed, set newSpeed as truck's speed.
+        if newSpeed < maxSpeed and newSpeed >= 0:
+            # keep new speed
+            # newSpeed = newSpeed 
+        # If new speed is lower 0, 0 will be as new speed.
+        elif newSpeed < 0:
+            # Bind new speed to reference for validation.
+            newSpeed = 0
+        # If new speed is above truck's max speed, max speed will be set as new speed.
+        elif newSpeed > maxSpeed:
+            # Set maxSpeed as newSpeed.
+            newSpeed = maxSpeed
+        # Set evaluated newSpeed as truck's speed.
+        truck.speed.set(newSpeed)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.speed == newSpeed
