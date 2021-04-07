@@ -7,7 +7,19 @@ __all__ = []
 class Truck(object):
     """[Docstring] Declares truck model's properties and their data types.
 
-    Properties: id Primary_key, truckId Integer, convoyPosition Integer, convoyLeaderId Integer, maxSpeed Float, speed Float.
+    Properties: 
+    
+        id Primary_key,
+        
+        truckId Integer,
+        
+        convoyPosition Integer,
+        
+        convoyLeaderId Integer,
+        
+        maxSpeed Float,
+        
+        speed Float.
     """
 
     # Declare truck model's properties and datatypes.
@@ -15,7 +27,7 @@ class Truck(object):
     truckId = models.IntegerField()
     convoyPosition = models.IntegerField()
     convoyLeaderId = models.IntegerField()
-    maxSpeed = models.IntegerField()
+    maxSpeed = models.FloatField()
     speed = models.FloatField()
     #truck_in_front = models.OneToOneField()
     #truck_behind = models.OneToOneField()
