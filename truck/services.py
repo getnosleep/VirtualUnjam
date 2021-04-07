@@ -10,16 +10,24 @@ class service:
                changeConvoyLeader(truckId, newConvoyLeaderId), changeSpeed(truckId, speedOffset)
     """
 
+    # Function changing truck identificator.
     def changeTruckIdentificator(self, truckId, newTruckId):
         """[Docstring] Change identificator of a truck.
         
         Inputs: Integer truckId, Integer newTruckId.
         """
-        # Id validation: If truck's old and new id are integers, set new id.
+        # Id validation: If truck's old and new id are integers, set new id and signal success.
         if validation.validate_int(truckId) and validation.validate_int(newTruckId):
             # Set new id on truck object referenced by the old id.
             models.Truck.objects.get(truckId=truckId).truckId = newTruckId
-
+            # Signal success, via returning true.
+            return True
+        # If validation went wrong, signal failure.
+        else: 
+            # Signal failure, via returning false.
+            return False
+    
+    # Function changing truck's position in convoy reference.
     def changeConvoyPosition(self, truckId, newConvoyPosition):
         """[Docstring] Change convoy position reference of a truck.
         
@@ -29,7 +37,14 @@ class service:
         if validation.validate_int(truckId) and validation.validate_int(newConvoyPosition):
             # Set new position on truck object referenced by its' truck id.
             models.Truck.objects.get(truckId=truckId).convoyPosition = newConvoyPosition
-        
+            # Signal success, via returning true.
+            return True
+        # If validation went wrong, signal failure.
+        else: 
+            # Signal failure, via returning false.
+            return False
+
+    # Function changing truck's convoy leader reference.
     def changeConvoyLeader(self, truckId, newConvoyLeaderId):
         """[Docstring] Change convoy's leader reference of a truck.
         
@@ -39,13 +54,20 @@ class service:
         if validation.validate_int(truckId) and validation.validate_int(newConvoyLeaderId):
             # Set new convoy leader's id on truck object referenced by its' truck id.
             models.Truck.objects.get(truckId=truckId).convoyLeaderId = newConvoyLeaderId
-        
+        # Signal success, via returning true.
+            return True
+        # If validation went wrong, signal failure.
+        else: 
+            # Signal failure, via returning false.
+            return False
+
+    # Function evaluating speed change and setting speed of a truck.
     def changeSpeed(self, truckId, speedOffset):
         """[Docstring] Change driving speed of a truck.
         
         Inputs: Integer truckId, Integer speedOffset.
         """
-        # Speed validation: If truck's id is an integer, the speed offset is a float, set truck's speed, according to its' max speed.
+        # Speed validation: If truck's id is an integer, the speed offset is a float, set truck's speed, according to its' max speed and signal success.
         if validation.validate_int(truckId) and validation.validate_float(speedOffset):
             # Set truck's speed, according to its' max speed, referenced by its' id.
             # bind new speed and max speed of the truck for performance reasons
@@ -63,3 +85,9 @@ class service:
             elif newSpeed > maxSpeed:
                 # Set new speed on truck object accordingly, referenced by its' id
                 models.Truck.objects.get(truckId = truckId).speed = maxSpeed
+            # Signal success, via returning true.
+            return True
+        # If validation went wrong, signal failure.
+        else: 
+            # Signal failure, via returning false.
+            return False

@@ -7,9 +7,9 @@ __all__ = []
 class Truck(object):
     """[Docstring] Declares truck model's properties and their data types.
 
-    Properties: id = Primary_key, truckId = Integer, convoyPosition = Integer, convoyLeaderId = Integer, maxSpeed = Float, speed = Float.
+    Properties: id Primary_key, truckId Integer, convoyPosition Integer, convoyLeaderId Integer, maxSpeed Float, speed Float.
     """
-    
+
     # Declare truck model's properties and datatypes.
     id = models.AutoField(primary_key=True)
     truckId = models.IntegerField()
