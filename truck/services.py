@@ -5,14 +5,14 @@ from validation import (
     validate_text,
 )
 
-class service:
+class Service(object):
     """[Docstring] Declares functions altering trucks' properties.
     
     Functions: 
 
         Names, inputs and results:
 
-            validateTruckObjectStructure(truckId):boolean
+            validateTruckObjectStructure(truckId, maxSpeed):boolean
 
             validateConvoyLeadership(truckId):boolean
 
@@ -27,8 +27,13 @@ class service:
         Hint: The respective docstrings hold a detailed behavioural description of the service class's functions.
     """
 
-    # Function validating truck object's structure
-    def validateTruckObjectStructure(self, truckId: int, maxSpeed: float):
+    # Static max speed reference
+    maxSpeed = 80.00
+
+    # Function validating truck object's structure.
+    #def validateTruckObjectStructure(self, truckId: int, maxSpeed: float):
+    @staticmethod
+    def validateTruckObjectStructure(truckId: int):
         """[Docstring] Validates structure of a truck object.
         
         Inputs:
@@ -41,8 +46,7 @@ class service:
 
             False - In case the update validation went wrong.
 
-            Exception - In case the input validation went wrong.
-
+        Exception - In case the input validation went wrong.icxc
         Logic:
 
             1.  Validates Inputs.
@@ -63,12 +67,12 @@ class service:
                                                           "truckId": validate_int(min_value = 0),
                                                           "convoyPosition": validate_int(min_value = 0),
                                                           "convoyLeaderId": validate_int(min_value = 0),
-                                                          "maxSpeed": validate_float(min_value = 0),
-                                                          "speed": validate_float(min_value = 0, max_value = maxSpeed)
+                                                          "speed": validate_float(min_value = 0, max_value = Service.maxSpeed)
                                                         })
 
     # Function validating truck object's convoy leadership.
-    def validateConvoyLeadership(self, truckId: int):
+    @staticmethod
+    def validateConvoyLeadership(truckId: int):
         """[Docstring] Validates convoy leadership of a truck object.
         
         Inputs:
@@ -102,7 +106,8 @@ class service:
        
 
     # Function changing truck identificator.
-    def changeTruckIdentificator(self, truckId: int, newTruckId: int):
+    @staticmethod
+    def changeTruckIdentificator(truckId: int, newTruckId: int):
         """[Docstring] Changes identificator of a truck.
         
         Inputs:
@@ -141,7 +146,8 @@ class service:
         return val.truckId == newTruckId
     
     # Function changing truck's position in convoy reference.
-    def changeConvoyPosition(self, truckId: int, newConvoyPosition: int):
+    @staticmethod
+    def changeConvoyPosition(truckId: int, newConvoyPosition: int):
         """[Docstring] Changes convoy position reference of a truck.
         
         Inputs: 
@@ -180,7 +186,8 @@ class service:
         return val.convoyPosition == newConvoyPosition
 
     # Function changing truck's convoy leader reference.
-    def changeConvoyLeader(self, truckId: int, newConvoyLeaderId: int):
+    @staticmethod
+    def changeConvoyLeader(truckId: int, newConvoyLeaderId: int):
         """[Docstring] Change convoy's leader reference of a truck.
         
         Inputs: 
@@ -219,7 +226,8 @@ class service:
         return val.convoyPosition == newConvoyLeaderId
     
     # Function stopping truck.
-    def stopTruck(self, truckId: int, newConvoyLeaderId: int):
+    @staticmethod
+    def stopTruck(truckId: int, newConvoyLeaderId: int):
         """[Docstring] Stopps truck entirely.
         
         Inputs: 
@@ -258,7 +266,8 @@ class service:
         return val.speed == 0
 
     # Function evaluating speed change and setting speed of a truck.
-    def changeSpeed(self, truckId: int, speedOffset: float, maxSpeed: float):
+    @staticmethod
+    def changeSpeed(truckId: int, speedOffset: float):
         """[Docstring] Changes driving speed of a truck.
         
         Inputs:
@@ -300,14 +309,14 @@ class service:
         # Calculate truck's new speed.
         newSpeed = truck.speed + speedOffset
         # If truck's new speed is inbetween 0 and maxSpeed, set newSpeed as truck's speed.
-        if validate_float(min_value = 0, max_value = maxSpeed, float = newSpeed):
+        if validate_float(min_value = 0, max_value = maxSpeed,  value = newSpeed):
             pass
         # If new speed is lower 0, 0 will be as new speed.
-        elif not validate_float(min_value = 0, float = newSpeed):
+        elif not validate_float(min_value = 0, value = newSpeed):
             # Bind new speed to reference for validation.
             newSpeed = 0
         # If new speed is above truck's max speed, max speed will be set as new speed.
-        elif not validate_float(max_value = maxSpeed, float = newSpeed):
+        elif not validate_float(max_value = maxSpeed, value = newSpeed):
             # Set maxSpeed as newSpeed.
             newSpeed = maxSpeed
         # Set evaluated newSpeed as truck's speed.

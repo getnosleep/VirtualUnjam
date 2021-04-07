@@ -3,8 +3,8 @@ from django.db import models
 # binding fields for serializers
 __all__ = [ "id", "truckId", "convoyPosition", "convoyLeaderId", "maxSpeed", "speed"]
 
-class Truck(object):
-    """[Docstring] Declares model objects
+class Truck(models.Model):
+    """[Docstring] Declares model objects.
 
     Properties:
     
@@ -18,7 +18,7 @@ class Truck(object):
         
         speed Float - current speed of the truck.
     """
-
+    
     id = models.AutoField(primary_key=True)
     truckId = models.IntegerField()
     convoyPosition = models.IntegerField()
