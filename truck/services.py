@@ -1,12 +1,10 @@
-"""[Docstring] Declares trucks' service class."""
-# Imports
 from . import models
 from validation import (
     validate_int, validate_float,
     validate_structure,
     validate_text,
 )
-# Trucks' service class.
+
 class service:
     """[Docstring] Declares functions altering trucks' properties.
     
@@ -47,7 +45,8 @@ class service:
 
             1. Checks if the truck object referenced by the truckId input, has a valid structure.
 
-                1.1.0 Signals success, in case the truck object's structure is valid, the truck's truckId reference will be set according to the newTruckId input.
+                1.1.0 Signals success, in case the truck object's structure is valid, the truck's truckId reference will be set according
+                      to the newTruckId input.
 
                 1.1.1 Signals failure, in case the truck object's structure is invalid.
         """        
@@ -79,7 +78,8 @@ class service:
 
             1. Checks if the truck object referenced by the truckId input, is leader of its' convoy.
 
-                1.1.0 Signals success, in case the truck object's is validated as its' convoy's leader, the truck's truckId reference will be set according to the newTruckId input.
+                1.1.0 Signals success, in case the truck object's is validated as its' convoy's leader, the truck's truckId reference will
+                      be set according to the newTruckId input.
 
                 1.1.1 Signals failure, in case the truck object in not leader of its' convoy.
         """        
@@ -130,7 +130,7 @@ class service:
     
     # Function changing truck's position in convoy reference.
     def changeConvoyPosition(self, truckId, newConvoyPosition):
-        """[Docstring] Change convoy position reference of a truck.
+        """[Docstring] Changes convoy position reference of a truck.
         
         Inputs: 
         
@@ -146,7 +146,8 @@ class service:
 
             1. Checks if truckId and newConvoyPosition are integers.
 
-                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set according to the newConvoyLeaderId input.
+                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set according to the newConvoyLeaderId
+                      input.
 
                 1.1.1 Signals success.
         
@@ -181,7 +182,8 @@ class service:
 
             1. Checks if truckId is an integer and newConvoyLeaderId is an integer.
 
-                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set to the newConvoyLeaderId input accordingly.
+                1.1.0 In case the inputs are valid, the truck's convoyLeaderId reference will be set to the newConvoyLeaderId input
+                      accordingly.
 
                 1.1.1 Signals success.
         
@@ -200,8 +202,8 @@ class service:
             return False
 
     # Function evaluating speed change and setting speed of a truck.
-    def changeSpeed(self, truckId, speedOffset):
-        """[Docstring] Change driving speed of a truck.
+    def changeSpeed(self, truckId, speedOffset, maxSpeed):
+        """[Docstring] Changes driving speed of a truck.
         
         Inputs:
 
@@ -227,22 +229,22 @@ class service:
 
                     2.2.1 Signals success.
         
-                    2.3.0 Does the truck not reach a negative velocity or does not go faster than it can, its' speed will be set to {speed = speedOffset + oldSpeed: 0 <= speed <= maxSpeed}.
+                    2.3.0 Does the truck not reach a negative velocity or does not go faster than it can, its' speed will be set to 
+                          {speed = speedOffset + oldSpeed: 0 <= speed <= maxSpeed}.
         
                     2.3.1 Signals success.
         
                 1.2 Will signal failure, in case inputs are invalid.
         """
         # Speed validation: If truck's id is an integer, the speed offset is a float, set truck's speed, according to its' max speed and signal success.
-        if validate_int(truckId) and validate_float(speedOffset):
+        if validate_int(truckId) and validate_float(speedOffset) and validate_float(maxSpeed):
             # Set truck's speed, according to its' max speed, referenced by its' id.
-            # bind new speed and max speed of the truck for performance reasons
+            # bind new speed of the truck for performance reasons
             newSpeed = float(speedOffset + models.Truck.objects.get(truckId = truckId).speed)
-            maxSpeed = float(models.Truck.objects.get(truckId = truckId).maxSpeed)
             # If new speed is inbetween 0 and max speed, set new speed.
             if newSpeed < maxSpeed and newSpeed >= 0:
                 # Set new speed on truck object referenced by its' id.
-                models.Truck.objects.get(truckId = truckId).speed += speedOffset
+                models.Truck.objects.get(truckId = truckId).speed = newSpeed
             # If new speed is lower 0, 0 will be as new speed.
             elif newSpeed < 0:
                 # Set new speed on truck object accordingly, referenced by its' id
