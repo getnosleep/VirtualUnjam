@@ -18,16 +18,17 @@ Including another URLconf
 from django.urls import include, path
 from django.contrib import admin
 from rest_framework import routers
-from api import views
+
 # Register trucks' view set to router.
 router = routers.DefaultRouter()
-router.register(r'trucks', views.TruckViewSet)
+
+#router.register(r'trucks', views.TruckViewSet)
+
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls')),
-    path('truck/', include('truck.urls')),
+    path('api/', include('truck.urls')),
 ]
