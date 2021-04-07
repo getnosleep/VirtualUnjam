@@ -1,28 +1,28 @@
-"""[Docstring] Declares trucks' model."""
+"""[Docstring] Declares model objects."""
 # Imports
 from django.db import models
-# Declare models as held in array.
-__all__ = []
-# Truck model class.
+# Truck model objects class
 class Truck(object):
-    """[Docstring] Declares truck model's properties and their data types.
+    """[Docstring] Declares model objects
 
-    Properties: 
+    Properties:
     
-        id Primary_key,
+        id Primary_key - UUID - Primary key for database,
         
-        truckId Integer,
+        truckId Integer - unique id for distributed system,
         
-        convoyPosition Integer,
+        convoyPosition Integer - position in distributed Convoy,
         
-        convoyLeaderId Integer,
+        convoyLeaderId Integer - leader in distributed Convoy,
         
-        maxSpeed Float,
+        maxSpeed Float - terminal velocity speed of the truck,
         
-        speed Float.
+        speed Float - current speed of the truck.
     """
 
-    # Declare truck model's properties and datatypes.
+    # binding fields for serializers
+    __all__ = [ "id", "truckId", "convoyPosition", "convoyLeaderId", "maxSpeed", "speed"]
+
     id = models.AutoField(primary_key=True)
     truckId = models.IntegerField()
     convoyPosition = models.IntegerField()
