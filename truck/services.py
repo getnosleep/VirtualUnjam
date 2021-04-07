@@ -300,15 +300,14 @@ class service:
         # Calculate truck's new speed.
         newSpeed = truck.speed + speedOffset
         # If truck's new speed is inbetween 0 and maxSpeed, set newSpeed as truck's speed.
-        if newSpeed < maxSpeed and newSpeed >= 0:
-            # keep new speed
-            # newSpeed = newSpeed 
+        if validate_float(min_value = 0, max_value = maxSpeed, float = newSpeed):
+            pass
         # If new speed is lower 0, 0 will be as new speed.
-        elif newSpeed < 0:
+        elif not validate_float(min_value = 0, float = newSpeed):
             # Bind new speed to reference for validation.
             newSpeed = 0
         # If new speed is above truck's max speed, max speed will be set as new speed.
-        elif newSpeed > maxSpeed:
+        elif not validate_float(max_value = maxSpeed, float = newSpeed):
             # Set maxSpeed as newSpeed.
             newSpeed = maxSpeed
         # Set evaluated newSpeed as truck's speed.
