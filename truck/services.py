@@ -16,6 +16,8 @@ class service:
 
             validateTruckObjectStructure(truckId):boolean
 
+            validateConvoyLeadership(truckId):boolean
+
             changeTruckIdentificator(truckId, newTruckId):boolean
             
             changeConvoyPosition(truckId, newConvoyPosition):boolean
