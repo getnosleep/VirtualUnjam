@@ -3,21 +3,26 @@ from django.urls import path
 from .views import TruckBehaviour
 from .views import TruckMonitoring
 
-# intitiate path prefix
-# app_name = 'api'
-# intitiate url patterns
-
 urlpatterns = [
-    #    url-path, classview
     path('truck', TruckBehaviour.as_view({
-        # http request type: function from classview
-        'put': 'update_fleet',
-        'post': 'set_speed'
+        'get': 'alive',
+        'post': 'create',
     })),
-    path('liferequest', TruckBehaviour.as_view({
-        'get': 'alive'
+    path('convoy', TruckBehaviour.as_view({
+        'put': 'updateConvoy',
+        'post': 'joinConvoy',
+        'delete': 'leaveConvoy',
+    })),
+    path('accelerate', TruckBehaviour.as_view({
+        'put': 'accelerate',
+    })),
+    path('decelerate', TruckBehaviour.as_view({
+        'put': 'decelerate',
+    })),
+    path('stop', TruckBehaviour.as_view({
+        'put': 'stop',
     })),
     path('data', TruckMonitoring.as_view({
-        'get': 'retrieve'
+        'get': 'retrieve',
     }))
 ]
