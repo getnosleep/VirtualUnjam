@@ -31,15 +31,16 @@ class Service(object):
             
             determineTruckBehind(truckId):boolean to be edited
 
-            adjustSpeedOfTruckToLeader(truckId):boolean to be edited
-
-            initiateVote(truckId):boolean to be edited
+            adjustSpeedOfTruckToLeader(truckId):
+            
+            initiateVote(truckId):boolean
 
             pollingWithAnotherTruck(pollingTruckId):boolean
 
-            pollingWithHigherIdentifiedTrucks(truckId, pollingTruckIds):
+            pollingWithHigherIdentifiedTrucks(truckId, pollingTruckIds):boolean
 
-        Hint: The respective docstrings hold a detailed behavioural description of the service class's functions.
+        Hint: The respective docstrings hold a detailed behavioural description of the
+              service class's functions.
     """
 
     # Static final references.
@@ -387,7 +388,7 @@ class Service(object):
         val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
         return val.speed == idolTruck.speed
-    
+
     # Function initiating votes among higher identified trucks.
     @staticmethod
     def initiateVote(truckId: int, convoyLeaderId: int, toBullyTruckIds: list([int]) or None):
@@ -529,7 +530,7 @@ class Service(object):
     # Function polling two truck's via truckId reference.
     @staticmethod
     def pollingWithHigherIdentifiedTrucks(truckId: int, pollingTruckIds: list([int])):
-        """[Docstring] Initiate vote among higher identified trucks
+        """[Docstring] Initiate vote among polling trucks.
 
             Inputs:
 
