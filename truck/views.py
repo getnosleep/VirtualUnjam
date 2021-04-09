@@ -55,7 +55,7 @@ class TruckBehaviour(viewsets.ViewSet):
         message = ''
 
         try:
-            #service.stop(truckId=truckId)
+            #Service.stop(truckId=truckId)
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_412_PRECONDITION_FAILED)
