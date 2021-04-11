@@ -416,7 +416,7 @@ class Service(object):
 
             3.1.1 Signals null reference, via returning status.HTTP_404_NOT_FOUND.
                 
-            3.2.1 If the polling truck's truckId is bigger, but it's broken, 
+            3.2.1 If the polling truck's truckId is bigger, but it's broken or truck is not in the convoy,
                   will evaluate polling as won.
 
             3.2.2 Signals success, via returning status.HTTP_200_OK.
@@ -429,9 +429,10 @@ class Service(object):
         val = Truck.objects.get(truckId=pollingTruckId)
         truck = Truck.objects.get(truckId=truckId)
         # Evaluate polling.
-        if   not val:                                           return status.HTTP_404_NOT_FOUND
-        elif val.truckId >= truck.truckId and val.isBroken:     return status.HTTP_200_OK
-        elif val.truckId >= truck.truckId and not val.isBroken: return status.HTTP_403_FORBIDDEN
+        if   not val:                                                                                          return status.HTTP_404_NOT_FOUND
+        elif val.truckId <= truck.truckId and val.convoyleaderId == truck.convoyLeaderId and val.isBroken:     return status.HTTP_200_OK
+        elif val.truckId >= truck.truckId and val.convoyleaderId == truck.convoyLeaderId and not val.isBroken: return status.HTTP_403_FORBIDDEN
+        elif val.convoyleaderId != truck.convoyLeaderId:                                                       return status.HTTP_200_OK
     
     # Function polling two truck's via truckId reference.
     @staticmethod
@@ -462,7 +463,7 @@ class Service(object):
 
             3.1.1 If polling failed, stop truck from further polling.
 
-            3.1.2 If polling is successful, will keep polling.
+            3.1.2 If polling is successful or truck is not in the convoy, will keep polling.
 
             3.1.3 If polling is succesful but the next truck isn't exisiting, will assume
                   convoy leadership.
@@ -507,13 +508,36 @@ class Service(object):
             # or has to be kept for further requests.
         except: pass
         finally: 
-            if resp.status_code == status.HTTP_200_OK: return True
-            elif connectionAttempt > 5:                return False
-            else: Service.initiateOneVote(toBullyTruckId, connectionAttempt, toBullyTruckIds)
+            if      resp.status_code == status.HTTP_200_OK: return True
+            elif    connectionAttempt > 5:                  return False
+            else:   Service.initiateOneVote(toBullyTruckId, connectionAttempt, toBullyTruckIds)
     
     @staticmethod
     def initiateAllVotes(truckId: int, convoyLeaderId: int, toBullyTruckIds: list([int])):
         for x in toBullyTruckIds: 
-            if Service.initiateOneVote(x, 0, toBullyTruckIds): toBullyTruckIds.remove(x)
-            else:                                              pass
-        return toBullyTruckIds        
+            if    Service.initiateOneVote(x, 0, toBullyTruckIds): toBullyTruckIds.remove(x)
+            else:                                                 pass
+        return toBullyTruckIds   
+
+    @staticmethod
+    def joinConvoy(truckId: int, convoyLeaderId: int):
+        # Bind truck's model object, referenced by its' their truckId.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set convoyLeaderId as truck's convoyLeaderId
+        truck.convoyLeaderId.set(convoyLeaderId)
+        # Save the truck and bind it to a reference.
+        val = truck.convoyLeaderId(force_insert=True)
+        # Validate update via bound truck object and input.
+        return val.convoyLeaderId == truck.convoyLeaderId
+
+    
+    @staticmethod
+    def leaveConvoy(truckId: int):
+        # Bind truck's model object, referenced by its' their truckId.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set convoyLeaderId as truck's convoyLeaderId
+        truck.convoyLeaderId.set(-1)
+        # Save the truck and bind it to a reference.
+        val = truck.convoyLeaderId(force_insert=True)
+        # Validate update via bound truck object and input.
+        return val.convoyLeaderId == truck.convoyLeaderId
