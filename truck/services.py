@@ -527,7 +527,7 @@ class Service(object):
         # Set convoyLeaderId as truck's convoyLeaderId
         truck.convoyLeaderId.set(convoyLeaderId)
         # Save the truck and bind it to a reference.
-        val = truck.convoyLeaderId(force_insert=True)
+        val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
         return val.convoyLeaderId == truck.convoyLeaderId
 
@@ -539,6 +539,6 @@ class Service(object):
         # Set convoyLeaderId as truck's convoyLeaderId
         truck.convoyLeaderId.set(-1)
         # Save the truck and bind it to a reference.
-        val = truck.convoyLeaderId(force_insert=True)
+        val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
-        return val.convoyLeaderId == truck.convoyLeaderId
+        return val.convoyLeaderId == -1
