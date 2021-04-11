@@ -412,7 +412,7 @@ class Service(object):
             3.    Evaluate Polling.
                 
             3.1.0 If the polling truck's truckId is bigger, it is not broken, will evaluate
-                polling as lost.
+                  polling as lost.
 
             3.1.1 Signals null reference, via returning status.HTTP_404_NOT_FOUND.
                 
@@ -430,9 +430,9 @@ class Service(object):
         truck = Truck.objects.get(truckId=truckId)
         # Evaluate polling.
         if   not val:                                                                                          return status.HTTP_404_NOT_FOUND
-        elif val.truckId <= truck.truckId and val.convoyleaderId == truck.convoyLeaderId:                      return status.HTTP_200_OK
-        elif val.truckId >= truck.truckId and val.convoyleaderId == truck.convoyLeaderId and val.isBroken:     return status.HTTP_200_OK
-        elif val.truckId >= truck.truckId and val.convoyleaderId == truck.convoyLeaderId and not val.isBroken: return status.HTTP_403_FORBIDDEN
+        elif val.truckId < truck.truckId and val.convoyleaderId == truck.convoyLeaderId:                       return status.HTTP_200_OK
+        elif val.truckId > truck.truckId and val.convoyleaderId == truck.convoyLeaderId and val.isBroken:      return status.HTTP_200_OK
+        elif val.truckId > truck.truckId and val.convoyleaderId == truck.convoyLeaderId and not val.isBroken:  return status.HTTP_403_FORBIDDEN
         elif val.convoyleaderId != truck.convoyLeaderId:                                                       return status.HTTP_200_OK
     
     # Function polling two truck's via truckId reference.
