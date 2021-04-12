@@ -11,42 +11,74 @@ from validation import (
 class Service(object):
     """[Docstring] Declares functions altering trucks' properties.
     
+    Properties:
+
+        maxSpeed:       final static float
+        
+        truckAPIHost:   final static string
+        
+        truckAPIPort:   final static string
+    
     Functions: 
 
         Names, inputs and results:
 
-            validateTruckObjectStructure(truckId, maxSpeed):boolean
+            Validation functions:
 
-            validateLeadership(truckId):boolean
+                validateTruckObjectStructure(truckId):boolean
 
-            changeTruckIdentificator(truckId, newTruckId):boolean
+                validateConvoyLeadership(truckId):boolean
+
+            Truck's driving behaviour:
+
+                joinConvoy(truckId, convoyLeaderId):boolean
+
+                leaveConvoy(truckId):boolean
+
+                changeSpeed(truckId, speedOffset):boolean
             
-            changeConvoyPosition(truckId, newConvoyPosition):boolean
+                adjustSpeedToTruck(truckId, idolTruckId):boolean
             
-            changeConvoyLeader(truckId, newConvoyLeaderId):boolean
+                stopTruck(truckId):boolean
+
+                changeConvoyPosition(truckId, newConvoyPosition):boolean
             
-            changeSpeed(truckId, speedOffset):boolean
+            Modeling functions:
             
-            determineTruckInFront(truckId):boolean to be edited
+                changeTruckIdentificator(truckId, newTruckId):boolean
             
-            determineTruckBehind(truckId):boolean to be edited
+                changeConvoyLeader(truckId, newConvoyLeaderId):boolean
+            
+                determineTruckInFront(truckId):boolean (to be added)
+            
+                determineTruckBehind(truckId):boolean (to be added)
 
-            adjustSpeedOfTruckToLeader(truckId):
+            Bullying functions:
 
-            initiateVote(truckId):boolean
+                initiateVote(truckId, connectionAttempts, truckIds):boolean
 
-            pollingWithAnotherTruck(pollingTruckId):boolean
+                initiateVotes(truckIds):list
 
-            pollingWithHigherIdentifiedTrucks(truckId, pollingTruckIds):boolean
+                pollingWithTruck(truckId, truckId):status code
+
+                pollingWithEligibleTrucks(truckId, truckIds):boolean
 
         Hint: The respective docstrings hold a detailed behavioural description of the
               service class's functions.
     """
+    
+    ###
+    # Static properties:
+    ###
 
     # Static final references.
     maxSpeed:     Final[float] =  80.00
     truckAPIHost: Final[str]   = '127.0.0.1'
     truckAPIPort: Final[str]   = '8000'
+
+    ###
+    # Validation functions:
+    ###
 
     # Function validating truck object's structure.
     @staticmethod
@@ -121,167 +153,87 @@ class Service(object):
         truck = Truck.objects.get(truckId=truckId)
         # Validate if truck is the leader of its' convoy and serve function call accordingly.
         return truck.truckId == truck.convoyLeaderId
-       
 
-    # Function changing truck identificator.
+    ###
+    # Truck's driving behaviour:
+    ###
+
+    # Function adding truck to a convoy referenced by its' leader's truck id.
     @staticmethod
-    def changeTruckIdentificator(truckId: int, newTruckId: int):
-        """[Docstring] Changes identificator of a truck.
-        
+    def joinConvoy(truckId: int, convoyLeaderId: int):
+        """[Docstring] Join truck to convoy.
+
         Inputs:
-        
-            Integer truckId, Integer newTruckId.
-        
+
+            Integer truckId, Integer convoyLeaderId.
+            
         Results:
 
-            True        -   In case the truck's truckId reference could be set.
+            True        -   In case truck joins convoy.
 
-            False       -   In case the update validation went wrong.
-
-            Exception   -   In case the input validation went wrong.
+            False       -   In case truck does not join convoy.
 
         Logic:
 
-            1.  Validates Inputs.
+            1.    Validates Inputs.
 
-            2.  Binds truck's model object to variable referenced by its' truckId.
+            2.    Bind truck referenced by its' id.
+                    
+            3.0   Update convoy leader reference on truck object.
 
-            3.  Sets new truck id input as truck's respective reference.
+            3.1   Validates update.
 
-            4.  Validates value update.
+            4.0   Returns True on successfully updating convoy leader's reference.
 
-            4.1 Signals success on valid update, via returning true.
-
-            4.2 Signals failure on invalid update, via returning false.
+            4.1   Returns False on not successfully updating reference.
         """
-        # Bind truck's object to reference.
+        # Bind truck's model object, referenced by its' their truckId.
         truck = Truck.objects.get(truckId=truckId)
-        # Set new truckId as truck's respective reference.
-        truck.truckId.set(newTruckId) 
+        # Set convoyLeaderId as truck's convoyLeaderId
+        truck.convoyLeaderId.set(convoyLeaderId)
         # Save the truck and bind it to a reference.
-        val = truck.save(force_insert = True)
+        val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
-        return val.truckId == newTruckId
+        return val.convoyLeaderId == truck.convoyLeaderId
     
-    # Function changing truck's position in convoy reference.
+    # Function removing truck from its' convoy
     @staticmethod
-    def changeConvoyPosition(truckId: int, newConvoyPosition: int):
-        """[Docstring] Changes convoy position reference of a truck.
-        
-        Inputs: 
-        
-            Integer truckId, Integer newConvoyPosition.
+    def leaveConvoy(truckId: int):
+        """[Docstring] Remove truck from convoy.
 
-        Results:
+        Inputs:
 
-            True        -   In case the truck's convoyPosition reference could be set.
-
-            False       -   In case the update validation went wrong.
-
-            Exception   -   In case the input validation went wrong.
-
-        Logic:
-
-            1.  Validates Inputs.
-
-            2.  Binds truck's model object to variable referenced by its' truckId.
-
-            3.  Sets new convoy leader's id input as truck's respective reference.
-
-            4.  Validates value update.
-
-            4.1 Signals success on valid update, via returning true.
-
-            4.2 Signals failure on invalid update, via returning false.
-        """
-        # Bind truck object to reference.
-        truck = Truck.objects.get(truckId=truckId)
-        # Set new convoy position as truck's respective reference.
-        truck.convoyPosition.set(newConvoyPosition)
-        # Save the truck and bind.
-        val = truck.save(force=True)
-        # validate new position in convoy.
-        return val.convoyPosition == newConvoyPosition
-
-    # Function changing truck's convoy leader reference.
-    @staticmethod
-    def changeConvoyLeader(truckId: int, newConvoyLeaderId: int):
-        """[Docstring] Change convoy's leader reference of a truck.
-        
-        Inputs: 
-        
-            Integer truckId, Integer newConvoyLeaderId.
-
-        Results:
-
-            True        -   In case the truck's convoyLeaderId reference could be set.
-
-            False       -   In case the update validation went wrong.
-
-            Exception   -   In case the input validation went wrong.
-
-        Logic:
-
-            1.  Validates Inputs.
-
-            2.  Binds truck's model object to variable referenced by its' truckId.
-
-            3.  Sets new convoy leader's id input as truck's respective reference.
-
-            4.  Validates value update.
-
-            4.1 Signals success on valid update, via returning true.
-
-            4.2 Signals failure on invalid update, via returning false.
-        """
-        # Bind truck object to reference.
-        truck = Truck.objects.get(truckId=truckId)
-        # Set new convoy leader's id as truck's respective reference.
-        truck.convoyLeaderId.set(newConvoyLeaderId)
-        # Save the truck and bind it to a reference.
-        val = truck.save(force_insert = True)
-        # Validate update via bound truck object and input.
-        return val.convoyLeaderId == newConvoyLeaderId
-    
-    # Function stopping truck.
-    @staticmethod
-    def stopTruck(truckId: int):
-        """[Docstring] Stopps truck entirely.
-        
-        Inputs: 
-        
             Integer truckId.
-
+            
         Results:
 
-            True        -   In case the truck's could be stopped.
+            True        -   In case truck leaves convoy.
 
-            False       -   In case the update validation went wrong.
-
-            Exception   -   In case the input validation went wrong.
+            False       -   In case truck does not leave convoy.
 
         Logic:
 
-            1.  Validates Inputs.
+            1.    Validates Inputs.
 
-            2.  Binds truck's model object to variable referenced by its' truckId.
+            2.    Bind truck referenced by its' id.
+                    
+            3.0   Update convoy leader reference on truck object, using negative one to
+                  indicate truck is not member of any convoy.
 
-            3.  Sets truck's speed to 0.
+            3.1   Validates update.
 
-            4.  Validates value update.
+            4.0   Returns True on successfully updating convoy leader's reference.
 
-            4.1 Signals success on valid update, via returning true.
-
-            4.2 Signals failure on invalid update, via returning false.
+            4.1   Returns False on not successfully updating reference.
         """
-        # Bind truck's object to reference.
+        # Bind truck's model object, referenced by its' their truckId.
         truck = Truck.objects.get(truckId=truckId)
-        # Set new convoy leader's id as truck's respective reference.
-        truck.speed.set(0)
+        # Set convoyLeaderId as truck's convoyLeaderId
+        truck.convoyLeaderId.set(-1)
         # Save the truck and bind it to a reference.
-        val = truck.save(force_insert = True)
+        val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
-        return val.speed == 0
+        return val.convoyLeaderId == -1
 
     # Function evaluating speed change and setting speed of a truck.
     @staticmethod
@@ -312,8 +264,8 @@ class Service(object):
 
             4.2 If new speed is below 0, set 0 as new speed
         
-            4.3 If the truck goes faster than its' terminal velocity, new speed will be set to that terminal
-                velocity.
+            4.3 If the truck goes faster than its' terminal velocity, new speed will be set
+                to that terminal velocity.
 
             5.  Saves evaluated new speed as truck's speed.
 
@@ -328,15 +280,15 @@ class Service(object):
         # Calculate truck's new speed.
         newSpeed = truck.speed + speedOffset
         # If truck's new speed is inbetween 0 and maxSpeed, set newSpeed as truck's speed.
-        if validate_float(min_value=0, max_value=Service.maxSpeed,  value=newSpeed): pass
         # If new speed is lower 0, 0 will be as new speed.
-        elif not validate_float(min_value = 0, value = newSpeed): newSpeed = 0
         # If new speed is above truck's max speed, max speed will be set as new speed.
-        elif not validate_float(max_value=Service.maxSpeed, value=newSpeed): newSpeed = Service.maxSpeed
+        if validate_float(min_value=0, max_value=Service.maxSpeed,  value=newSpeed): pass
+        elif not validate_float(min_value=0, value=newSpeed):                        newSpeed = 0
+        elif not validate_float(max_value=Service.maxSpeed, value=newSpeed):         newSpeed = Service.maxSpeed
         # Set evaluated newSpeed as truck's speed.
         truck.speed.set(newSpeed)
         # Save the truck and bind it to a reference.
-        val = truck.save(force_insert = True)
+        val = truck.save(force_insert=True)
         # Validate update via bound truck object and input.
         return val.speed == newSpeed
 
@@ -384,9 +336,278 @@ class Service(object):
         # Validate update via bound truck object and input.
         return val.speed == idolTruck.speed
 
+    # Function stopping truck.
+    @staticmethod
+    def stopTruck(truckId: int):
+        """[Docstring] Stopps truck entirely.
+        
+        Inputs: 
+        
+            Integer truckId.
+
+        Results:
+
+            True        -   In case the truck's could be stopped.
+
+            False       -   In case the update validation went wrong.
+
+            Exception   -   In case the input validation went wrong.
+
+        Logic:
+
+            1.  Validates Inputs.
+
+            2.  Binds truck's model object to variable referenced by its' truckId.
+
+            3.  Sets truck's speed to 0.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck's object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy leader's id as truck's respective reference.
+        truck.speed.set(0)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert=True)
+        # Validate update via bound truck object and input.
+        return val.speed == 0
+
+    # Function changing truck's position in convoy reference.
+    @staticmethod
+    def changeConvoyPosition(truckId: int, newConvoyPosition: int):
+        """[Docstring] Changes convoy position reference of a truck.
+        
+        Inputs: 
+        
+            Integer truckId, Integer newConvoyPosition.
+
+        Results:
+
+            True        -   In case the truck's convoyPosition reference could be set.
+
+            False       -   In case the update validation went wrong.
+
+            Exception   -   In case the input validation went wrong.
+
+        Logic:
+
+            1.  Validates Inputs.
+
+            2.  Binds truck's model object to variable referenced by its' truckId.
+
+            3.  Sets new convoy leader's id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy position as truck's respective reference.
+        truck.convoyPosition.set(newConvoyPosition)
+        # Save the truck and bind.
+        val = truck.save(force=True)
+        # validate new position in convoy.
+        return val.convoyPosition == newConvoyPosition
+
+    ###
+    # Modeling functions:
+    ###
+
+    # Function changing truck identificator.
+    @staticmethod
+    def changeTruckIdentificator(truckId: int, newTruckId: int):
+        """[Docstring] Changes identificator of a truck.
+        
+        Inputs:
+        
+            Integer truckId, Integer newTruckId.
+        
+        Results:
+
+            True        -   In case the truck's truckId reference could be set.
+
+            False       -   In case the update validation went wrong.
+
+            Exception   -   In case the input validation went wrong.
+
+        Logic:
+
+            1.  Validates Inputs.
+
+            2.  Binds truck's model object to variable referenced by its' truckId.
+
+            3.  Sets new truck id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck's object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new truckId as truck's respective reference.
+        truck.truckId.set(newTruckId)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert=True)
+        # Validate update via bound truck object and input.
+        return val.truckId == newTruckId
+
+    # Function changing truck's convoy leader reference.
+    @staticmethod
+    def changeConvoyLeader(truckId: int, newConvoyLeaderId: int):
+        """[Docstring] Change convoy's leader reference of a truck.
+        
+        Inputs: 
+        
+            Integer truckId, Integer newConvoyLeaderId.
+
+        Results:
+
+            True        -   In case the truck's convoyLeaderId reference could be set.
+
+            False       -   In case the update validation went wrong.
+
+            Exception   -   In case the input validation went wrong.
+
+        Logic:
+
+            1.  Validates Inputs.
+
+            2.  Binds truck's model object to variable referenced by its' truckId.
+
+            3.  Sets new convoy leader's id input as truck's respective reference.
+
+            4.  Validates value update.
+
+            4.1 Signals success on valid update, via returning true.
+
+            4.2 Signals failure on invalid update, via returning false.
+        """
+        # Bind truck object to reference.
+        truck = Truck.objects.get(truckId=truckId)
+        # Set new convoy leader's id as truck's respective reference.
+        truck.convoyLeaderId.set(newConvoyLeaderId)
+        # Save the truck and bind it to a reference.
+        val = truck.save(force_insert = True)
+        # Validate update via bound truck object and input.
+        return val.convoyLeaderId == newConvoyLeaderId
+
+    ###
+    # Bullying functions:
+    ###
+
+    @staticmethod
+    def initiateVote(toBullyTruckId: int, connectionAttempt: int, toBullyTruckIds: list([int])):
+        """[Docstring] Initiate vote on another trucks.
+
+        Inputs:
+
+            Integer toBullyTruckId, Integer connectionAttempt, Integer List toBullyTruckIds.
+            
+        Results:
+
+            True        -   In case the polling is successful.
+
+            False       -   In case the vote initiation failed and limit of connection attempts
+                            is reached.
+
+            Re-call     -   In case the vote initiation failed.
+
+        Logic:
+
+            1.    Validates Inputs.
+
+            2.    Increase connectionAttempt by one.
+                    
+            3.    File request to initiate vote on truck, referenced by its' id,
+                  providing all truck ids to poll with.
+
+            4.0   If exception is thrown, pass exception block to handle exception in finally
+                  block.
+
+            4.1   If request is coming back 200 - OK, signaling voting initiation, will return
+                  True.
+
+            4.2   If request is coming back a failure in some way and the maximum connection
+                  attempts are reached, will return False.
+                  
+            4.3   If request is coming back a failure and maximum connection attempts are not
+                  reached, re-call function to re-file the request recursivly.
+        """
+        try:
+            # Increase connectionAttempt by one.
+            connectionAttempt += 1
+            # File post request for truck json against api.
+            resp = requests.post(
+                'http://'
+                + Service.truckAPIHost + ':'
+                + Service.truckAPIPort + '/api/truck/'
+                + toBullyTruckId + '/vote/',
+                params=dict(
+                    higherIdentifiedTrucks=str(
+                        toBullyTruckIds
+                    )
+                )
+            )
+        # Pass exception block to still achieve recursion on exception.
+        except:
+            pass
+        finally:
+            # Return success on recieving 200 - Ok status code, failure after to many connection attempts
+            # or another function to re-file request until connection attempts are reached.
+            if resp.status_code == status.HTTP_200_OK: return True
+            elif connectionAttempt > 5:                return False
+            else:                                      Service.initiateVote( toBullyTruckId, connectionAttempt, toBullyTruckIds)
+
+    @staticmethod
+    def initiateVotes(toBullyTruckIds: list([int])):
+        """[Docstring] Initiate vote on all eligible trucks.
+
+        Inputs:
+
+            Integer List toBullyTruckIds.
+            
+        Results:
+
+            True        -   In case the polling is successful.
+
+            False       -   In case the vote initiation failed and limit of connection attempts
+                            is reached.
+
+            Re-call     -   In case the vote initiation failed.
+
+        Logic:
+
+            1.    Validates Inputs.
+
+            2.    Iterates to bully trucks.
+                    
+            3.0   If vote is initiated, will cross id off of the list provided to function
+                  call.
+
+            3.1   If vote is not initiated, will not cross id off of provided list.
+
+            4.    Eventually returns broken or unreachable trucks, referenced by their ids.
+        """
+        # Iterate list of to bully truck ids.
+        for x in toBullyTruckIds:
+            # If vote is initiated, will remove id from list. If vote initiation is failure, will pass.
+            if Service.initiateVote(x, 0, toBullyTruckIds): toBullyTruckIds.remove(x)
+            else:                                              pass
+        # After iterating all ids return list of unreachable or broken trucks.
+        return toBullyTruckIds
+
     # Function polling two truck's via truckId reference
     @staticmethod
-    def pollingWithAnotherTruck(truckId: int, pollingTruckId: int):
+    def pollingWithTruck(truckId: int, pollingTruckId: int):
         """[Docstring] Polling in between truck and a another one.
 
         Inputs:
@@ -416,8 +637,8 @@ class Service(object):
 
             3.1.1 Signals null reference, via returning status.HTTP_404_NOT_FOUND.
                 
-            3.2.1 If the polling truck's truckId is bigger, but it's broken or truck is not in the convoy,
-                  will evaluate polling as won.
+            3.2.1 If the polling truck's truckId is bigger, but it's broken or truck is not
+                  in the convoy, will evaluate polling as won.
 
             3.2.2 Signals success, via returning status.HTTP_200_OK.
                 
@@ -437,7 +658,7 @@ class Service(object):
     
     # Function polling two truck's via truckId reference.
     @staticmethod
-    def pollingWithHigherIdentifiedTrucks(truckId: int, pollingTruckIds: list([int])):
+    def pollingWithEligibleTrucks(truckId: int, pollingTruckIds: list([int])):
         """[Docstring] Initiate vote among polling trucks.
 
         Inputs:
@@ -480,7 +701,7 @@ class Service(object):
         # Iterate list of integers provided by function call, polling with referenced trucks.
         for x in pollingTruckIds:
             # Bind polling result to reference for performance reason.
-            result = Service.pollingWithAnotherTruck(truck.truckId, x)
+            result = Service.pollingWithTruck(truck.truckId, x)
             # Evaluate polling result.
             if   result == status.HTTP_404_NOT_FOUND: truck.convoyLeaderId.set(truck.truckId); truck.save(force=True)
             elif result == status.HTTP_200_OK:        pass
@@ -488,57 +709,3 @@ class Service(object):
         # Validate truck's convoy leadership.
         return Service.validateConvoyLeadership(truck.truckId)
 
-    @staticmethod
-    def initiateOneVote(toBullyTruckId: int, connectionAttempt: int, toBullyTruckIds:list([int])):
-        try:
-            # Increase connectionAttempt by one.
-            connectionAttempt += 1
-            # File post request for truck json against api.
-            resp = requests.post(
-                                'http://'
-                                + Service.truckAPIHost + ':'
-                                + Service.truckAPIPort + '/api/truck/'
-                                + toBullyTruckId + '/vote/',
-                                params=dict(
-                                    higherIdentifiedTrucks=str(
-                                        toBullyTruckIds
-                                    )
-                                )   
-                            )
-            # Will evaluate response status code to decide, if the truckId can be deleted from to-bully-truckIds-list
-            # or has to be kept for further requests.
-        except: pass
-        finally: 
-            if      resp.status_code == status.HTTP_200_OK: return True
-            elif    connectionAttempt > 5:                  return False
-            else:   Service.initiateOneVote(toBullyTruckId, connectionAttempt, toBullyTruckIds)
-    
-    @staticmethod
-    def initiateAllVotes(truckId: int, convoyLeaderId: int, toBullyTruckIds: list([int])):
-        for x in toBullyTruckIds: 
-            if    Service.initiateOneVote(x, 0, toBullyTruckIds): toBullyTruckIds.remove(x)
-            else:                                                 pass
-        return toBullyTruckIds   
-
-    @staticmethod
-    def joinConvoy(truckId: int, convoyLeaderId: int):
-        # Bind truck's model object, referenced by its' their truckId.
-        truck = Truck.objects.get(truckId=truckId)
-        # Set convoyLeaderId as truck's convoyLeaderId
-        truck.convoyLeaderId.set(convoyLeaderId)
-        # Save the truck and bind it to a reference.
-        val = truck.save(force_insert=True)
-        # Validate update via bound truck object and input.
-        return val.convoyLeaderId == truck.convoyLeaderId
-
-    
-    @staticmethod
-    def leaveConvoy(truckId: int):
-        # Bind truck's model object, referenced by its' their truckId.
-        truck = Truck.objects.get(truckId=truckId)
-        # Set convoyLeaderId as truck's convoyLeaderId
-        truck.convoyLeaderId.set(-1)
-        # Save the truck and bind it to a reference.
-        val = truck.save(force_insert=True)
-        # Validate update via bound truck object and input.
-        return val.convoyLeaderId == -1
