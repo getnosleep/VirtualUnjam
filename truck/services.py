@@ -3,6 +3,7 @@ import requests # builds up on import urllib3.request
 import json
 from typing import Final
 from rest_framework import status
+from .drive import Drive
 from .models import Truck
 from validation import (
     validate_int, validate_float,
@@ -14,16 +15,30 @@ class Service(object):
     """[Docstring] Declares functions altering trucks' properties.
     
     Properties:
+        
+        convoyAPIHost:   private static string
+        
+        convoyAPIPort:   private static int
 
-        maxSpeed:       final static float
-        
-        truckAPIHost:   final static string
-        
-        truckAPIPort:   final static string
+        convoyAPIAddress: private static string
     
     Functions: 
 
         Names, inputs and results:
+
+            Static porperties' functions:
+
+                setConvoyApiHost(host: str):
+
+                getConvoyApiHost():str
+
+                setConvoyApiPort(port: int):
+
+                getConvoyApiPort():int
+
+                setConvoyApiAddress(host: str, port: int):
+                
+                getConvoyApiAddress():str
 
             Validation functions:
 
@@ -69,10 +84,44 @@ class Service(object):
     # Static properties:
     ###
 
-    # Static final references.
-    convoyAPIHost: Final[str] = '127.0.0.1'
-    convoyAPIPort: Final[str] = '8000'
-    convoyAPIAddress = 'http://' + convoyAPIHost + ':' + convoyAPIHost
+    # Static private references.
+    __convoyAPIHost__:str = '127.0.0.1'
+    __convoyAPIPort__:str = 8000
+    __convoyAPIAddress__:str = 'http://127.0.0.1:8000'
+
+    ###
+    # Static property functions:
+    ###
+
+    @staticmethod
+    def setConvoyApiHost(host: str):
+        """[Docstring] Convoy host setter."""
+        Service.__convoyAPIHost__ = host
+
+    @staticmethod
+    def getConvoyApiHost():
+        """[Docstring] Convoy host getter."""
+        return Service.__convoyAPIHost__
+    
+    @staticmethod
+    def setConvoyApiPort(port: int):
+        """[Docstring] Convoy port setter."""
+        Service.__convoyAPIPort__ = port
+    
+    @staticmethod
+    def getConvoyApiPort():
+        """[Docstring] Convoy port getter."""
+        return Service.__convoyAPIPort__
+    
+    @staticmethod
+    def setConvoyApiAddress(host: str, port: int):
+        """[Docstring] Convoy address setter."""
+        Service.__convoyAPIPort__ = 'http://' + host + ':' + str(port)
+
+    @staticmethod
+    def getConvoyApiAddress():
+        """[Docstring] Convoy address getter."""
+        return Service.__convoyAPIAddress__
 
     ###
     # Validation functions:
@@ -104,7 +153,7 @@ class Service(object):
                                                           "truckId": validate_int(min_value = 0),
                                                           "convoyPosition": validate_int(min_value = 0),
                                                           "convoyLeaderId": validate_int(min_value = 0),
-                                                          "speed": validate_float(min_value = 0, max_value = Service.maxSpeed),
+                                                          "speed": validate_float(min_value = 0, max_value = Drive.maxSpeed),
                                                           "address": validate_text(min_length=8)
                                                         })
 

@@ -57,7 +57,7 @@ class Bully(object):
         truck = Truck.objects.get(truckId=truckId)
         if truck.isPolling or not Service.changePollingStatus(truck.truckId):
             return False
-        addresses = Service.fetchTruckAddresses(Service.convoyAPIAddress)
+        addresses = Service.fetchTruckAddresses(Service.getConvoyAPIAddress())
         trucksInConvoy = Service.fetchTrucksInConvoy(addresses)
         relevantTrucksInConvoy = Service.determineRelevantTrucksInConvoy(truck.convoyPosituion, trucksInConvoy)
         Bully.bullyRelevantTrucks(relevantTrucksInConvoy)

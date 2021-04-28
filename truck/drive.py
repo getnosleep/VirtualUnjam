@@ -16,23 +16,31 @@ class Drive(object):
 
     Functions:
         
-        changeSpeed(truckId: int, speed: float):boolean
+        Static porperties' functions:
 
-        stopTruck(truckId: int):boolean
+            setTrucksMaxSpeed(speed: float):
 
-        changeConvoyPosition(truckId: int, newConvoyPosition: int):boolean
+            getTrucksMaxSpeed(speed: float):float
+        
+        Truck's driving behaviour:
 
-        joinConvoy(truckId: int):boolean
+            changeSpeed(truckId: int, speed: float):boolean
 
-        leaveConvoy(truckId: int):boolean
+            stopTruck(truckId: int):boolean
 
-        accelerateCollectively(truckId: int, speed: float):boolean
+            changeConvoyPosition(truckId: int, newConvoyPosition: int):boolean
 
-        confirmAcceleration(truckId: int, speed: float):boolean
+            joinConvoy(truckId: int):boolean
 
-        prepareDeceleration(truckId: int, speed: float):boolean
+            leaveConvoy(truckId: int):boolean
 
-        decelerateCollectively(truckId: int, speed: float):boolean
+            accelerateCollectively(truckId: int, speed: float):boolean
+
+            confirmAcceleration(truckId: int, speed: float):boolean
+
+            prepareDeceleration(truckId: int, speed: float):boolean
+
+            decelerateCollectively(truckId: int, speed: float):boolean
 
 
         Hint: The respective docstrings hold a detailed behavioural description of the
@@ -43,8 +51,26 @@ class Drive(object):
     # Static properties:
     ###
 
-    # Static final references.
-    maxSpeed:     Final[float] = 80.00
+    # Static private references.
+    __maxSpeed__:float = 80.00
+
+    ###
+    # Static property functions:
+    ###
+
+    @staticmethod
+    def setTrucksMaxSpeed(speed: float):
+        """[Docstring] Truck's max speed setter."""
+        Drive.__maxSpeed__ = speed
+
+    @staticmethod
+    def getTrucksMaxSpeed():
+        """[Docstring] Truck's max speed getter."""
+        return Drive.__maxSpeed__
+
+    ###
+    # Truck's driving behaviour:
+    ###
 
     @staticmethod
     def changeSpeed(truckId: int, speed: float):
@@ -70,12 +96,12 @@ class Drive(object):
 
         """
         truck = Truck.objects.get(truckId=truckId)
-        if validate_float(min_value=0, max_value=Drive.maxSpeed,  value=speed):
+        if validate_float(min_value=0, max_value=Drive.getTrucksMaxSpeed(),  value=speed):
             pass
         elif not validate_float(min_value=0, value=speed):
             speed = 0
-        elif not validate_float(max_value=Drive.maxSpeed, value=speed):
-            speed = Drive.maxSpeed
+        elif not validate_float(max_value=Drive.getTrucksMaxSpeed(), value=speed):
+            speed = Drive.getTrucksMaxSpeed()
         truck.speed.set(speed)
         val = truck.save(force_insert=True)
         return val.speed == speed
@@ -151,7 +177,7 @@ class Drive(object):
             'truckId': truck.truckId,
             'address': truck.address
         }
-        resp = requests.post(Service.convoyAPIAddress, data=data)
+        resp = requests.post(Service.getConvoyAPIAddress(), data=data)
         return resp.status_code == 200
 
     @staticmethod
@@ -174,7 +200,7 @@ class Drive(object):
         data = {
             'truckId': truck.truckId
         }
-        resp = requests.delete(Service.convoyAPIAddress, data=data)
+        resp = requests.delete(Service.getConvoyAPIAddress(), data=data)
         return resp.status_code == 200
     
     @staticmethod
@@ -209,7 +235,7 @@ class Drive(object):
         position = truck.convoyPosition + 1
         if not Service.changeAccelerationStatus(truckId) or not Drive.changeSpeed(truckId, speed):
             return False
-        addresses = Service.fetchTruckAddresses(Service.convoyAPIAddress)
+        addresses = Service.fetchTruckAddresses(Service.getConvoyAPIAddress())
         trucks = Service.fetchTrucksInConvoy(addresses)
         trucks = sorted(trucks, key=lambda Truck: Truck.convoyPosition, reverse=False)
         if trucks[position]:
@@ -261,7 +287,7 @@ class Drive(object):
                 return False
         if not Service.changeAccelerationStatus(truckId):
             return False
-        addresses = Service.fetchTruckAddresses(Service.convoyAPIAddress)
+        addresses = Service.fetchTruckAddresses(Service.getConvoyApiAddress())
         trucks = Service.fetchTrucksInConvoy(addresses)
         trucks = sorted(trucks, key=lambda Truck: Truck.convoyPosition, reverse=False)
         if trucks[position]:
@@ -307,7 +333,7 @@ class Drive(object):
         position = truck.convoyPosition + 1
         if not Service.changeDecelerationStatus(truckId):
             return False
-        addresses = Service.fetchTruckAddresses(Service.convoyAPIAddress)
+        addresses = Service.fetchTruckAddresses(Service.getConvoyAPIAddress())
         trucks = Service.fetchTrucksInConvoy(addresses)
         trucks = sorted(trucks, key=lambda Truck: Truck.convoyPosition, reverse=False)
         if trucks[position]:
@@ -356,7 +382,7 @@ class Drive(object):
         position = truck.convoyPosition + 1
         if not Service.changeDecelerationStatus or not Drive.changeSpeed(truckId, speed):
             return False
-        addresses = Service.fetchTruckAddresses(Service.convoyAPIAddress)
+        addresses = Service.fetchTruckAddresses(Service.getConvoyAPIAddress())
         trucks = Service.fetchTrucksInConvoy(addresses)
         trucks = sorted(trucks, key=lambda Truck: Truck.convoyPosition, reverse=False)
         if trucks[position]:
