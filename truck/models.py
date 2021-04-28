@@ -1,7 +1,8 @@
+"""[Docstring] Declares model objects."""
 from django.db import models
 
 # binding fields for serializers
-__all__ = [ "id", "truckId", "convoyPosition", "convoyLeaderId", "maxSpeed", "speed", "isBroken", "isPolling"]
+__all__ = [ "id", "truckId", "convoyPosition", "convoyLeaderId", "speed", "address", "isBroken", "isPolling", "isBreaking", "isAccelerating"]
 
 class Truck(models.Model):
     """[Docstring] Declares model objects.
@@ -18,9 +19,15 @@ class Truck(models.Model):
         
         speed Float - current speed of the truck,
 
+        address Text - truck's microservice address,
+
         isBroken Boolean - flags operational readiness of the truck,
 
-        isPolling - flags polling status.
+        isPolling - flags polling status,
+        
+        isDecelerating - flags breaking status,
+        
+        isAccelerating - flags acceleration status.
     """
     
     id = models.AutoField(primary_key=True)
@@ -28,7 +35,8 @@ class Truck(models.Model):
     convoyPosition = models.IntegerField()
     convoyLeaderId = models.IntegerField()
     speed = models.FloatField()
+    address = models.TextField()
     isBroken = models.BooleanField()
     isPolling = models.BooleanField()
-    #truck_in_front = models.OneToOneField()
-    #truck_behind = models.OneToOneField()
+    isDecelerating = models.BooleanField()
+    isAccelerating = models.BooleanField()
