@@ -1,7 +1,5 @@
 """[Docstring] Service class handling truck's driving behaviour."""
 import requests
-from .services import Service
-from .bully import Bully
 from typing import Final
 from rest_framework import status
 from .models import Truck
