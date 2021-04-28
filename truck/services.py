@@ -60,7 +60,7 @@ class Service(object):
 
                 changeConvoyPosition(truckId, newConvoyPosition):boolean
             
-            Modeling functions:
+            Modelling functions:
                 
                 repairTruck(truckId: int):boolean
 
@@ -86,11 +86,11 @@ class Service(object):
 
     # Static private references.
     __convoyAPIHost__:str = '127.0.0.1'
-    __convoyAPIPort__:str = 8000
+    __convoyAPIPort__:int = 8000
     __convoyAPIAddress__:str = 'http://127.0.0.1:8000'
 
     ###
-    # Static property functions:
+    # Static properties' functions:
     ###
 
     @staticmethod
@@ -153,8 +153,12 @@ class Service(object):
                                                           "truckId": validate_int(min_value = 0),
                                                           "convoyPosition": validate_int(min_value = 0),
                                                           "convoyLeaderId": validate_int(min_value = 0),
-                                                          "speed": validate_float(min_value = 0, max_value = Drive.maxSpeed),
-                                                          "address": validate_text(min_length=8)
+                                                          "speed": validate_float(min_value = 0, max_value = Drive.getMaxSpeed()),
+                                                          "address": validate_text(min_length=8),
+                                                          "isBroken": validate_int(min_value=0, max_value=1),
+                                                          "isProlling": validate_int(min_value=0, max_value=1),
+                                                          "isAccelerating": validate_int(min_value=0, max_value=1),
+                                                          "isDecelerating": validate_int(min_value=0, max_value=1)
                                                         })
 
     @staticmethod
