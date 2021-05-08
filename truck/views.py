@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from .serializers import TruckSerializer
 from .services import Service
+from .drive import Drive
 from .models import Truck
 
 class TruckBehaviour(viewsets.ViewSet):
@@ -28,7 +29,7 @@ class TruckBehaviour(viewsets.ViewSet):
         message = ''
 
         try:
-            if Service.changeSpeed(truckId=truckId, speedOffset=speedOffset):
+            if Drive.changeSpeed(truckId=truckId, speed=speedOffset):
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -42,7 +43,7 @@ class TruckBehaviour(viewsets.ViewSet):
         message = ''
 
         try:
-            if Service.changeSpeed(truckId=truckId, speedOffset=speedOffset):
+            if Drive.changeSpeed(truckId=truckId, speed=speedOffset):
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
@@ -68,7 +69,7 @@ class TruckBehaviour(viewsets.ViewSet):
         message = ''
 
         try:
-            Service.changeConvoyPosition(truckId=truckId, newConvoyPosition=convoyPosition)
+            Drive.changeConvoyPosition(truckId=truckId, newConvoyPosition=convoyPosition)
             return Response(status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_403_FORBIDDEN)

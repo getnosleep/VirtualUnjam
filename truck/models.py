@@ -2,7 +2,8 @@
 from django.db import models
 
 # binding fields for serializers
-__all__ = [ "id", "truckId", "convoyPosition", "convoyLeaderId", "speed", "address", "isBroken", "isPolling", "isBreaking", "isAccelerating"]
+__all__ = ["id", "truckId", "convoyPosition", "convoyLeaderId", "speed",
+           "address", "isBroken", "isPolling", "isDecelerating", "isAccelerating"]
 
 class Truck(models.Model):
     """[Docstring] Declares model objects.
@@ -31,12 +32,12 @@ class Truck(models.Model):
     """
     
     id = models.AutoField(primary_key=True)
-    truckId = models.IntegerField()
-    convoyPosition = models.IntegerField()
-    convoyLeaderId = models.IntegerField()
-    speed = models.FloatField()
-    address = models.TextField()
-    isBroken = models.BooleanField()
-    isPolling = models.BooleanField()
-    isDecelerating = models.BooleanField()
-    isAccelerating = models.BooleanField()
+    truckId = models.IntegerField(default=0)
+    convoyPosition = models.IntegerField(default=None)
+    convoyLeaderId = models.IntegerField(default=None)
+    speed = models.FloatField(default=0)
+    address = models.TextField(default='127.0.0.1:8000')
+    isBroken = models.BooleanField(default=False)
+    isPolling = models.BooleanField(default=False)
+    isDecelerating = models.BooleanField(default=False)
+    isAccelerating = models.BooleanField(default=False)

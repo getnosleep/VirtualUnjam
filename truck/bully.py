@@ -12,7 +12,7 @@ from validation import (
     validate_text,
 )
 
-class Bully(object):
+class Bully:
     """[Docstring] Declares electoral functions, determining the new convoy leader.
     
     Functions: 

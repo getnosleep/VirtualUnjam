@@ -3,8 +3,6 @@ import requests # builds up on import urllib3.request
 import json
 from typing import Final
 from rest_framework import status
-#from .drive import Drive
-from .drive import Drive
 from .models import Truck
 from validation import (
     validate_int, validate_float,
@@ -12,7 +10,7 @@ from validation import (
     validate_text,
 )
 
-class Service(object):
+class Service:
     """[Docstring] Declares functions altering trucks' properties.
     
     Properties:

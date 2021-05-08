@@ -2,6 +2,7 @@
 import requests
 from typing import Final
 from rest_framework import status
+from .services import Service
 from .models import Truck
 from validation import (
     validate_int, validate_float,
@@ -9,7 +10,7 @@ from validation import (
     validate_text,
 )
 
-class Drive(object):
+class Drive:
     """[Docstring] Service class handling truck's driving behaviour.
 
     Functions:
