@@ -9,6 +9,29 @@ from validation import (
     validate_text,
 )
 
+"""Properties:"""
+__requestType__ = 'http://'
+__convoyApiHost__ = '127.0.0.1'
+__convoyApiPort__ = 8000
+__convoyApiAddress__ = __requestType__ + __convoyAPIHost__ + str(__convoyAPIPort__) 
+
+"""Mutation functionalities and extern property access:"""
+def getConvoyApiHost(): return __convoyApiHost__
+def setConvoyApiHost(host: str):
+    __convoyApiHost__ = host
+    pass
+
+def getConvoyApiPort(): return __convoyApiPort__
+def setConvoyApiPort(port: int):
+    __convoyApiPort__ = port
+    pass
+
+def getConvoyApiAddress(): return __convoyApiAddress__
+def setConvoyApiAddress(host: str, port: int):
+    __convoyApiAddress__ = __requestType__ + host + ':' + str(port)
+    pass
+
+"""Convoy functionalities:"""
 def joinConvoy():
     """
         @returns bool - successful joined the convoy

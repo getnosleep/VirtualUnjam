@@ -38,14 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    ## 3rd party
+    # 3rd party
     'rest_framework',
     'rest_framework_swagger',
     'validation',
     'pika',
     'numpy',
 
-    #service
+    # service
     'truck',
 ]
 

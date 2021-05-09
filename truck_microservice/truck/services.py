@@ -11,24 +11,24 @@ from validation import (
 
 """Properties:"""
 __requestType__ = 'http://'
-__convoyAPIHost__ = '127.0.0.1'
-__convoyAPIPort__ = 8000
-__convoyAPIAddress__ = 'http://127.0.0.1:8000'
+__convoyApiHost__ = '127.0.0.1'
+__convoyApiPort__ = 8000
+__convoyApiAddress__ = __requestType__ + __convoyAPIHost__ + str(__convoyAPIPort__) 
 
 """Mutation functionalities and extern property access:"""
-def getConvoyApiHost(): return __convoyAPIHost__
+def getConvoyApiHost(): return __convoyApiHost__
 def setConvoyApiHost(host: str):
-    __convoyAPIHost__ = host
+    __convoyApiHost__ = host
     pass
 
-def getConvoyApiPort(): return __convoyAPIPort__
+def getConvoyApiPort(): return __convoyApiPort__
 def setConvoyApiPort(port: int):
-    __convoyAPIPort__ = port
+    __convoyApiPort__ = port
     pass
 
-def getConvoyApiAddress(): return __convoyAPIAddress__
+def getConvoyApiAddress(): return __convoyApiAddress__
 def setConvoyApiAddress(host: str, port: int):
-    __convoyAPIPort__ = __requestType__ + host + ':' + str(port)
+    __convoyApiAddress__ = __requestType__ + host + ':' + str(port)
     pass
 
 
