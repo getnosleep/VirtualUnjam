@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 
-from .serializers import TruckSerializer
+#from .serializers import TruckSerializer
 from .services import Service
 from .drive import Drive
 from .models import Truck
@@ -91,3 +91,20 @@ class TruckMonitoring(viewsets.ViewSet):
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     #def speed_monitor ... etc -> because of CQRS
+
+"""
+create:
+    fertig -> muss noch auf statisches Objekt angepasst werden
+
+joinConvoy Methode
+     anlegen und sobald der Truck einem Convoy joinen soll dementsprechend die Methode aufrufen und das Objekt hinsichtlich wder TruckID manipulieren
+
+alive:
+    muss noch den broke bit negiert aus der statischen Truck Klasse zurueckgeben
+
+accelerate:
+    setSpeed methode -> idempotent (ist validiert)
+
+
+"""
+

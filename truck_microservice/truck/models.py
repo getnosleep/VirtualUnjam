@@ -1,43 +1,90 @@
-"""[Docstring] Declares model objects."""
-from django.db import models
+class SthThatBehavesLikeATruck(object):
+    def __init__(self, address: str, truckId=None, convoyPosition=None, convoyLeaderId=None, speed=0.0, isBroken=False, isPolling=False, isDecelerating=False, isAccelerating=False):
+        self.__address__ = address
+        self.__truckId__ = self.__generateId__(address) if truckId == None else truckId
+        self.__convoyLeaderId__ = convoyLeaderId
+        self.__convoyPosition__ = convoyPosition
+        self.__speed__ = speed
+        self.__isBroken__ = isBroken
+        self.__isPolling__ = isPolling
+        ####  ##### #   #     ##### ####  ##### #   #     ####  ##### #   # ##### #   # ##### #   #
+        #   #   #   ##  #     #     #   # #     ##  #     #   # #   # #   # #     #   # #     ##  #
+ 	    ####    #   # # #     ##### ####  ##### # # #     ####  ##### #   # #     ##### ##### # # #
+  	    #   #   #   #  ##     #     #   # #     #  ##     #   # #   # #   # #     #   # #     #  ##
+        ####  ##### #   #     ##### ####  ##### #   #     #   # #   # ##### ##### #   # ##### #   #
+        self.__isDecelerating__ = isDecelerating
+        self.__isAccelerating__ = isAccelerating
 
-# binding fields for serializers
-__all__ = ["id", "truckId", "convoyPosition", "convoyLeaderId", "speed",
-           "address", "isBroken", "isPolling", "isDecelerating", "isAccelerating"]
+    def __generateId__(self, address):
+        from time import time
+        from hashlib import sha256
 
-class Truck(models.Model):
-    """[Docstring] Declares model objects.
-
-    Properties:
+        hashstring = f'{address}truck{str(time())}'
+        return sha256(hashstring.encode('utf-8')).hexdigest()
     
-        id Primary_key - UUID - Primary key for database,
-        
-        truckId Integer - unique id for distributed system,
-        
-        convoyPosition Integer - position in distributed Convoy,
-        
-        convoyLeaderId Integer - leader in distributed Convoy,
-        
-        speed Float - current speed of the truck,
+    def reInit(self):
+        self.__convoyPosition__ = None
+        self.__convoyLeaderId__ = None
+        self.__speed__ = 0.0
+        self.__isBroken__ = False
+        self.__isPolling__ = False
+        self.__isDecelerating__ = False
+        self.__isAccelerating__ = False
 
-        address Text - truck's microservice address,
+    def getAddress(self): return self.__address__
+    def getTruckId(self): return self.__truckId__
 
-        isBroken Boolean - flags operational readiness of the truck,
+    def getConvoyPosition(self): return self.__convoyPosition__
+    def setConvoyPosition(self, convoyPosition: int):
+        self.__convoyPosition__ = convoyPosition
+        pass
 
-        isPolling - flags polling status,
-        
-        isDecelerating - flags breaking status,
-        
-        isAccelerating - flags acceleration status.
-    """
+    def getConvoyLeaderId(self): return self.__convoyLeaderId__
+    def setConvoyLeaderId(self, convoyLeaderId: str):
+        self.__convoyLeaderId__ = convoyLeaderId
+        pass
+
+    def getSpeed(self): return self.__speed__
+    def setSpeed(self, speed: float):
+        self.__speed__ = speed
+        pass
+
+    def isBroken(self): return self.__isBroken__
+    def toggleBroken(self):
+        self.__isBroken__ = not self.__isBroken__
+        pass
+
+    def isPolling(self): return self.__isPolling__
+    def togglePolling(self):
+        self.__isPolling__ = not self.__isPolling__
+        pass
     
-    id = models.AutoField(primary_key=True)
-    truckId = models.IntegerField(default=0)
-    convoyPosition = models.IntegerField(default=None)
-    convoyLeaderId = models.IntegerField(default=None)
-    speed = models.FloatField(default=0)
-    address = models.TextField(default='127.0.0.1:8000')
-    isBroken = models.BooleanField(default=False)
-    isPolling = models.BooleanField(default=False)
-    isDecelerating = models.BooleanField(default=False)
-    isAccelerating = models.BooleanField(default=False)
+    def isDecelerating(self): return self.__isDecelerating__
+    def toggleDecelerating(self):
+        self.__isDecelerating__ = not self.__isDecelerating__
+        pass
+    
+    def isAccelerating(self): return self.__isAccelerating__
+    def toggleAccelerating(self):
+        self.__isAccelerating__ = not self.__isAccelerating__
+        pass
+
+    def setDependent(self, convoyLeaderId: str, convoyPosition: int):
+        self.setConvoyLeaderId(convoyLeaderId=convoyLeaderId)
+        self.setConvoyPosition(convoyPosition=convoyPosition)
+        self.__isMember__ = True
+        pass
+
+    def setIndependent(self):
+        self.__convoyLeaderId__ = None
+        self.__convoyPosition__ = None
+        self.__isMember__ = False
+        pass
+
+    def isMember(self): return self.__convoyPosition__ != None and self.__convoyLeaderId__ != None
+
+    def isLeader(self): return self.__convoyLeaderId__ == self.__truckId__
+
+Truck = SthThatBehavesLikeATruck("ABCDEFGHIJKLMNO - Fick die Henne, wie bekomme ich die Umgebungsvariablen hier raus? - QRSTUVWXYZ - OKAY HALT DEIN MAUL !!!")
+
+# import socket # Koennte die richtige Loesung sein...
