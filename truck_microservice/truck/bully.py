@@ -3,8 +3,9 @@ import requests
 import json
 from typing import Final
 from rest_framework import status
-from .services import Service
-from .drive import Drive
+from .convoy import *
+from .services import *
+from .drive import *
 from .models import Truck
 from validation import (
     validate_int, validate_float,
