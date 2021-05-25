@@ -1,3 +1,6 @@
+from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
+
 class SthThatBehavesLikeATruck(object):
     def __init__(self, address: str, truckId=None, convoyPosition=None, convoyLeaderId=None, speed=0.0, isBroken=False, isPolling=False, isDecelerating=False, isAccelerating=False):
         self.__address__ = address
@@ -86,5 +89,24 @@ class SthThatBehavesLikeATruck(object):
     def isLeader(self): return self.__convoyLeaderId__ == self.__truckId__
 
 Truck = SthThatBehavesLikeATruck("ABCDEFGHIJKLMNO - Fick die Henne, wie bekomme ich die Umgebungsvariablen hier raus? - QRSTUVWXYZ - OKAY HALT DEIN MAUL !!!")
+
+class TruckEntity(models.Model):
+    # Settings
+    truckId = models.IntegerField(primary_key=True, validators=[MinValueValidator(1)])
+    address = models.CharField(max_length=50)
+
+    # Status
+    targetDistance = models.PositiveIntegerField(default=20, validators=[MinValueValidator(1)])
+    currentDistance = models.PositiveIntegerField(default=20, validators=[MinValueValidator(1)])
+    targetSpeed = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(80.0)])
+    currentSpeed = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(80.0)])
+    broken = models.BooleanField(default=False)
+    convoyLeader = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+    convoyPosition = models.PositiveIntegerField(validators=[MinValueValidator(0)])
+
+    # Current actions that shouldn't be persisted
+    polling = models.BooleanField(default=False)
+    accelerating = models.BooleanField(default=False)
+    decelerating = models.BooleanField(default=False)
 
 # import socket # Koennte die richtige Loesung sein...

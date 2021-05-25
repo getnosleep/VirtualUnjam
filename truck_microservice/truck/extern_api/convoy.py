@@ -1,5 +1,4 @@
 import requests
-from .models import Truck
 
 """Properties:"""
 __requestType__ = 'http://'
@@ -12,18 +11,19 @@ def getConvoyApiHost(): return __convoyApiHost__
 def getConvoyApiPort(): return __convoyApiPort__
 def getConvoyApiAddress(): return __convoyApiAddress__
 
-"""Convoy functionalities:"""
-def joinConvoy():
+"""Convoy requests:"""
+def join(truckId, address):
     """@returns bool - successful joined the convoy"""
-    data = {'truckId': Truck.getTruckId(), 'address': Truck.getAddress()}
+    data = {'truckId': truckId, 'address': address}
     resp = requests.post(__convoyApiAddress__, data=data)
     return resp.status_code == 200
 
-def leaveConvoy():
+def leave(truckId):
     """@returns bool - successful left the convoy"""
-    data = {'truckId': Truck.getTruckId}
+    data = {'truckId': truckId}
     resp = requests.delete(__convoyApiAddress__, data=data)
-    if resp.status_code == 200:
-        Truck.setIndependent()
-        return True
-    return False
+    return resp.status_code == 200
+
+def registered():
+    """@returns dict - {\"truckId\": truckId, \"address\": address} of trucks registered on convoy"""
+    pass

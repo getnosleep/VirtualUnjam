@@ -53,7 +53,6 @@ class Bully:
             In case new position is leader, signal leadership convoy's trucks.
             Change truck's convoy position.
             Return position change validation.
-
         """
         truck = Truck.objects.get(truckId=truckId)
         if truck.isPolling or not Service.changePollingStatus(truck.truckId):
