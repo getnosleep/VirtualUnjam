@@ -5,7 +5,6 @@ from rest_framework.parsers import JSONParser
 from .service import Service
 
 from paho.mqtt.client import Client, MQTT_ERR_NO_CONN, MQTTv311
-from .publisher import Publisher
 from django.shortcuts import render
 from django.urls import path
 from rest_framework import status, viewsets
@@ -23,19 +22,13 @@ class Initializer(viewsets.ViewSet):
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         interval = data['interval']
         count = data['count']
-        mqttClient = Client(client_id="heartbeat",
-                            clean_session=False,
-                            userdata=None,
-                            protocol=MQTTv311,
-                            transport="tcp")
-        mqttClient.username_pw_set(data['broker_username'],
-                                    data['broker_password'])
-        publisher = Publisher(mqttClient,
-                              data['broker_address'],
-                              data['broker_port'],
-                              data['broker_channel'])
+        brokerAddress = data['broker_address']
+        brokerPort = data['broker_port']
+        brokerUsername = data['broker_username']
+        brokerPassword = data['broker_password']
+        brokerChannel = data['broker_channel']
         try:
-            if Service.initiateHeartbeat(interval=interval, count=count, publisher=publisher):
+            if Service.initiateHeartbeat(interval=interval, count=count, brokerAddress=brokerAddress, brokerPort=brokerPort, brokerUsername=brokerUsername, brokerPassword=brokerPassword, brokerChannel=brokerChannel):
                 return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
