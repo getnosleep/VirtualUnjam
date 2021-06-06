@@ -18,7 +18,7 @@ class Initializer(viewsets.ViewSet):
     def initializeHeartbeats(self: viewsets.ViewSet, request: Request, pk=None):
         """[Docstring] Declares functions, stimulating heartbeats."""
         data = JSONParser().parse(request)
-        if not data:
+        if not data or data['count'] < 0:
             return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
         interval = data['interval']
         count = data['count']
