@@ -8,3 +8,4 @@ validation==0.6.1
 pika==1.2.0
 numpy==1.19.5
 paho-mqtt==1.5.1
+ntplib==0.4.0
