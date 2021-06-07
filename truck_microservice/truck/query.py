@@ -6,9 +6,7 @@ from .serializer import TruckSerializer
 from .exceptions.initialization import TruckNotInitializedException
 from .initializer import TRUCK_ID
 
-ERR = 0
-ERRMSG_UNINITIALIZED = 'Please wait a few seconds until the initializer initialized this truck.'
-ERRMSG_USELESS = 'Please kill me !!!'
+ERRMSG_UNINITIALIZED = 'Has the truck already been initialized?'
 
 class Query(viewsets.ViewSet):
     def settings(self, request):
@@ -25,9 +23,6 @@ class Query(viewsets.ViewSet):
         except TruckNotInitializedException as e:
             return HttpResponse(e.message, status=204)
         except TruckEntity.DoesNotExist:
-            if ERR > 3:
-                return HttpResponse(ERRMSG_USELESS, status=404)
-            ERR += 1
             return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
         except:
             return HttpResponse('We are sorry, a problem has occured.', status=500)
@@ -52,9 +47,6 @@ class Query(viewsets.ViewSet):
         except TruckNotInitializedException as e:
             return HttpResponse(e.message, status=204)
         except TruckEntity.DoesNotExist:
-            if ERR > 3:
-                return HttpResponse(ERRMSG_USELESS, status=404)
-            ERR += 1
             return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
         except:
             return HttpResponse('We are sorry, a problem has occured.', status=500)
@@ -74,9 +66,6 @@ class Query(viewsets.ViewSet):
         except TruckNotInitializedException as e:
             return HttpResponse(e.message, status=204)
         except TruckEntity.DoesNotExist:
-            if ERR > 3:
-                return HttpResponse(ERRMSG_USELESS, status=404)
-            ERR += 1
             return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
         except:
             return HttpResponse('We are sorry, a problem has occured.', status=500)
@@ -92,9 +81,6 @@ class Query(viewsets.ViewSet):
         except TruckNotInitializedException as e:
             return HttpResponse(e.message, status=204)
         except TruckEntity.DoesNotExist:
-            if ERR > 3:
-                return HttpResponse(ERRMSG_USELESS, status=404)
-            ERR += 1
             return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
         except:
             return HttpResponse('We are sorry, a problem has occured.', status=500)
