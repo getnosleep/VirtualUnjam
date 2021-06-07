@@ -1,5 +1,5 @@
 """[Docstring] Declares heartbeat thread."""
-from paho.mqtt.client import Client, MQTTMessage, MQTTv311
+from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
 import time
 

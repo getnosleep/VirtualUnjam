@@ -1,6 +1,4 @@
 """[Docstring] Declares functions, running the heartbeat."""
-import time
-from paho.mqtt.client import Client, MQTTMessage
 from .heartbeat import Heartbeat
 
 

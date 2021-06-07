@@ -3,9 +3,6 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from .service import Service
 
-from paho.mqtt.client import Client, MQTT_ERR_NO_CONN, MQTTv311
-from django.shortcuts import render
-from django.urls import path
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request

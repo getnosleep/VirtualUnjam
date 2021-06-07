@@ -1,7 +1,6 @@
 """[Docstring] Declares heartbeat thread."""
 from .callbacks import Callbacks
-from paho.mqtt.client import Client, MQTTMessage, MQTTv311
-from .exceptions import SubscribeException, SubscriberConnectionException
+from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
 import time
 
