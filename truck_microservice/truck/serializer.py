@@ -1,8 +1,12 @@
+# library imports
 from django.db.models import fields
 from rest_framework import serializers
+
+# persistence layer imports
 from .models import TruckEntity
 
 class AdminSerializer(serializers.ModelSerializer):
+    """Serialization of Truck-Data for the Admin-Microservice"""
     class Meta:
         model = TruckEntity
         fields = [
@@ -20,6 +24,7 @@ class AdminSerializer(serializers.ModelSerializer):
         ]
 
 class ConvoySerializer(serializers.ModelSerializer):
+    """Serialization of Truck-Data for other Truck-Microservice"""
     class Meta:
         model = TruckEntity
         fields = [
@@ -40,6 +45,7 @@ class ConvoySerializer(serializers.ModelSerializer):
         ]
 
 class Serializer(serializers.ModelSerializer):
+    """All Truck-Data serialization -> only for development purpose"""
     class Meta:
         model = TruckEntity
         fields = [

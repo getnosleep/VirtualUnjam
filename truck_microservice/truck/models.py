@@ -1,6 +1,8 @@
+# library imports
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+# property imports
 from .properties import ID, ADDRESS, LENGTH, MIN_SPEED, MAX_SPEED, MIN_ACCELERATION, MAX_ACCELERATION
 
 class TruckEntity(models.Model):

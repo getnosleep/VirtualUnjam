@@ -1,9 +1,11 @@
+# library imports
 from threading import Thread
 
+# property imports
+from ..properties import ID, DEPARTURE_DISTANCE
+
+# persistence layer imports
 from ..models import TruckEntity
-from ..serializer import TruckSerializer
-from ..exceptions.initialization import TruckNotInitializedException
-from ..properties import TRUCK_ID, DEPARTURE_DISTANCE
 
 class Movement(Thread):
     def __init__(self):
@@ -59,7 +61,7 @@ class Movement(Thread):
 
         # setup data
         t = t_ms*1.0 / 1000.0
-        truck = TruckEntity.objects.get(truckId=TRUCK_ID)
+        truck = TruckEntity.objects.get(truckId=ID)
         s_0, v_0, a = truck.movementStats()
         s_1, v_1 = truck.targetStats()
 
@@ -90,5 +92,3 @@ class Movement(Thread):
         truck.save()
 
         return True
-
-mover = Movement()

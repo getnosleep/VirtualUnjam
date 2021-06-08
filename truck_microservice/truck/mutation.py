@@ -1,12 +1,20 @@
-from django.conf import settings
-from rest_framework import serializers, viewsets
-from django.http import HttpResponse, JsonResponse
+# library imports
+from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
-from .models import TruckEntity
-from .serializer import Serializer
+from django.http import HttpResponse, JsonResponse
 
-from .exceptions.initialization import TruckNotInitializedException
+# property imports
 from .properties import ID, ADDRESS, LENGTH
+
+# persistence layer imports
+from .models import TruckEntity
+from .serializer import ConvoySerializer, AdminSerializer
+
+# dirty imports
+from .intern_services.movement import Movement
+
+# error messages
+ERR_MSG_ACCESSABILITY = 'Truck not accessable'
 
 class Mutation(viewsets.ViewSet):
     def joinConvoy(self, request):
@@ -25,4 +33,8 @@ class Mutation(viewsets.ViewSet):
         pass
 
     def poll(self, request):
+        pass
+
+    # Just because I'm lazy and don't want to be upset about this fucking program
+    def move(self, request):
         pass

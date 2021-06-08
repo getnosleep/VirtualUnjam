@@ -1,12 +1,16 @@
+# library importss
 from rest_framework import viewsets
 from django.http import HttpResponse, JsonResponse
 
-from .models import TruckEntity
-from .serializer import ConvoySerializer, AdminSerializer
-from .exceptions.initialization import TruckNotInitializedException
+# property imports
 from .properties import ID
 
-ERRMSG_UNINITIALIZED = 'Has the truck already been initialized?'
+# persistence layer imports
+from .models import TruckEntity
+from .serializer import ConvoySerializer, AdminSerializer
+
+# error messages
+ERR_MSG_ACCESSABILITY = 'Truck not accessable'
 
 class Query(viewsets.ViewSet):
     def convoyRequests(self, request):
@@ -16,7 +20,7 @@ class Query(viewsets.ViewSet):
             truckJSON = serializer.data
             return JsonResponse(data=truckJSON, status=200)
         else:
-            return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
+            return HttpResponse(ERR_MSG_ACCESSABILITY, status=404)
     
     def adminRequests(self, request):
         truck = TruckEntity.objects.get(pk=ID)
@@ -25,4 +29,4 @@ class Query(viewsets.ViewSet):
             truckJSON = serializer.data
             return JsonResponse(data=truckJSON, status=200)
         else:
-            return HttpResponse(ERRMSG_UNINITIALIZED, status=404)
+            return HttpResponse(ERR_MSG_ACCESSABILITY, status=404)
