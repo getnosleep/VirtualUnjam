@@ -6,16 +6,31 @@ class TruckSerializer(serializers.ModelSerializer):
     class Meta:
         model = TruckEntity
         fields = [
-            'truckid',
+            # Params
+            'id',
             'address',
-            'targetDistance',
-            'currentDistance',
-            'targetSpeed',
+            'length',
+
+            # Movement
+            'currentRouteSection',
             'currentSpeed',
+            'currentAcceleration',
+            'targetRouteSection',
+            'targetSpeed',
+
+            # Convoy
+            'polling',
             'broken',
             'convoyLeader',
             'convoyPosition',
-            'polling',
+
+            # Computed
             'accelerating',
             'decelerating',
+
+            # Properties
+            'minSpeed',
+            'maxSpeed',
+            'minAcceleration',
+            'maxAcceleration',
         ]

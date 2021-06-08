@@ -6,8 +6,38 @@ from .models import TruckEntity
 from .serializer import TruckSerializer
 
 from .exceptions.initialization import TruckNotInitializedException
-from .initializer import TRUCK_ID
+from .properties import ID, ADDRESS, LENGTH
 
 class Mutation(viewsets.ViewSet):
-    def view(self, request):
+    def selfInitialize(self, request):
+        trucks = TruckEntity.objects.all()
+        if trucks.exists():
+            TruckEntity.objects.all().delete()
+        
+        truck = TruckEntity()
+        
+        truck.save()
+        try:
+            serializer = TruckSerializer(truck, many=False)
+            truckJSON = serializer.data
+            return JsonResponse(data=truckJSON, status=200)
+        except:
+            return HttpResponse('Oh shit, that was an awesome fail...', status=500)
+
+    def joinConvoy(self, request):
+        pass
+
+    def leaveConvoy(self, request):
+        pass
+
+    def accelerate(self, request):
+        pass
+
+    def decelerate(self, request):
+        pass
+
+    def emergencyBrake(self, request):
+        pass
+
+    def poll(self, request):
         pass
