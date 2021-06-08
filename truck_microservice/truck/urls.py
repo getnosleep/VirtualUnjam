@@ -1,22 +1,24 @@
 # imports
 from django.urls import path
+
+from .initializer import Initializer
 from .query import Query
 from .mutation import Mutation
 
 urlpatterns = [
-    # Queries
-    path('monitor', Query.as_view({
-        'get': 'truck'
+    # For Development purpose only !!!
+    path('05FD548CB946F6AEFD3831FE4F1FD046E1827757E07F877F3A087B0ED98A03BF', Initializer.as_view({
+        'get': 'truck',
+        'post': 'initialize',
     })),
-    # path('monitor/settings', Query.as_view({
-    #     'get': 'settings'
-    # })),
-    # path('monitor/status', Query.as_view({
-    #     'get': 'status'
-    # })),
-    # path('monitor/actions', Query.as_view({
-    #     'get': 'actions'
-    # })),
+
+    # Queries
+    path('convoy', Query.as_view({
+        'get': 'convoyRequests',
+    })),
+    path('monitor', Query.as_view({
+        'get': 'adminRequests',
+    })),
 
     # Mutations
     path('convoy', Mutation.as_view({
@@ -31,6 +33,6 @@ urlpatterns = [
         'post': 'decelerate',
     })),
     path('initialize', Mutation.as_view({
-        'post': 'selfInitialize'
+        'post': 'selfInitialize',
     })),
 ]
