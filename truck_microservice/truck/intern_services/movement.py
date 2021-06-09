@@ -8,6 +8,9 @@ from ..properties import ID, DEPARTURE_DISTANCE
 # persistence layer imports
 from ..models import TruckEntity
 
+# extern requests
+from ..extern_api import convoy
+
 class Movement(Thread):
     def __init__(self):
         Thread.__init__(self, daemon=True)
@@ -81,13 +84,15 @@ class Movement(Thread):
             # standing still
             return False
 
-        # print(f'Distance: {s}\tTarget Distance: {s_1}')
-
         if self.__leaveConvoyFlank__(s, s_1):
             truck.leadingTruckAddress = None
             truck.frontTruckAddress = None
             truck.backTruckAddress = None
             truck.position = None
+            try:
+                Thread(target=convoy.leave(), daemon=True)
+            except:
+                pass
         
         truck.currentRouteSection = s
         truck.currentSpeed = v
