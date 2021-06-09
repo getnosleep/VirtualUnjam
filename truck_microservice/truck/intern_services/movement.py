@@ -1,5 +1,6 @@
 # library imports
 from threading import Thread
+import time
 
 # property imports
 from ..properties import ID, DEPARTURE_DISTANCE
@@ -9,25 +10,28 @@ from ..models import TruckEntity
 
 class Movement(Thread):
     def __init__(self):
-        self.is_alive = True
-        self.run()
+        Thread.__init__(self, daemon=True)
+        self.accelerationTime = None
     
     def run(self):
-        self.is_alive = True
-        while self.is_alive:
+        while True:
+            delay = .05
+            time.sleep(delay)
+            self.calculateSpeed(delay*1000)
+            # Here has to be the subscriber/listener
             pass
 
-    def stop(self):
-        self.is_alive = False
-        pass
+    def setAccelerationTime(self, flank):
+        self.accelerationTime = flank
 
     def __leaveConvoyFlank__(self, currentDistance, maxDistance):
-        return abs(currentDistance + DEPARTURE_DISTANCE) > maxDistance
+        departure = maxDistance - DEPARTURE_DISTANCE
+        return currentDistance > departure
 
     def __linearVelocity__(self, s_0, v_0, t):
         # s = v(0) t + s(0) -> distance calculation for linear velocities
         s = v_0 * t + s_0
-        return (s, v_0)
+        return s
 
     def __acceleratingVelocity__(self, s_0, v_0, v_1, a, t):
         # v = a t + v(0) -> accelerating velocity
@@ -43,52 +47,63 @@ class Movement(Thread):
             # s = 1/2 a t(a)² + (v - v(0)) (t - t(a)) + v(0) t + s(0) -> distance calculation for linear accelerating velocities with absolute offset 
             s = 0.5 * a * t_a**2 + (v_1 - v_0) * (t - t_a) + v_0 * t + s_0
 
-            return (s, v_1, True)
+            return [s, v_1, True]
 
         # inside speed limitation
         else:
             # s = 1/2 a t² + v(0) t + s(0) -> distance calculation for linear accelerating velocities
             s = 0.5 * a * t**2 + v_0 * t + s_0
         
-            return (s, v, False)
+            return [s, v, False]
 
     def calculateSpeed(self, t_ms):
         # placeholder
         leave = False
         targetVelocity = False
-        s = 0.0
-        v = 0.0
+        s = .0
+        v = .0
 
         # setup data
         t = t_ms*1.0 / 1000.0
-        truck = TruckEntity.objects.get(truckId=ID)
+        truck = TruckEntity.objects.get(pk=ID)
         s_0, v_0, a = truck.movementStats()
         s_1, v_1 = truck.targetStats()
 
-        if self.__leaveConvoyFlank__(s_0, s_1):
-            s = s_0
-        elif a == 0.0 and v_0 == v_1:
+        if not a and v_0 == v_1:
             v = v_0
-            s = self.__linearVelocity__(s_0, s_1, v_0, t)
+            s = self.__linearVelocity__(s_0, v_0, t)
         else:
-            s, v, targetVelocity = self.__acceleratingVelocity__(s_0, s_1, v_0, v_1, a, t)
+            s, v, targetVelocity = self.__acceleratingVelocity__(s_0, v_0, v_1, a, t)
         
+        print(f'Position: {truck.position}\tSpeed: {v}\tDistance: {s}')
+
         if not s or not v:
-            print('This is an Error that can\'t even exist, but yeah, okay... I\'m fine with this (crappy shit)')
-            # truck.broken = True
+            # standing still
             return False
 
-        if leave or self.__leaveConvoyFlank__(s, s_1):
-            truck.convoyLeader = 0
-            truck.convoyPosition = 0
+        # print(f'Distance: {s}\tTarget Distance: {s_1}')
+
+        if self.__leaveConvoyFlank__(s, s_1):
+            truck.leadingTruckAddress = None
+            truck.frontTruckAddress = None
+            truck.backTruckAddress = None
+            truck.position = None
         
-        truck.currentDistance = s
+        truck.currentRouteSection = s
         truck.currentSpeed = v
 
         if targetVelocity:
             truck.targetSpeed = v
-            truck.currentAcceleration = 0.0
+            truck.acceleration = .0
 
         truck.save()
 
         return True
+
+def startMovement():
+    mvmnt = Movement()
+    mvmnt.start()
+    return mvmnt
+
+movement = startMovement()
+

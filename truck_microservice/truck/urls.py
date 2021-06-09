@@ -34,9 +34,4 @@ urlpatterns = [
     path('decelerate', Mutation.as_view({
         'post': 'decelerate',
     })),
-
-    # Yeah, imma lazy fucking cunt
-    path('move', Mutation.as_view({
-        'post': 'move',
-    })),
 ]

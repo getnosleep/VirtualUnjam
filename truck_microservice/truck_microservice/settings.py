@@ -38,14 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 3rd party
+    # extern libraries
     'rest_framework',
     'rest_framework_swagger',
+    # 'huey.contrib.djhuey', # background threader for parallel request options... see => https://huey.readthedocs.io/en/latest/django.html
     'validation',
-    'pika',
     'numpy',
 
-    # service
+    # services
     'truck',
 ]
 

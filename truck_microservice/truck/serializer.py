@@ -13,12 +13,15 @@ class AdminSerializer(serializers.ModelSerializer):
             'convoyPosition',
             'id',
             'length',
-            'broken',
 
+            'broken',
             'polling',
+            'closing',
             'accelerating',
             'decelerating',
+
             'currentSpeed',
+            'currentDistance',
             'currentRouteSection',
             'targetRouteSection',
         ]
@@ -34,7 +37,7 @@ class ConvoySerializer(serializers.ModelSerializer):
 
             'currentRouteSection',
             'currentSpeed',
-            'currentAcceleration',
+            'acceleration',
             'targetRouteSection',
             'targetSpeed',
 
@@ -49,25 +52,30 @@ class Serializer(serializers.ModelSerializer):
     class Meta:
         model = TruckEntity
         fields = [
-            # Params
+            # About this truck
             'id',
             'address',
             'length',
+            'distance',
 
             # Movement
+            'currentDistance',
             'currentRouteSection',
             'currentSpeed',
-            'currentAcceleration',
+            'acceleration',
             'targetRouteSection',
             'targetSpeed',
 
             # Convoy
+            'leadingTruckAddress',
+            'frontTruckAddress',
+            'backTruckAddress',
+            'position',
             'polling',
             'broken',
-            'convoyLeader',
-            'convoyPosition',
 
             # Computed
+            'closing',
             'accelerating',
             'decelerating',
 
