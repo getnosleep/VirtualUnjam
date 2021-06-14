@@ -10,7 +10,7 @@ class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = TruckEntity
         fields = [
-            'convoyPosition',
+            'position',
             'id',
             'length',
 
