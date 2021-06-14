@@ -10,7 +10,7 @@ from .properties import ID, MIN_SPEED, MIN_ACCELERATION
 from .models import TruckEntity
 
 # dirty imports
-from .intern_services.movement import movement
+from .daemons import movement
 
 # extern requests
 from .extern_api import convoy

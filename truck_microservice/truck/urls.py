@@ -25,7 +25,6 @@ urlpatterns = [
     # Mutations
     path('convoy', Mutation.as_view({
         'post': 'joinConvoy',
-        'put': 'emergencyBrake',
         'delete': 'leaveConvoy',
     })),
     path('accelerate', Mutation.as_view({
@@ -33,5 +32,6 @@ urlpatterns = [
     })),
     path('decelerate', Mutation.as_view({
         'post': 'decelerate',
+        'put': 'emergencyBrake',
     })),
 ]

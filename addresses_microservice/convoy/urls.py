@@ -10,7 +10,7 @@ urlpatterns = [
     path('trucks', ConvoyViewSet.as_view({
         'get': 'truckIds', # alle registrierten Truck IDs
     })),
-    path('address:id', ConvoyViewSet.as_view({
+    path('address/:id', ConvoyViewSet.as_view({
         'get': 'address', # spezifische Adresse zu einer Truck ID
     })),
 ]

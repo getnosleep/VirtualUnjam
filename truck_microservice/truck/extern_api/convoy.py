@@ -8,13 +8,13 @@ from ..properties import ID, ADDRESS, ADDRESS_MICROSERVICE
 def join():
     """@returns bool if successful joined the convoy, else throws exception"""
     data = {'truckId': ID, 'address': ADDRESS}
-    resp = requests.post(ADDRESS_MICROSERVICE, data=data)
+    resp = requests.post(ADDRESS_MICROSERVICE + '/api', data=data)
     return resp.status_code == 200
 
 def leave():
     """@returns bool if successful left the convoy, else throws exception"""
     data = {'truckId': ID}
-    resp = requests.delete(ADDRESS_MICROSERVICE, data=data)
+    resp = requests.delete(ADDRESS_MICROSERVICE + '/api', data=data)
     return resp.status_code == 200
 
 def registered():
