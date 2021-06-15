@@ -8,8 +8,9 @@ from .properties import *
 class TruckEntity(models.Model):
     # Params
     id = models.PositiveIntegerField(default=ID, primary_key=True)
-    length = models.FloatField(default=LENGTH, validators=[MinValueValidator(LENGTH)])
-    distance = models.FloatField(default=DISTANCE, validators=[MinValueValidator(DISTANCE)])
+    address = models.TextField(default=ADDRESS, max_length=50)
+    length = models.FloatField(default=LENGTH)
+    distance = models.FloatField(default=DISTANCE)
 
     # Movement
     currentDistance = models.FloatField(default=.0)
@@ -29,7 +30,7 @@ class TruckEntity(models.Model):
 
     # Computed
     def closing(self):
-        return self.distance > self.currentDistance # Funktion wird mit Brokerlog
+        return self.distance > self.currentDistance and self.position
 
     def accelerating(self):
         return self.acceleration > .0

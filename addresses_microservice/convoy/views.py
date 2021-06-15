@@ -1,3 +1,4 @@
+from truck_microservice.truck.properties import MIN_ACCELERATION
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -5,9 +6,8 @@ from rest_framework.response import Response
 import json
 
 class ConvoyViewSet(viewsets.ViewSet):
-
     REGISTERED = {}  # {1: '192.168.0.2:5001'}
-
+    ACCELERATION = {'MIN': -3.5, 'MAX': 2.5}
 
     def __extractTruckIds__(self):
         """@return truckIds from REGISTERED"""

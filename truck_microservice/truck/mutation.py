@@ -1,4 +1,6 @@
 # library imports
+from .exceptions.invalid_input import AccelerationException
+from django.core.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponse, JsonResponse
@@ -13,9 +15,10 @@ from .models import TruckEntity
 from .daemons import movement
 
 # extern requests
-from .extern_api import convoy
+from .extern_api.addresses import join
 
 # error messages
+ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
 ERR_MSG_ACCESSABILITY = 'Truck not accessible'
 ERR_MSG_JOIN = 'Joining the convoy wasn\'t possible for unknown reason'
 ERR_MSG_LEAVE = 'Leaving the convoy wasn\'t possible for unknown reason'
@@ -23,83 +26,56 @@ ERR_MSG_LEAVE = 'Leaving the convoy wasn\'t possible for unknown reason'
 class Mutation(viewsets.ViewSet):
     def joinConvoy(self, request):
         try:
-            status = convoy.join()
-            HttpResponse(status=status)
+            status = join()
+            return HttpResponse(status=status)
         except:
-            HttpResponse(ERR_MSG_JOIN, status=500)
+            return HttpResponse(ERR_MSG_JOIN, status=500)
 
     def leaveConvoy(self, request):
         try:
-            status = convoy.leave()
-            HttpResponse(status=status)
+            truck = TruckEntity.objects.get(pk=ID)
+            truck.position = None
+            truck.leadingTruckAddress = None
+            truck.frontTruckAddress = None
+            truck.backTruckAddress = None
+            truck.polling = False
+            truck.closing = False
+
+            # Maybe unwanted, but nice to see
+            truck.targetSpeed = .0
+            truck.acceleration = -1.0
+            
+            truck.full_clean()
+            truck.save()
+            return HttpResponse(status=200)
         except:
-            HttpResponse(ERR_MSG_LEAVE, status=500)
+            return HttpResponse(ERR_MSG_LEAVE, status=500)
 
     def accelerate(self, request):
         success = False
+        status = 500
         truck = TruckEntity.objects.get(pk=ID)
-        try:
-            data = JSONParser().parse(request)
-            truck.acceleration = abs(data['acceleration'])
-            truck.targetSpeed = data['targetSpeed']
-            
-            # => sollte eingesetzt werden, sobald der Broker eingebunden ist
-            # 
-            # if data['accelerationTime']:
-            #     movement.setAccelerationTime(data['accelerationTime'])
-            # else:
-            #     movement.setAccelerationTime(None)
-            
-            truck.save()
-            success = True
-        except:
-            pass
-        return JsonResponse({'success': success}, status=500)
+        if truck.leadingTruckAddress == truck.address or not truck.position:
+            try:
+                data = JSONParser().parse(request)
+                
+                acc = data['acceleration']
+                vel = data['targetSpeed'] / 3.6
 
-    def decelerate(self, request):
-        success = False
-        truck = TruckEntity.objects.get(pk=ID)
-        try:
-            data = JSONParser().parse(request)
-            truck.acceleration = -1 * abs(data['deceleration'])
-            truck.targetSpeed = data['targetSpeed']
-
-            # => sollte eingesetzt werden, sobald der Broker eingebunden ist
-            # 
-            # if data['accelerationTime']:
-            #     movement.setAccelerationTime(data['accelerationTime'])
-            # else:
-            #     movement.setAccelerationTime(None)
-            
-            truck.save()
-            success = True
-        except:
-            pass
-        return JsonResponse({'success': success}, status=500)
-
-    def emergencyBrake(self, request):
-        success = False
-        truck = TruckEntity.objects.get(pk=ID)
-        try:
-            data = JSONParser().parse(request)
-            truck.acceleration = MIN_ACCELERATION
-            truck.targetSpeed = MIN_SPEED
-
-            # => sollte eingesetzt werden, sobald der Broker eingebunden ist
-            # 
-            # movement.setAccelerationTime(None)
-
-            truck.save()
-            success = True
-        except:
-            pass
-        return JsonResponse({'success': success}, status=500)
+                if acc > .0 and vel > truck.currentSpeed or acc < .0 and vel < truck.currentSpeed:
+                    truck.acceleration = acc
+                    truck.targetSpeed = vel
+                else:
+                    raise AccelerationException()
+                truck.full_clean()
+                truck.save()
+                success = True
+                status = 200
+            except ValidationError as e:
+                return HttpResponse(ERR_MSG_VALIDATION, status=401)
+            except AccelerationException as e:
+                return HttpResponse(e.message, status=404)
+        return JsonResponse({'success': success}, status=status)
 
     def poll(self, request):
         pass
-
-    ####  ##### #   #     ##### ####  ##### #   #     ####  ##### #   # ##### #   # ##### #   #
-    #   #   #   ##  #     #     #   # #     ##  #     #   # #   # #   # #     #   # #     ##  #
-    ####    #   # # #     ##### ####  ##### # # #     ####  ##### #   # #     ##### ##### # # #
-    #   #   #   #  ##     #     #   # #     #  ##     #   # #   # #   # #     #   # #     #  ##
-    ####  ##### #   #     ##### ####  ##### #   #     #   # #   # ##### ##### #   # ##### #   #

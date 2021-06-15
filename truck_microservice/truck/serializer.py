@@ -34,17 +34,18 @@ class ConvoySerializer(serializers.ModelSerializer):
             'id',
             'address',
             'length',
+            'distance',
 
+            'currentDistance',
             'currentRouteSection',
             'currentSpeed',
             'acceleration',
             'targetRouteSection',
             'targetSpeed',
 
-            'minSpeed',
-            'maxSpeed',
-            'minAcceleration',
-            'maxAcceleration',
+            'position',
+            'polling',
+            'broken',
         ]
 
 class Serializer(serializers.ModelSerializer):

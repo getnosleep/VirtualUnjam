@@ -8,9 +8,6 @@ from ..properties import ID, DEPARTURE_DISTANCE
 # persistence layer imports
 from ..models import TruckEntity
 
-# extern requests
-from ..extern_api import convoy
-
 class Movement(Thread):
     def __init__(self):
         Thread.__init__(self, daemon=True)
@@ -18,6 +15,7 @@ class Movement(Thread):
     
     def run(self):
         while True:
+            # if heartbeat%2 == 0: => alle 40ms
             delay = .05
             time.sleep(delay)
             self.calculateSpeed(delay*1000)
@@ -27,9 +25,9 @@ class Movement(Thread):
     def setAccelerationTime(self, flank):
         self.accelerationTime = flank
 
-    def __leaveConvoyFlank__(self, currentDistance, maxDistance):
+    def __leaveConvoyFlank__(self, position, currentDistance, maxDistance):
         departure = maxDistance - DEPARTURE_DISTANCE
-        return currentDistance > departure
+        return currentDistance > departure and position
 
     def __linearVelocity__(self, s_0, v_0, t):
         # s = v(0) t + s(0) -> distance calculation for linear velocities
@@ -61,7 +59,6 @@ class Movement(Thread):
 
     def calculateSpeed(self, t_ms):
         # placeholder
-        leave = False
         targetVelocity = False
         s = .0
         v = .0
@@ -78,21 +75,19 @@ class Movement(Thread):
         else:
             s, v, targetVelocity = self.__acceleratingVelocity__(s_0, v_0, v_1, a, t)
         
-        print(f'Position: {truck.position}\tSpeed: {v}\tDistance: {s}')
+        print(f'Position: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
 
         if not s or not v:
             # standing still
             return False
 
-        if self.__leaveConvoyFlank__(s, s_1):
+        if self.__leaveConvoyFlank__(truck.position, s, s_1):
+            TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
             truck.leadingTruckAddress = None
             truck.frontTruckAddress = None
             truck.backTruckAddress = None
             truck.position = None
-            try:
-                Thread(target=convoy.leave(), daemon=True)
-            except:
-                pass
+            truck.polling = False
         
         truck.currentRouteSection = s
         truck.currentSpeed = v

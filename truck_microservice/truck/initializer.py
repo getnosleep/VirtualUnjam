@@ -21,8 +21,6 @@ class Initializer(viewsets.ViewSet):
             TruckEntity.objects.all().delete()
         truck = TruckEntity()
 
-        truck.position = 1 # NIMM DAS SOFORT RAUUUUUUUUUUUUUUUSSSSSSSSSSSSSSSSSSSSS
-
         truck.save()
         serializer = Serializer(truck, many=False)
         truckJSON = serializer.data
