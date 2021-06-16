@@ -99,11 +99,3 @@ class Movement(Thread):
         truck.save()
 
         return True
-
-def startMovement():
-    mvmnt = Movement()
-    mvmnt.start()
-    return mvmnt
-
-movement = startMovement()
-

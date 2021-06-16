@@ -2,6 +2,11 @@
 ID = 151
 ADDRESS = '127.0.0.1:7000'
 ADDRESS_MICROSERVICE = '127.0.0.1:1025'
+ADDRESS_BROKER = '127.0.0.1'
+PORT_BROKER = 1883
+USER_BROKER = 'username'
+PASSWORD_BROKER = 'password'
+CHANNEL_BROKER = 'channel'
 
 # physical fixed props
 MIN_SPEED = 0.0

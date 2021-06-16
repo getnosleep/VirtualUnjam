@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # extern libraries
+    'paho.mqtt',
     'rest_framework',
     'rest_framework_swagger',
     # 'huey.contrib.djhuey', # background threader for parallel request options... see => https://huey.readthedocs.io/en/latest/django.html

@@ -12,7 +12,7 @@ from .properties import ID, MIN_SPEED, MIN_ACCELERATION
 from .models import TruckEntity
 
 # dirty imports
-from .daemons import movement
+from .daemons import subscriber
 
 # extern requests
 from .extern_api.addresses import join
