@@ -30,4 +30,7 @@ urlpatterns = [
     path('accelerate', Mutation.as_view({
         'post': 'accelerate',
     })),
+    path('bully', Mutation.as_view({
+        'get': 'poll',
+    })),
 ]

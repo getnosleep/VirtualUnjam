@@ -15,7 +15,7 @@ from .models import TruckEntity
 from .daemons import subscriber
 
 # extern requests
-from .extern_api.addresses import join
+from .extern_api.addresses import join, registered
 
 # error messages
 ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
@@ -78,4 +78,9 @@ class Mutation(viewsets.ViewSet):
         return JsonResponse({'success': success}, status=status)
 
     def poll(self, request):
-        pass
+        try:
+            reg = registered()
+            a = JSONParser().parse(reg)
+            return HttpResponse(a, status=200)
+        except Exception as e:
+            return HttpResponse('unsuccessful', status=500)

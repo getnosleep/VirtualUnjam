@@ -8,4 +8,6 @@ from ..properties import ID, ADDRESS
 def convoyRequest(address):
     """@returns the status of the requested truck"""
     data = {'truckId': ID, 'address': ADDRESS}
-    return requests.delete(address + '/api/convoy', data=data)
+    return requests.delete('http://' + address + '/api/convoy', data=data)
+
+    # Hier muessen noch die Mutations mit bei, wie bspw. Ich bin neuer Truck hinter dir, oder Ich leave den Convoy vor dir oder ich bin Fuehrer. Akzeptier das oder geh kaputt...

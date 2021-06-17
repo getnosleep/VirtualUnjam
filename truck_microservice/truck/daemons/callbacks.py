@@ -1,5 +1,5 @@
 """[Docstring] Declares subscriber exceptions."""
-from paho.mqtt.client import MQTTMessage
+from paho.mqtt.client import MQTTMessage # irgendwo spakkt der bei mir (Alexander) mit dem Import rum... gleich mal gucken https://pypi.org/project/paho-mqtt/
 from threading import Thread
 from . import movement, lifecycle
 
