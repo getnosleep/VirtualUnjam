@@ -1,4 +1,4 @@
-"""Some values the truck needs to know about the network (Convoy, Admin-Service, and Broker)"""
+"""Some values the truck needs to know about the network (Self, Convoy, Admin-Service, and Broker)"""
 
 # Network Identification: Truck (self) Microservice -> depending on truck
 ID = 151
