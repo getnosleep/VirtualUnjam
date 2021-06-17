@@ -9,21 +9,12 @@ from ..properties import ID, DEPARTURE_DISTANCE
 from ..models import TruckEntity
 
 class Movement(Thread):
-    def __init__(self):
+    def __init__(self, duration: float):
         Thread.__init__(self, daemon=True)
-        self.accelerationTime = None
+        self.duration = duration
     
     def run(self):
-        while True:
-            # if heartbeat%2 == 0: => alle 40ms
-            delay = .05
-            time.sleep(delay)
-            self.calculateSpeed(delay*1000)
-            # Here has to be the subscriber/listener
-            pass
-
-    def setAccelerationTime(self, flank):
-        self.accelerationTime = flank
+        self.calculateSpeed(self.duration)
 
     def __leaveConvoyFlank__(self, position, currentDistance, maxDistance):
         departure = maxDistance - DEPARTURE_DISTANCE
@@ -88,14 +79,10 @@ class Movement(Thread):
             truck.backTruckAddress = None
             truck.position = None
             truck.polling = False
-        
         truck.currentRouteSection = s
         truck.currentSpeed = v
-
         if targetVelocity:
             truck.targetSpeed = v
             truck.acceleration = .0
-
         truck.save()
-
         return True
