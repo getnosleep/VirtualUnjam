@@ -5,7 +5,6 @@ import time
 
 class Heartbeat(Thread):
     """[Docstring] Declares thread, publishing heartbeats."""
-
     def __init__(self, interval: float, count: int, brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str) -> None:
         """[Docstring] Constructing heartbeat thread."""
         Thread.__init__(self)

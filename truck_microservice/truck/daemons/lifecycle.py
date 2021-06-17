@@ -5,7 +5,7 @@ from rest_framework.parsers import JSONParser
 import time
 
 # property imports
-from ..properties import EMERGENCY_BRAKE, ID, MIN_ACCELERATION
+from ..properties import ID
 
 # persistence layer imports
 from ..models import TruckEntity

@@ -3,18 +3,17 @@ from threading import Thread
 import time
 
 # property imports
-from ..properties import ID, DEPARTURE_DISTANCE
+from ..properties import ID, DEPARTURE_DISTANCE, DURATION_BROKER
 
 # persistence layer imports
 from ..models import TruckEntity
 
 class Movement(Thread):
-    def __init__(self, duration: float):
+    def __init__(self):
         Thread.__init__(self, daemon=True)
-        self.duration = duration
     
     def run(self):
-        self.calculateSpeed(self.duration)
+        self.calculateSpeed()
 
     def __leaveConvoyFlank__(self, position, currentDistance, maxDistance):
         departure = maxDistance - DEPARTURE_DISTANCE
@@ -48,7 +47,9 @@ class Movement(Thread):
         
             return [s, v, False]
 
-    def calculateSpeed(self, t_ms):
+    def calculateSpeed(self):
+        t_ms = 2 * DURATION_BROKER
+
         # placeholder
         targetVelocity = False
         s = .0

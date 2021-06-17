@@ -2,20 +2,20 @@
 import requests
 
 # property imports
-from ..properties import ID, ADDRESS, ADDRESS_MICROSERVICE
+from ..properties import ID, ADDRESS_SELF, ADDRESS_CONVOY
 
-SERVER = 'http://' + ADDRESS_MICROSERVICE + '/api/'
+SERVER = 'http://' + ADDRESS_CONVOY + '/api/'
 
 """Convoy requests:"""
 def join():
     """@returns bool if successful joined the convoy, else throws exception"""
-    data = {'truckId': ID, 'address': ADDRESS}
+    data = {'truckId': ID, 'address': ADDRESS_SELF}
     resp = requests.post(SERVER, data=data)
     return resp.status_code
 
 def bully(position):
     """@returns bool if successful left the convoy, else throws exception"""
-    data = {'truckId': ID, 'address': ADDRESS, 'position': position}
+    data = {'truckId': ID, 'address': ADDRESS_SELF, 'position': position}
     resp = requests.put(SERVER, data=data)
     return resp.status_code == 200
 

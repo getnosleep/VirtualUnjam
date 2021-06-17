@@ -6,13 +6,13 @@ from rest_framework.parsers import JSONParser
 from django.http import HttpResponse, JsonResponse
 
 # property imports
-from .properties import ID, MIN_SPEED, MIN_ACCELERATION
+from .properties import ID
 
 # persistence layer imports
 from .models import TruckEntity
 
 # dirty imports
-from .daemons import subscriber
+from .daemons.subscriber import subscription
 
 # extern requests
 from .extern_api.addresses import join, registered
@@ -22,6 +22,8 @@ ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
 ERR_MSG_ACCESSABILITY = 'Truck not accessible'
 ERR_MSG_JOIN = 'Joining the convoy wasn\'t possible for unknown reason'
 ERR_MSG_LEAVE = 'Leaving the convoy wasn\'t possible for unknown reason'
+
+SUB = subscription
 
 class Mutation(viewsets.ViewSet):
     def joinConvoy(self, request):

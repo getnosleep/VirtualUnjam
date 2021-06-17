@@ -1,12 +1,20 @@
-# distributed system specified props
+# Truck Microservice -> depending on service
 ID = 151
-ADDRESS = '127.0.0.1:7000'
-ADDRESS_MICROSERVICE = '127.0.0.1:1025'
+ADDRESS_SELF = '127.0.0.1:1031'
+
+# Address Microservice -> fixed
+ADDRESS_CONVOY = '127.0.0.1:1030'
 ADDRESS_BROKER = '127.0.0.1'
-PORT_BROKER = 1883
-USER_BROKER = 'username'
-PASSWORD_BROKER = 'password'
-CHANNEL_BROKER = 'channel'
+
+# Admin Microservice -> fixed
+ADDRESS_ADMIN = '127.0.0.1:1029'
+
+# MQTT Broker -> fixed
+PORT_BROKER = 1028
+USER_BROKER = 'testUser'
+PASSWORD_BROKER = 'test'
+CHANNEL_BROKER = 'truckChannel'
+DURATION_BROKER = 0.025
 
 # physical fixed props
 MIN_SPEED = 0.0

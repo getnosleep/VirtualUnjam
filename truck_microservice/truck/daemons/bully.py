@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 import time
 
 # property imports
-from ..properties import ID, ADDRESS, ADDRESS_MICROSERVICE
+from ..properties import ID, ADDRESS_SELF, ADDRESS_CONVOY
 
 # persistence layer imports
 from ..models import TruckEntity

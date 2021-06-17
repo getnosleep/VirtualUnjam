@@ -1,16 +1,10 @@
 """[Docstring] Declares functions, running the heartbeat."""
 from threading import Thread
 from time import time
-
 from paho.mqtt.client import Client, MQTTv311
-#from .heartbeat import Heartbeat
-
-
 
 class Service:
     """[Docstring] Static class, holding and managing the microservice's heartbeat thread."""
-
-    #heartbeatThread: Heartbeat
     heartbeatThread: Thread
     heartbeatCount: float
 

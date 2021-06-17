@@ -7,10 +7,8 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-# Create your views here.
 class Initializer(viewsets.ViewSet):
     """[Docstring] Declares view, handling respective api calls."""
-    
     def initializeHeartbeats(self: viewsets.ViewSet, request: Request, pk=None) -> Response:
         """[Docstring] Declares functions, stimulating heartbeats."""
         try:
@@ -43,7 +41,6 @@ class Initializer(viewsets.ViewSet):
 
 class Monitor(viewsets.ViewSet):
     """[Docstring] Declares view, handling respective api calls."""
-
     def monitorHeartbeats(self: viewsets.ViewSet, request: Request, pk=None) -> Response:
         """[Docstring] Declares functions, monitoring the heartbeat."""
         try:

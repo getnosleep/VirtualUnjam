@@ -4,7 +4,7 @@ from rest_framework.parsers import JSONParser
 from django.http import HttpResponse, JsonResponse
 
 # property imports
-from .properties import ID, ADDRESS, LENGTH
+from .properties import ID, ADDRESS_SELF, LENGTH
 
 # persistence layer imports
 from .models import TruckEntity
@@ -35,7 +35,7 @@ class Initializer(viewsets.ViewSet):
 
             truck = TruckEntity()
             truck.id = ID
-            truck.address = ADDRESS
+            truck.address = ADDRESS_SELF
             truck.length = LENGTH
 
             """

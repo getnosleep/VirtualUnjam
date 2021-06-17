@@ -8,7 +8,7 @@ from .properties import *
 class TruckEntity(models.Model):
     # Params
     id = models.PositiveIntegerField(default=ID, primary_key=True)
-    address = models.TextField(default=ADDRESS, max_length=50)
+    address = models.TextField(default=ADDRESS_SELF, max_length=50)
     length = models.FloatField(default=LENGTH)
     distance = models.FloatField(default=DISTANCE)
 
@@ -43,10 +43,6 @@ class TruckEntity(models.Model):
     
     def targetStats(self):
         return [self.targetRouteSection, self.targetSpeed]
-
-    @property
-    def address(self):
-        return ADDRESS
 
     @property
     def minSpeed(self):
