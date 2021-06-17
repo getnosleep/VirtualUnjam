@@ -1,7 +1,8 @@
 """[Docstring] Declares subscriber exceptions."""
 from paho.mqtt.client import MQTTMessage # irgendwo spakkt der bei mir (Alexander) mit dem Import rum... gleich mal gucken https://pypi.org/project/paho-mqtt/
 from threading import Thread
-from . import movement, lifecycle
+from .movement import Movement
+from .lifecycle import Lifecycle
 
 class Callbacks:
     """[Docstring] Declares callback functions and holds actual heartbeat."""
@@ -17,7 +18,7 @@ class Callbacks:
         tick = int(payload, base=16)
         Callbacks.heartbeat = tick
         while True:
-          if tick % 2 == 1:
-                Thread(movement, daemon=True)
-          else:
-                Thread(lifecycle, daemon=True)
+            if tick % 2 == 1:
+                Movement(duration=0.25)
+            else:
+                Lifecycle()
