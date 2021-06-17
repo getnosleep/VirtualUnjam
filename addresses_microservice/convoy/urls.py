@@ -3,7 +3,9 @@ from .views import ConvoyViewSet
 
 urlpatterns = [
     path('', ConvoyViewSet.as_view({
-        'get': 'data',
         'post': 'register',
+        'get': 'data',
+        'put': 'bully',
+        'delete': 'flush',
     })),
 ]
