@@ -9,7 +9,7 @@ import time
 class Subscriber(Thread):
     """[Docstring] Declares thread, subscribing to heartbeat broker."""
 
-    def __init__(self) -> None:
+    def __init__(self, daemon=True) -> None:
         """[Docstring] Constructing subscriber thread."""
         Thread.__init__(self)
         self.__running__ = False
