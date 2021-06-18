@@ -2,7 +2,6 @@
 from threading import Thread
 from ..serializer import ConvoySerializer
 from rest_framework.parsers import JSONParser
-import time
 
 # property imports
 from ..properties import ID
@@ -11,8 +10,8 @@ from ..properties import ID
 from ..models import TruckEntity
 
 # extern requests
-from ..extern_api.addresses import registered
 from ..extern_api.trucks import convoyRequest
+from .bully import BullyAlgorithm
 
 class Lifecycle(Thread):
     def __init__(self):
@@ -20,25 +19,7 @@ class Lifecycle(Thread):
 
     def run(self):
         self.__convoyUpdate__()
-
-    def __convoyUpdate__(self):
-        truck = TruckEntity.objects.get(pk=ID)
-
-        frontTruck = truck.frontTruckAddress
-        backTruck = truck.backTruckAddress
-
-        if frontTruck:
-            truckInFront = self.__requestTruck__(frontTruck)
-            if truckInFront:
-                serialized = ConvoySerializer(data=truckInFront)
-                if serialized.is_valid():
-                    serialized.save()
-            else:
-                self.__frontTruckNotAccessible__()
-        if backTruck:
-            truckBehind = self.__requestTruck__(backTruck)
-            if not truckBehind:
-                self.__truckBehindNotAccessible__()
+        self.__pollingCheck__()
 
     def __requestTruck__(self, trucksAddress):
         try:
@@ -51,14 +32,57 @@ class Lifecycle(Thread):
             pass
         return False
 
-    def __frontTruckNotAccessible__(self):
-        truck = TruckEntity.objects.get(pk=ID)
-        TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
-        truck.frontTruckAddress = None
-        truck.polling = True
-        truck.save()
+    def __accessTruckBehind__(self, backTruck):
+        truckBehind = self.__requestTruck__(backTruck)
+        if not truckBehind:
+            truck = TruckEntity.objects.get(pk=ID)
+            truck.backTruckAddress = None
+            truck.save()
 
-    def __truckBehindNotAccessible__(self):
+    def __accessTruckInFront__(self, frontTruck):
+        truckInFront = self.__requestTruck__(frontTruck)
+        if truckInFront:
+            serialized = ConvoySerializer(data=truckInFront)
+            if serialized.is_valid():
+                serialized.save()
+        else:
+            truck = TruckEntity.objects.get(pk=ID)
+            TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
+            truck.frontTruckAddress = None
+            truck.polling = True
+            truck.save()
+
+
+    def __convoyUpdate__(self):
         truck = TruckEntity.objects.get(pk=ID)
-        truck.backTruckAddress = None
-        truck.save()
+
+        frontTruck = truck.frontTruckAddress
+        backTruck = truck.backTruckAddress
+
+        leader = not frontTruck and backTruck
+        lonely = not (frontTruck or backTruck)
+
+        if lonely:
+            pass
+        elif leader:
+            # No thread needed
+            self.__accessTruckBehind__(backTruck)
+        else:
+            # Here we need Threads
+            behind = Thread(self.__accessTruckBehind__(backTruck))
+            front = Thread(self.__accessTruckInFront__(frontTruck))
+
+            behind.join()
+            front.join()
+            pass
+
+    def __pollingCheck__(self):
+        polling = False
+
+        # truck.polling -> muss nur eine Flanke sein ...
+
+        if polling:
+            BullyAlgorithm()
+            # truck.polling = False -> Flanke zurueckgesetzt
+            # ggf. sollte man die Flanke auch anders abfragen... ich ueberleg mir was elegantes
+        pass
