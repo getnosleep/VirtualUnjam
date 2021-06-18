@@ -5,9 +5,9 @@ from ..properties import *
 import time
 
 class Subscriber(Thread):
-    def __init__(self, daemon=True) -> None:
+    def __init__(self) -> None:
         # Constructing subscriber thread
-        Thread.__init__(self)
+        Thread.__init__(self, daemon=True)
         self.__running__ = False
         self.__client__: Client
     
