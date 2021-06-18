@@ -24,10 +24,10 @@ class Subscriber(Thread):
 
         Wie dem auch sei... morgen geht es weiter :D
 
-        DIE LIBRARY MACHT DAS SO. die callback funktionen müssen statisch sein, mit fixen inputs (mehr oder weniger inputs rippen das script).
+        DIE LIBRARY MACHT DAS SO. die callback funktionen müssen statisch sein, mit fixen inputs (mehr oder weniger, bzw andere inputs rippen das script).
         deshalb landet der heartbeat count auf der callbacks.py als statische variable und kann von da ausgelesen werden.
-        entsprechend kann auch die callback funktion entsprechend angepasst werden und der wert dort direkt weitergegeben werden.
-        da der loop, wie erwähnt, auch nebenläufig abläuft, könnte der subscriber zu einer statischen klasse verändert und dann mit callbacks zusammengelegt werden.
+        entsprechend kann auch die callback funktion angepasst werden und der wert dort direkt weitergegeben werden.
+        da der loop, wie oben erwähnt, auch nebenläufig abläuft, könnte der subscriber zu einer statischen klasse verändert und dann mit callbacks zusammengelegt werden.
         dann passt der subscriber aber nicht mehr zu der daemons idee (siehe movement, lifecycle).
         """
         self.__running__ = True
