@@ -31,7 +31,7 @@ class Subscriber(Thread):
             self.__client__.subscribe(self.__brokerChannel__, 0)
             self.__client__.loop_start()      # maybe needs to be called in view
         except:
-            raise Exception("EXPECTATION FAILED")
+            pass
     
     def start(self) -> bool:
         # Function starting subscription
