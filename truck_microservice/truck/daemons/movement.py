@@ -13,7 +13,7 @@ class Movement(Thread):
         Thread.__init__(self, daemon=True)
     
     def run(self):
-        self.calculateSpeed()
+        self.__calculateSpeed__()
 
     def __leaveConvoyFlank__(self, position, currentDistance, maxDistance):
         departure = maxDistance - DEPARTURE_DISTANCE
@@ -47,8 +47,8 @@ class Movement(Thread):
         
             return [s, v, False]
 
-    def calculateSpeed(self):
-        t_ms = 2 * DURATION_BROKER
+    def __calculateSpeed__(self):
+        t_ms = 2 * DURATION_BROKER # twice, because only the first of two subscribes is for movement calculation. The other one is for lifecycle updates
 
         # placeholder
         targetVelocity = False

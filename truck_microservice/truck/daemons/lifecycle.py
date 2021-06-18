@@ -19,9 +19,9 @@ class Lifecycle(Thread):
         Thread.__init__(self, daemon=True)
 
     def run(self):
-        self.convoyUpdate()
+        self.__convoyUpdate__()
 
-    def convoyUpdate(self):
+    def __convoyUpdate__(self):
         truck = TruckEntity.objects.get(pk=ID)
 
         frontTruck = truck.frontTruckAddress
