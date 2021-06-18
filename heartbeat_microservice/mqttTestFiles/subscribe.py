@@ -1,7 +1,5 @@
 """[Docstring] Declares functions, handling mqtt subscription."""
 from string import hexdigits
-import struct
-import sys
 import paho.mqtt.client as mqtt
 from struct import pack, unpack
 

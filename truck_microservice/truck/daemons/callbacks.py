@@ -3,7 +3,8 @@ from paho.mqtt.client import MQTTMessage # irgendwo spakkt der bei mir (Alexande
 
 class Callbacks:
     """[Docstring] Declares callback functions and holds actual heartbeat."""
-    heartbeat: float
+
+    heartbeat: int
 
     @staticmethod
     def on_message(client, userdata, msg: MQTTMessage) -> None:

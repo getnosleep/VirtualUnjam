@@ -1,28 +1,32 @@
 """[Docstring] Declares heartbeat thread."""
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
-import time
+from time import sleep
 
 class Heartbeat(Thread):
     """[Docstring] Declares thread, publishing heartbeats."""
+
     def __init__(self, interval: float, count: int, brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str) -> None:
         """[Docstring] Constructing heartbeat thread."""
         Thread.__init__(self)
-        self.__running__ = False
-        self.__interval__ = interval # desired value is 0.020 seconds
-        self.__count__ = count
+        #Thread.daemon = True # nope
+        #Thread.__init__(self, daemon=True) # nope
+        #self.daemon = True # nope
+        self.__running__: bool = False
+        self.__interval__: float = interval # desired value is 0.020 seconds
+        self.__count__: int = count
         self.__client__: Client
-        self.__brokerAddress__ = brokerAddress
-        self.__brokerPort__ = brokerPort
-        self.__brokerUsername__ = brokerUsername
-        self.__brokerPassword__ = brokerPassword
-        self.__brokerChannel__ = brokerChannel
+        self.__brokerAddress__: str = brokerAddress
+        self.__brokerPort__: int = brokerPort
+        self.__brokerUsername__: str = brokerUsername
+        self.__brokerPassword__: str = brokerPassword
+        self.__brokerChannel__: str = brokerChannel
     
-    def __run__(self) -> None:
+    def run(self) -> None:
         """[Docstring] Function handling lifetime of a heartbeat."""
         try:
             self.__running__ = True
-            self.__client__ = Client(client_id="heartbeatPublisher",
+            self.__client__: Client = Client(client_id="heartbeatPublisher",
                                     clean_session=False,
                                     userdata=None,
                                     protocol=MQTTv311,
@@ -33,20 +37,19 @@ class Heartbeat(Thread):
                 self.__count__ += 1
                 payload: bytes = self.__count__.to_bytes(2, "big")
                 self.__client__.publish(self.__brokerChannel__, payload=payload, qos=0, retain=False, properties=None)
-                time.sleep(self.__interval__)
+                sleep(self.__interval__)
         except Exception:
             self.__running__ = False
             raise Exception("EXPECTATION FAILED")
     
-    def start(self) -> bool:
+    def start(self) -> None:
         """[Docstring] Function starting heartbeats."""
-        self.__run__()
-        return self.is_alive()
+        self.run()
 
     def stop(self) -> bool:
         """[Docstring] Function stopping heartbeats."""
         self.__running__ = False
-        time.sleep(0.100)
+        sleep(0.100)
         return not self.is_alive()
 
     def getClient(self) -> Client:

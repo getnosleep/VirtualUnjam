@@ -9,6 +9,7 @@ from rest_framework.request import Request
 
 class Initializer(viewsets.ViewSet):
     """[Docstring] Declares view, handling respective api calls."""
+    
     def initializeHeartbeats(self: viewsets.ViewSet, request: Request, pk=None) -> Response:
         """[Docstring] Declares functions, stimulating heartbeats."""
         try:
