@@ -5,7 +5,7 @@ from ..properties import *
 import time
 
 class Subscriber(Thread):
-    def __init__(self) -> None:
+    def __init__(self):
         # Constructing subscriber thread
         Thread.__init__(self, daemon=True)
         self.__running__ = False
@@ -35,7 +35,7 @@ class Subscriber(Thread):
         except:
             pass
     
-    def stop(self) -> bool:
+    def stop(self):
         # Function stopping subscription
         self.__running__ = False
         self.__client__.unsubscribe(TOPIC_BROKER)
@@ -44,14 +44,6 @@ class Subscriber(Thread):
         time.sleep(0.100)
         # return self.__client__.is_alive()
         return not self.__client__.is_connected() # probably better than is_alive, because subscriber threads ends up in clients loop thread
-
-    def getClient(self) -> Client:
-        # Function serving thread's client
-        return self.__client__
-
-    def getCount(self) -> float:
-        # Function serving current heatbeat
-        return Callbacks.heartbeat
 
 def startSubscription():
     # 'Dirty starter' for subscription thread
