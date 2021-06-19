@@ -9,7 +9,7 @@ class Subscriber(Thread):
 
     def __init__(self, brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str) -> None:
         """[Docstring] Constructing subscriber thread."""
-        Thread.__init__(self)
+        Thread.__init__(self, daemon=True)
         self.__running__ = False
         self.__client__: Client
         self.__brokerAddress__ = brokerAddress
@@ -18,7 +18,7 @@ class Subscriber(Thread):
         self.__brokerPassword__ = brokerPassword
         self.__brokerChannel__ = brokerChannel
     
-    def __run__(self) -> None:
+    def run(self) -> None:
         """[Docstring] Function handling lifetime of a subscriber."""
         try:
             self.__running__ = True
@@ -31,20 +31,18 @@ class Subscriber(Thread):
             self.__client__.on_message = Callbacks.on_message
             self.__client__.connect(self.__brokerAddress__, self.__brokerPort__, 60)
             self.__client__.subscribe(self.__brokerChannel__, 0)
-            self.__client__.loop_start()      # maybe needs to be called in view
+            self.__client__.loop_start()
+
+            while not self.__client__.is_connected() and self.__running__:
+                time.sleep(0.025)
         except:
             raise Exception("EXPECTATION FAILED")
     
     def start(self) -> bool:
         """[Docstring] Function starting subscription."""
-        if not self.__running__:
-            self.__run__()
-            # return self.__client__.is_alive()
-            return self.__client__.is_connected() # same 406 result but running as is_alive on restart
-        else:
-            return False
+        self.run()
     
-    def stop(self) -> bool:
+    def stop(self) -> bool: # does not work correctly yet
         """[Docstring] Function stopping subscription."""
         self.__running__ = False
         self.__client__.unsubscribe(self.__brokerChannel__, 0)
@@ -57,6 +55,10 @@ class Subscriber(Thread):
     def getClient(self) -> Client:
         """[Docstring] Function serving thread's client."""
         return self.__client__
+
+    def getConnectionStatus(self) -> bool:
+        """[Docstring] Function serving connection status."""
+        return self.__client__.is_connected()
 
     def getCount(self) -> float:
         """[Docstring] Function serving current heatbeat."""

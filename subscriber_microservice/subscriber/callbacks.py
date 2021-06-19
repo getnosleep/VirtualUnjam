@@ -10,7 +10,8 @@ class Callbacks:
     def on_message(client, userdata, msg: MQTTMessage) -> None:
         """[Docstring] Declares functions, handling message callback."""
         payload = msg.payload
-        payload = payload.hex(':', 2)
-        tick: float = 0
-        tick = int(payload, base=16)
+        #payload = payload.hex(':', 2)
+        #tick: float = 0
+        #tick = int(payload, base=16)
+        tick = int.from_bytes(payload, "big")
         Callbacks.heartbeat = tick

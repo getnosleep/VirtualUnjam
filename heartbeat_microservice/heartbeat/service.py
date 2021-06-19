@@ -9,8 +9,8 @@ import paho.mqtt.client as mqtt
 class Service:
     """[Docstring] Static class, holding and managing the microservice's heartbeat thread."""
     
-    #heartbeatThread: Thread
-    heartbeatThread: Heartbeat
+    heartbeatThread: Thread
+    #heartbeatThread: Heartbeat
     heartbeatCount: int
 
     @staticmethod
@@ -50,7 +50,7 @@ class Service:
             #client.on_publish = Service.on_publish
             while Service.heartbeatCount >= 0:
                 Service.heartbeatCount += 1
-                payload: bytes = Service.heartbeatCount.to_bytes(2, "big")
+                payload: bytes = Service.heartbeatCount.to_bytes(8, "big")
                 client.publish(brokerChannel, payload=payload, qos=0, retain=False, properties=None)
                 sleep(interval)
 

@@ -14,12 +14,13 @@ class Service:
         if not Service.flag:
             Service.flag = True
             Service.subscriber = Subscriber(brokerAddress, brokerPort, brokerUsername, brokerPassword, brokerChannel)
-            return Service.subscriber.start()
+            Service.subscriber.start()
+            return Service.subscriber.getConnectionStatus()
         else: 
-            return Service.subscriber.start()
-
+            Service.subscriber.start()
+            return Service.subscriber.getConnectionStatus()
     @staticmethod
-    def unsubscribe() -> bool:
+    def unsubscribe() -> bool: # does not work correctly yet
         """[Docstring] Unsubscribes from heartbeat broker."""
         Service.flag = False
         return Service.subscriber.stop()
