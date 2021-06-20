@@ -7,20 +7,21 @@ urlpatterns = [
     # Initialization
 
     # Queries
-    path('test', Monitor.as_view({
-        'get': 'test'
+    path('activeTrucks', Monitor.as_view({
+        'get': 'truckAdresses',
     })),
 
     path('test2', Monitor.as_view({
-        'get': 'test2'
+        'get': 'test2',
     })),
 
-    path('runtest', Monitor.as_view({
-        'get': 'runtest'
+    path('convoy', Monitor.as_view({
+        'post': 'activate',
+        'delete': 'deactivate',
     })),
 
-    path('datastacker', Monitor.as_view({
-        'post': 'datastacker'
+    path('monitor', Monitor.as_view({
+        'get': 'dataStacker',
     }))
 
 ]

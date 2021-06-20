@@ -2,6 +2,7 @@
 from .callbacks import Callbacks
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
+from ..properties import ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER
 import time
 
 class Subscriber(Thread):
@@ -63,7 +64,8 @@ class Subscriber(Thread):
 
 def startSubscription():
     # 'Dirty starter' for subscription thread
-    subscriber = Subscriber()
+    #brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str
+    subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER)
     subscriber.start()
     return subscriber
 
