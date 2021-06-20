@@ -11,10 +11,6 @@ urlpatterns = [
         'get': 'truckAdresses',
     })),
 
-    path('test2', Monitor.as_view({
-        'get': 'test2',
-    })),
-
     path('convoy', Monitor.as_view({
         'post': 'activate',
         'delete': 'deactivate',
