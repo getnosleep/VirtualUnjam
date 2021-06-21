@@ -1,11 +1,12 @@
 # library imports
 from threading import Thread
-from .daemons.bully import finishBullying
+from .daemons.bully import finishBullying, BullyAlgorithm
 from .exceptions.invalid_input import AccelerationException, NoMemberException
 from django.core.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponse, JsonResponse
+import concurrent.futures
 
 # property imports
 from .properties import ID
@@ -91,6 +92,7 @@ class Mutation(viewsets.ViewSet):
             truck.save()
 
             # TODO start bully algorithm thread
+            BullyAlgorithm.start()
 
             return HttpResponse(status=200)
         except Exception as e:
