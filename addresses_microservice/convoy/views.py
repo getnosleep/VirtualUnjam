@@ -1,9 +1,11 @@
 from django.http import HttpResponse, JsonResponse
+from requests import status_codes
+from requests.api import post
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 
 class ConvoyViewSet(viewsets.ViewSet):
-    # {ID: ADDRESS_SELF, . . . }
+    # {POSITION: ADDRESS_SELF}
     registered = {}
     
     def register(self, request):
@@ -16,19 +18,24 @@ class ConvoyViewSet(viewsets.ViewSet):
                     "address": ADDRESS_SELF of the requesting truck
                 }
             
-            @return successful registration: bool
+            @return unsuccessful bool or position JSON
         """
         try:
             data = JSONParser().parse(request)
-            truckId = data['truckId']
             address = data['address']
-            self.registered[truckId] = address
 
-            # position = len(self.registered) + 1
-            # self.registered[position] = address
-            return HttpResponse(True, status=200)
+            if address and not address in self.registered.values():
+                position = len(self.registered) + 1
+                self.registered[position] = address
+                
+                data = {
+                    'position': position
+                }
+                return JsonResponse(data, status=200)
+            else:
+                return HttpResponse(False, status=404)
         except:
-            return HttpResponse(False, status=404)
+            return HttpResponse(False, status=400)
 
     def data(self, request):
         """
@@ -41,36 +48,35 @@ class ConvoyViewSet(viewsets.ViewSet):
         """
         return JsonResponse(self.registered, status=200)
     
-    def bully(self, request):
+    def overwriteRegistration(self, request):
         """
-            PUT: Bullies a truck if possible
+            PUT: Overwrites the bullied position/truck
 
-            @requestJson:
+            @returnJson:
                 {
-                    "bulliedtruckId": ID of the leaving truck
-                    "bulliedtruckAddress": ADDRESS_SELF of the leaving truck
+                    "oldPosition": old position of the truck,
+                    "newPosition": current position of the truck,
+                    "address": trucks address,
                 }
-
-            @return A string statement of the done action: str
         """
         try:
             data = JSONParser().parse(request)
-            bulliedTruckId = data['bulliedTruckId']
-            bulliedTruckAddress = data['bulliedTruckAddress']
+            oldPosition = data['oldPosition']
+            newPosition = data['newPosition']
+            truckAddress = data['address']
 
-            registeredValue = self.registered.get(bulliedTruckId)
-
-            if registeredValue and registeredValue == bulliedTruckAddress:
-                result = str('Truck %s got kicked', self.registered.pop(bulliedTruckId, '???'))
-                return HttpResponse(result, status=200)
+            if self.registered[oldPosition] == truckAddress and self.registered[newPosition] and oldPosition >= newPosition:
+                self.registered.pop(oldPosition)
+                self.registered[newPosition] = truckAddress
+                return HttpResponse(status=200)
             else:
-                return HttpResponse('Already kicked', status=200)
+                return HttpResponse('You have no permission to do this', status=401)
         except:
-            return HttpResponse('Ya mad bro?', status=404)
+            return HttpResponse('Possibly wrong input', status=400)
         
     def flush(self, request):
         """
-            DELETE: Flushes the registered trucks and addresses
+            DELETE: Flushes the registered positioning of the truck addresses
 
             @requestJson:
                 {
@@ -82,9 +88,10 @@ class ConvoyViewSet(viewsets.ViewSet):
         try:
             data = JSONParser().parse(request)
             if data['parol'] == 'idi na chui':
-                self.registered = {}
-                return HttpResponse('Cleared', status=200)
-            else:
-                raise Exception()
+                while len(self.registered):
+                    key = next(iter(self.registered))
+                    del self.registered[key]
+                return HttpResponse(True, status=200)
         except Exception as e:
-            return HttpResponse('Ne ne ne', status=404)
+            pass
+        return HttpResponse(False, status=400)

@@ -18,7 +18,8 @@ PASSWORD_BROKER = 'test'
 TOPIC_BROKER = 'truckChannel'
 DURATION_BROKER = 0.025
 
-
+# Network specific settings: Request settings -> fixed
+MAX_TIMEOUT = 0.5
 
 # Truck specific properties: Truck physics -> fixed
 MIN_SPEED = 0.0

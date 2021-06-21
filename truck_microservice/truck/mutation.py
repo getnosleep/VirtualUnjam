@@ -1,5 +1,7 @@
 # library imports
-from .exceptions.invalid_input import AccelerationException
+from threading import Thread
+from .daemons.bully import finishBullying
+from .exceptions.invalid_input import AccelerationException, NoMemberException
 from django.core.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
@@ -15,7 +17,7 @@ from .models import TruckEntity
 from .daemons.subscriber import subscription
 
 # extern requests
-from .extern_api.addresses import join, registered
+from .extern_api.addresses import join
 
 # error messages
 ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
@@ -79,10 +81,47 @@ class Mutation(viewsets.ViewSet):
                 return HttpResponse(e.message, status=404)
         return JsonResponse({'success': success}, status=status)
 
-    def poll(self, request):
+    def startBullying(self, request):
         try:
-            reg = registered()
-            a = JSONParser().parse(reg)
-            return HttpResponse(a, status=200)
+            data = JSONParser().parse(request)
+            newTruckBehind = data['backTruckAddress']
+
+            truck = TruckEntity.objects.get(ID)
+            truck.backTruckAddress = newTruckBehind
+            truck.save()
+
+            # TODO start bully algorithm thread
+
+            return HttpResponse(status=200)
         except Exception as e:
-            return HttpResponse('unsuccessful', status=500)
+            return HttpResponse(status=500)
+
+    def updateAfterBullying(self, request):
+        try:
+            data = JSONParser().parse(request)
+            newLeader = data['newLeader']
+            newTruckInFront = data['frontTruckAddress']
+            frontTruckPosition = data['frontTruckPosition']
+
+            truck = TruckEntity.objects.get(ID)
+            truckBehind = truck.backTruckAddress
+            oldPosition = truck.position
+            newPosition = frontTruckPosition + 1
+
+            if not oldPosition:
+                raise NoMemberException()
+
+            truck.leadingTruckAddress = newLeader
+            truck.frontTruckAddress = newTruckInFront
+            truck.position = newPosition
+            truck.polling = False
+            truck.save()
+
+            # TODO eben checken ob der noch auf ne Variable verwiesen werden muss
+            Thread(finishBullying(truckBehind, newLeader, oldPosition, newPosition), daemon=True)
+            return HttpResponse(status=200)
+        except NoMemberException as e:
+            return HttpResponse(e.message, status=404)
+        except Exception as e:
+            return HttpResponse(status=500)
+    

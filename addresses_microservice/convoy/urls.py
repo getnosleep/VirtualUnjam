@@ -5,7 +5,7 @@ urlpatterns = [
     path('', ConvoyViewSet.as_view({
         'post': 'register',
         'get': 'data',
-        'put': 'bully',
+        'put': 'overwriteRegistration',
         'delete': 'flush',
     })),
 ]
