@@ -1,6 +1,8 @@
 
 
 # Create your views here.
+import re
+
 from rest_framework import viewsets, status
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
@@ -28,15 +30,24 @@ class Monitor(viewsets.ViewSet):
     addresses = set()
 
     def __addToAddresses__(self, address):
-        # todo validirung mit pattern
+        #validirung mit pattern http://127.0.0.1:1031/
+        address= "http://127.0.0.1:1031/"
+        if (address[-1] == '/' and address[0:7] == "http://"):
+            if (':' in address):
+                ip = address[7:-1].split(":")
+                if ([0 <= int(x) < 256 for x in
+                     re.split('\.', re.match(r'^\d+\.\d+\.\d+\.\d+$', ip[0]).group(0))].count(True) == 4):
+                    if(0 < int(ip[1]) < 65536):
+                        pass #hier ist richtig ansosten nicht
+
+        print(address)
         if address:
             self.addresses.add(address)
             return (True, 200)
         else: return (False, 400)
 
     def __deleteFromAddresses__(self, address):
-        # todo validirung ob da
-        if address:
+        if address and address in self.addresses:
             self.addresses.remove(address)
             return (True, 200)
         else: return (False, 400)
