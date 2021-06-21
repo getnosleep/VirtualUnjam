@@ -36,5 +36,9 @@ urlpatterns = [
     path('bully', Mutation.as_view({
         'post': 'startBullying',
         'put': 'updateAfterBullying',
-    }))
+    })),
+    path('intact', Mutation.as_view({
+        'post': 'repair',
+        'delete': 'destroy',
+    })),
 ]
