@@ -1,9 +1,13 @@
 # library imports
+import json
 from threading import Thread
 import time
+from truck_microservice.truck.serializer import ConvoySerializer
+
+from paho.mqtt.client import Client, MQTTv311
 
 # property imports
-from ..properties import ID, DEPARTURE_DISTANCE, DURATION_BROKER
+from ..properties import ID, DEPARTURE_DISTANCE, DURATION_BROKER, ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER
 
 # persistence layer imports
 from ..models import TruckEntity
@@ -87,3 +91,24 @@ class Movement(Thread):
             truck.acceleration = .0
         truck.save()
         return True
+    
+    def publishMonitoringData(self):
+        try:
+            truck = TruckEntity.objects.get(pk=ID)
+            if truck:
+                serializer = ConvoySerializer(truck, many=False)
+                truckJSON = serializer.data
+            else:
+                return False
+            client = Client(client_id="monitoringPublisher",
+                                    clean_session=False,
+                                    userdata=None,
+                                    protocol=MQTTv311,
+                                    transport="tcp")
+            client.username_pw_set(USERNAME_BROKER, PASSWORD_BROKER)
+            client.connect(ADDRESS_BROKER, PORT_BROKER, 60)
+            payload = json.dumps(truckJSON).encode('UTF-8')
+            info = client.publish(TOPIC_BROKER, payload=payload, qos=0, retain=False, properties=None)
+            return info.is_published()
+        except:
+            raise Exception("EXPECTATION FAILED")
