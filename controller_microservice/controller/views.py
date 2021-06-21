@@ -6,8 +6,12 @@ import re
 from rest_framework import viewsets, status
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
+
 import concurrent.futures
 import requests
+
+# dirty imports
+from .daemons.subscriber import subscription
 
 def monitoring(addresses):
     def request(address):
