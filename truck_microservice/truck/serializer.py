@@ -31,7 +31,6 @@ class ConvoySerializer(serializers.ModelSerializer):
         model = TruckEntity
         fields = [
             'id',
-            'address',
             'length',
             'distance',
 
@@ -44,6 +43,21 @@ class ConvoySerializer(serializers.ModelSerializer):
 
             'position',
             'polling',
+            'broken',
+        ]
+
+class BullySerializer(serializers.ModelSerializer):
+    """Serialization of Truck-Data for Pollings"""
+    class Meta:
+        model = TruckEntity
+        fields = [
+            'id',
+            'address',
+            
+            'leadingTruckAddress',
+            'frontTruckAddress',
+            'backTruckAddress',
+            'position',
             'broken',
         ]
 

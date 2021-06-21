@@ -15,11 +15,14 @@ urlpatterns = [
     })),
 
     # Queries
-    path('convoy', Query.as_view({
-        'get': 'convoyRequests',
+    path('truck', Query.as_view({
+        'get': 'truckRequests',
     })),
     path('monitor', Query.as_view({
         'get': 'adminRequests',
+    })),
+    path('poll', Query.as_view({
+        'get': 'pollRequests',
     })),
 
     # Mutations
@@ -31,6 +34,7 @@ urlpatterns = [
         'post': 'accelerate',
     })),
     path('bully', Mutation.as_view({
-        'get': 'poll',
-    })),
+        'post': 'startBullying',
+        'put': 'updateAfterBullying',
+    }))
 ]

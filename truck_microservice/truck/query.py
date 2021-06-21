@@ -7,13 +7,13 @@ from .properties import ID
 
 # persistence layer imports
 from .models import TruckEntity
-from .serializer import ConvoySerializer, AdminSerializer
+from .serializer import BullySerializer, ConvoySerializer, AdminSerializer
 
 # error messages
 ERR_MSG_ACCESSABILITY = 'Truck not accessable'
 
 class Query(viewsets.ViewSet):
-    def convoyRequests(self, request):
+    def truckRequests(self, request):
         truck = TruckEntity.objects.get(pk=ID)
         if truck:
             serializer = ConvoySerializer(truck, many=False)
@@ -26,6 +26,15 @@ class Query(viewsets.ViewSet):
         truck = TruckEntity.objects.get(pk=ID)
         if truck:
             serializer = AdminSerializer(truck, many=False)
+            truckJSON = serializer.data
+            return JsonResponse(data=truckJSON, status=200)
+        else:
+            return HttpResponse(ERR_MSG_ACCESSABILITY, status=404)
+    
+    def pollRequests(self, request):
+        truck = TruckEntity.objects.get(pk=ID)
+        if truck:
+            serializer = BullySerializer(truck, many=False)
             truckJSON = serializer.data
             return JsonResponse(data=truckJSON, status=200)
         else:
