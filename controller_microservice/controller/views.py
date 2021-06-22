@@ -1,6 +1,5 @@
-
-
 # Create your views here.
+from .daemons.callbacks import Callbacks
 import re
 
 from rest_framework import viewsets, status
@@ -92,7 +91,7 @@ class Monitor(viewsets.ViewSet):
         return HttpResponse(status=400)
 
 
-
+    '''
     def dataStacker(self, request):
         try:
             trucks = monitoring(self.addresses)
@@ -102,3 +101,13 @@ class Monitor(viewsets.ViewSet):
             return JsonResponse(data, status=200)
         except Exception as e:
             return HttpResponse(e, status=500)
+    '''
+
+def dataStacker(self, request):
+    try:
+        data = {
+            'data': Callbacks.truckDictionary
+        }
+        return JsonResponse(data, status=200)
+    except Exception as e:
+        return HttpResponse(e, status=500)

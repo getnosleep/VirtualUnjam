@@ -18,6 +18,7 @@ class Movement(Thread):
     
     def run(self):
         self.__calculateSpeed__()
+        self.__publishMonitoringData__()
 
     def __leaveConvoyFlank__(self, position, currentDistance, maxDistance):
         departure = maxDistance - DEPARTURE_DISTANCE
@@ -92,7 +93,7 @@ class Movement(Thread):
         truck.save()
         return True
     
-    def publishMonitoringData(self):
+    def __publishMonitoringData__(self):
         try:
             truck = TruckEntity.objects.get(pk=ID)
             if truck:
@@ -111,4 +112,4 @@ class Movement(Thread):
             info = client.publish(TOPIC_BROKER, payload=payload, qos=0, retain=False, properties=None)
             return info.is_published()
         except:
-            raise Exception("EXPECTATION FAILED")
+            raise Exception("Mointoring publish failed")
