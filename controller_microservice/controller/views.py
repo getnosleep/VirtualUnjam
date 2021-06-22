@@ -73,22 +73,22 @@ class Mutation(viewsets.ViewSet):
             return HttpResponse(e.message, status=404)
 
     def accelerate(self, request):
-        try:
-            requestData = JSONParser().parse(request)
-            truck = Callbacks.truckDictionary[requestData['id']]
-            truckAddress = truck['address']
-            headers = {'content-type': 'application/json'}
-            data = {
-                'targetSpeed': requestData['targetSpeed'],
-                'acceleration': requestData['acceleration']
-            }
-            val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
-            if val.status_code == 200:
-                return HttpResponse(status=200)
-            else:
-                return HttpResponse(status=400)
-        except Exception as e:
-            return HttpResponse(e.message, status=404)
+        #try:
+        requestData = JSONParser().parse(request)
+        truck = Callbacks.truckDictionary[requestData['id']]
+        truckAddress = truck['address']
+        headers = {'content-type': 'application/json'}
+        data = {
+            'targetSpeed': requestData['targetSpeed'],
+            'acceleration': requestData['acceleration']
+        }
+        val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+        if val.status_code == 200:
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
+        #except Exception as e:
+        #    return HttpResponse(e.message, status=404)
 
 class Monitor(viewsets.ViewSet):
 
@@ -212,6 +212,12 @@ class Monitor(viewsets.ViewSet):
 
         </table>
     <button onclick=sendit()>send JS </button>
+    <button onclick=accelerate()>accelerate</button>
+    <button onclick=decelerate()>decelerate</button>
+    <button onclick=destroy()>destroy</button>
+    <button onclick=repair()>repair</button>
+    <button onclick=joinConvoy()>joinConvoy</button>
+    <button onclick=leaveConvoy()>leaveConvoy</button>
 
     </body>
     </html>
@@ -220,13 +226,13 @@ class Monitor(viewsets.ViewSet):
             for value in Callbacks.truckDictionary.values():
                 print(value)
                 truck1.append(value['position'])
-                truck1.append(value['currentSpeed'])
+                truck1.append(value['currentSpeed']*3.6)
                 truck1.append(value['currentRouteSection'])
                 print(value['position'])
 
             t = Template(template)
             c = Context({"pos": truck1[0],
-                         "speed": truck1[1]*3.6,
+                         "speed": truck1[1],
                          "distance": truck1[2],
                          "pos1": 2,
                          "speed1": 22,

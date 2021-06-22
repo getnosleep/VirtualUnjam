@@ -1,6 +1,5 @@
 """Some values the truck needs to know about the network (Self, Convoy, Admin-Service, and MQTT)"""
 # Network Identification: As Subscriber of MQTT Broker -> fixed
-from truck_microservice.truck.properties import MAX_TIMEOUT
 
 
 ID_BROKER = 'monitorSubscriber'
