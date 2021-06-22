@@ -10,8 +10,7 @@ urlpatterns = [
     # For Development purpose only !!!
     path('05FD548CB946F6AEFD3831FE4F1FD046E1827757E07F877F3A087B0ED98A03BF', Initializer.as_view({
         'get': 'truck',
-        'post': 'recommendedInit',
-        'put': 'specificInit',
+        'post': 'init',
     })),
 
     # Queries
@@ -26,26 +25,23 @@ urlpatterns = [
     })),
 
     # Mutations
-    # path('leader', Mutation.as_view({
-    #     'post', 'leaderHandshake',
-    # })),
     path('convoy', Mutation.as_view({
-        'post': 'joinConvoy',
+        'post': 'joinConvoy', # ADMIN
         'put': 'joinBehind',
-        'delete': 'leaveConvoy',
+        'delete': 'leaveConvoy', # ADMIN
     })),
     path('intact', Mutation.as_view({
-        'post': 'repair',
-        'delete': 'destroy',
+        'post': 'repair', # ADMIN
+        'delete': 'destroy', # ADMIN
     })),
     path('accelerate', Mutation.as_view({
-        'post': 'accelerate',
+        'post': 'accelerate', # ADMIN
     })),
     path('bully', Mutation.as_view({
         'post': 'startBullying',
         'put': 'updateAfterBullying',
     })),
     path('test', Mutation.as_view({
-        'get': 'checkRequestTimes',
+        'get': 'checkRequestTimes', # just dirty shit
     }))
 ]

@@ -31,6 +31,7 @@ class ConvoySerializer(serializers.ModelSerializer):
         model = TruckEntity
         fields = [
             'id',
+            'address',
             'length',
             'distance',
 

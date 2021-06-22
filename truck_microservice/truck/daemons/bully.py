@@ -1,5 +1,6 @@
 # library imports
 from threading import Thread
+import time
 
 # property imports
 from ..properties import ID, ADDRESS_SELF
@@ -41,18 +42,20 @@ class BullyAlgorithm(Thread):
             self.__bully__()
 
     def __bully__(self):
-        registerRequest = registered()
-        if registerRequest.status_code == 200:
-            addresses = registerRequest.json()
-            sortedAddresses = sort(addresses)
-            frontTruck, position = self.__findPosition__(sortedAddresses)
+        print('bully')
+        time.sleep(1)
+        # registerRequest = registered()
+        # if registerRequest.status_code == 200:
+        #     addresses = registerRequest.json()
+        #     sortedAddresses = sort(addresses)
+        #     frontTruck, position = self.__findPosition__(sortedAddresses)
             
-            if frontTruck == ADDRESS_SELF and position == 1:
-                self.__makeLeader__()
-            elif frontTruck and position:
-                self.__actualizePosition__()
-        else:
-            self.tries += 1
+        #     if frontTruck == ADDRESS_SELF and position == 1:
+        #         self.__makeLeader__()
+        #     elif frontTruck and position:
+        #         self.__actualizePosition__()
+        # else:
+        #     self.tries += 1
 
     def __findPosition__(self, addresses: dict):
         """@returns the address of the truck in front and the position of own truck"""
