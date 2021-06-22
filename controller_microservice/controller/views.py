@@ -82,7 +82,7 @@ class Mutation(viewsets.ViewSet):
                 'targetSpeed': requestData['targetSpeed'],
                 'acceleration': requestData['acceleration']
             }
-            val = requests.delete('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
