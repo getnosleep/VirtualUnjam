@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from .daemons.bully import finishBullying, bully
 
 # property imports
-from .properties import ID
+from .properties import ADDRESS_SELF, ID
 
 # persistence layer imports
 from .models import TruckEntity
@@ -134,9 +134,8 @@ class Mutation(viewsets.ViewSet):
             if truck.broken:
                 raise TruckBrokenException()
 
-            if truck.leadingTruckAddress == truck.address or not truck.position:
-                data = JSONParser().parse(request)
-                
+            data = JSONParser().parse(request)
+            if not truck.position or truck.leadingTruckAddress == truck.address or truck.leadingTruckAddress == data['self']:
                 acc = data['acceleration']
                 vel = data['targetSpeed'] / 3.6
 

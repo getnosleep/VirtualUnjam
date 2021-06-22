@@ -5,7 +5,6 @@ from threading import Thread
 from ..properties import ID
 
 # functional imports
-from ..serializer import ConvoySerializer
 from .bully import bully
 
 # persistence layer imports
@@ -24,6 +23,8 @@ class Lifecycle(Thread):
     def __convoyUpdate__(self):
         truck = TruckEntity.objects.get(pk=ID)
 
+        polling = truck.polling
+
         frontTruck = truck.frontTruckAddress
         backTruck = truck.backTruckAddress
 
@@ -39,9 +40,7 @@ class Lifecycle(Thread):
             if backTruck:
                 self.__accessTruckBehind__(backTruck)
             if frontTruck:
-                accessible = self.__accessTruckInFront__(frontTruck)
-                if not accessible:
-                    bully()
+                self.__accessTruckInFront__(frontTruck)
 
     def __accessTruckBehind__(self, backTruck):
         truckBehind = convoyRequest(backTruck)
@@ -55,10 +54,12 @@ class Lifecycle(Thread):
         if truckInFront and truckInFront.status_code == 200:
             if self.__truckAlignment__(truckInFront.json()):
                 return True
+        
         truck = TruckEntity.objects.get(pk=ID)
-        TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
         truck.frontTruckAddress = None
-        truck.polling = True
+        if not truck.polling:
+            truck.polling = True
+            bully()
         truck.save()
         return False
 
