@@ -1,7 +1,5 @@
 # library imports
 from threading import Thread
-from rest_framework.parsers import JSONParser
-import time
 
 # property imports
 from ..properties import ID, ADDRESS_SELF
@@ -15,10 +13,6 @@ from ..extern_api.trucks import bullyAcknowledgement, pollRequest, startBullying
 
 def sort(dictionary: dict):
     return {key: value for key, value in sorted(dictionary.items(), key=lambda item: item[1])}
-
-def startBullyAlgorithm():
-    bully = BullyAlgorithm()
-    bully.start()
 
 def finishBullying(truckBehind, leader, oldPosition, newPosition):
     # Inform the Truck behind
@@ -123,3 +117,7 @@ class BullyAlgorithm(Thread):
         truck.save()
 
         # Ende ... erstmal ... Im Anschluss wird dann von vorne nach hinten durchgegeben, welche Positionen der jeweilige Vordermann nun hat und wer der aktuelle leader ist
+
+def bully():
+    bully = BullyAlgorithm()
+    bully.start()

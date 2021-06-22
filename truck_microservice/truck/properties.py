@@ -15,7 +15,8 @@ ADDRESS_BROKER = '127.0.0.1'
 PORT_BROKER = 1883
 USERNAME_BROKER = 'testUser'
 PASSWORD_BROKER = 'test'
-TOPIC_BROKER = 'truckChannel'
+TOPIC_HEARTBEAT = 'truckChannel'
+TOPIC_MONITOR = 'monitorChannel'
 DURATION_BROKER = 0.025
 
 # Network specific settings: Request settings -> fixed

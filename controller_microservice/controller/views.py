@@ -2,30 +2,12 @@
 from .daemons.callbacks import Callbacks
 import re
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
 
-import concurrent.futures
-import requests
-
 # dirty imports
 from .daemons.subscriber import subscription
-
-def monitoring(addresses):
-    def request(address):
-        """@returns the status of the requested truck"""
-        result = requests.get(address + 'api/monitor')
-        return result.json()
-
-    trucks = [] #jason list
-
-    for address in addresses:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(request, address)
-            trucks.append(future.result())
-
-    return trucks
 
 class Monitor(viewsets.ViewSet):
 

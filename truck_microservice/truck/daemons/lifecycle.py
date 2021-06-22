@@ -15,7 +15,7 @@ from .bully import BullyAlgorithm
 
 class Lifecycle(Thread):
     def __init__(self):
-        Thread.__init__(self, daemon=True)
+        Thread.__init__(self)
 
     def run(self):
         self.__convoyUpdate__()
@@ -63,12 +63,15 @@ class Lifecycle(Thread):
         lonely = not (frontTruck or backTruck)
 
         if lonely:
+            print('I am so lonely')
             pass
         elif leader:
             # No thread needed
+            print('I am the leader')
             self.__accessTruckBehind__(backTruck)
         else:
             # Here we need Threads
+            print('I need instructions what to do')
             behind = Thread(self.__accessTruckBehind__(backTruck))
             front = Thread(self.__accessTruckInFront__(frontTruck))
 
@@ -86,3 +89,7 @@ class Lifecycle(Thread):
             # truck.polling = False -> Flanke zurueckgesetzt
             # ggf. sollte man die Flanke auch anders abfragen... ich ueberleg mir was elegantes
         pass
+
+def alive():
+    lifecycle = Lifecycle()
+    lifecycle.start()

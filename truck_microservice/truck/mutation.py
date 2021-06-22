@@ -1,12 +1,11 @@
 # library imports
 from threading import Thread
-from .daemons.bully import finishBullying, BullyAlgorithm, startBullyAlgorithm
+from .daemons.bully import finishBullying, bully
 from .exceptions.invalid_input import AccelerationException, NoMemberException, TruckBrokenException
 from django.core.exceptions import ValidationError
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
-from django.http import HttpResponse, JsonResponse
-import concurrent.futures
+from django.http import HttpResponse
 
 # property imports
 from .properties import ID
@@ -23,8 +22,6 @@ from .extern_api.addresses import join
 # error messages
 ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
 ERR_MSG_ACCESSABILITY = 'Truck not accessible'
-
-SUB = subscription
 
 LEADER_POSITION = 1
 
@@ -154,7 +151,7 @@ class Mutation(viewsets.ViewSet):
                 truck.polling = True
                 truck.save()
 
-                startBullyAlgorithm()
+                bully()
 
             return HttpResponse(status=200)
         except Exception as e:

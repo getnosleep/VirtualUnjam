@@ -1,20 +1,19 @@
 # library imports
 import json
 from threading import Thread
-import time
-from truck_microservice.truck.serializer import ConvoySerializer
+from ..serializer import ConvoySerializer
 
 from paho.mqtt.client import Client, MQTTv311
 
 # property imports
-from ..properties import ID, DEPARTURE_DISTANCE, DURATION_BROKER, ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER
+from ..properties import ID, DEPARTURE_DISTANCE, DURATION_BROKER, ADDRESS_BROKER, PORT_BROKER, TOPIC_MONITOR, USERNAME_BROKER, PASSWORD_BROKER
 
 # persistence layer imports
 from ..models import TruckEntity
 
 class Movement(Thread):
     def __init__(self):
-        Thread.__init__(self, daemon=True)
+        Thread.__init__(self)
     
     def run(self):
         self.__calculateSpeed__()
@@ -53,7 +52,7 @@ class Movement(Thread):
             return [s, v, False]
 
     def __calculateSpeed__(self):
-        t_ms = 2 * DURATION_BROKER # twice, because only the first of two subscribes is for movement calculation. The other one is for lifecycle updates
+        t = 2 * DURATION_BROKER # twice, because only the first of two subscribes is for movement calculation. The other one is for lifecycle updates
 
         # placeholder
         targetVelocity = False
@@ -61,7 +60,6 @@ class Movement(Thread):
         v = .0
 
         # setup data
-        t = t_ms*1.0 / 1000.0
         truck = TruckEntity.objects.get(pk=ID)
         s_0, v_0, a = truck.movementStats()
         s_1, v_1 = truck.targetStats()
@@ -72,7 +70,7 @@ class Movement(Thread):
         else:
             s, v, targetVelocity = self.__acceleratingVelocity__(s_0, v_0, v_1, a, t)
         
-        print(f'Position: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
+        # print(f'Position: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
 
         if not s or not v:
             # standing still
@@ -109,7 +107,11 @@ class Movement(Thread):
             client.username_pw_set(USERNAME_BROKER, PASSWORD_BROKER)
             client.connect(ADDRESS_BROKER, PORT_BROKER, 60)
             payload = json.dumps(truckJSON).encode('UTF-8')
-            info = client.publish(TOPIC_BROKER, payload=payload, qos=0, retain=False, properties=None)
+            info = client.publish(TOPIC_MONITOR, payload=payload, qos=0, retain=False, properties=None)
             return info.is_published()
         except:
             raise Exception("Mointoring publish failed")
+
+def move():
+    movement = Movement()
+    movement.start()

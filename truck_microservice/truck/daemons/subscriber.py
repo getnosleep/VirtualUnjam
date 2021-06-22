@@ -2,7 +2,7 @@
 from .callbacks import Callbacks
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
-from ..properties import ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER
+from ..properties import ADDRESS_BROKER, PORT_BROKER, TOPIC_HEARTBEAT, USERNAME_BROKER, PASSWORD_BROKER
 import time
 
 class Subscriber(Thread):
@@ -36,10 +36,6 @@ class Subscriber(Thread):
         while not self.__client__.is_connected() and self.__running__:
             time.sleep(0.025)
     
-    def start(self) -> bool:
-        """[Docstring] Function starting subscription."""
-        self.run()
-    
     def stop(self) -> bool: # does not work correctly yet
         """[Docstring] Function stopping subscription."""
         self.__running__ = False
@@ -63,9 +59,7 @@ class Subscriber(Thread):
         return Callbacks.heartbeat
 
 def startSubscription():
-    # 'Dirty starter' for subscription thread
-    #brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str
-    subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER)
+    subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber
 

@@ -1,4 +1,6 @@
 """[Docstring] Declares subscriber exceptions."""
+from .lifecycle import alive
+from .movement import move
 from paho.mqtt.client import MQTTMessage
 
 class Callbacks:
@@ -12,3 +14,7 @@ class Callbacks:
         payload = msg.payload
         tick = int.from_bytes(payload, "big")
         Callbacks.heartbeat = tick
+        if tick%2 == 0:
+            move()
+        elif tick%2 == 1:
+            alive()
