@@ -182,6 +182,16 @@ class Monitor(viewsets.ViewSet):
                 <td >{{speed2}}</td>
                 <td >{{distance2}}</td>
             </tr>
+            <tr>
+                <td >{{pos3}}</td>
+                <td >{{speed3}}</td>
+                <td >{{distance3}}</td>
+            </tr>
+            <tr>
+                <td >{{pos4}}</td>
+                <td >{{speed4}}</td>
+                <td >{{distance4}}</td>
+            </tr>
 
             </tbody>
 
@@ -191,14 +201,18 @@ class Monitor(viewsets.ViewSet):
     </body>
     </html>
             """
-
-            for key, value in Callbacks.truckDictionary.items():
-                print(key,value)
+            truck1=[]
+            for value in Callbacks.truckDictionary.values():
+                print(value)
+                truck1.append(value['position'])
+                truck1.append(value['currentSpeed'])
+                truck1.append(value['currentRouteSection'])
+                print(value['position'])
 
             t = Template(template)
-            c = Context({"pos": 1,
-                         "speed": 20,
-                         "distance": 23462,
+            c = Context({"pos": truck1[0],
+                         "speed": truck1[1]*3.6,
+                         "distance": truck1[2],
                          "pos1": 2,
                          "speed1": 22,
                          "distance1": 123262,
@@ -206,7 +220,7 @@ class Monitor(viewsets.ViewSet):
                          "speed2": 502,
                          "distance2": 12123462,
                          })
-            print(t.render(c))
+            #print(t.render(c))
             return HttpResponse(t.render(c), status=200)
 
 
@@ -231,19 +245,5 @@ def dataStacker(self, request):
     except Exception as e:
         return HttpResponse(e, status=500)
 
-
-
-
-
-class truckdata(object):
-    #todo hier alle truckdaten
-    def listlen(self) :return [1,2]
-    def getID(self) :return "2"
-    def getSpeed(self) :
-        for key, value in Callbacks.truckDictionary.items():
-            pass
-
-        return "80"
-    def getDistance(self) :return "150374.0654204"
 
 

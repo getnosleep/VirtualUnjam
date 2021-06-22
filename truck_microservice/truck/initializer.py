@@ -16,15 +16,13 @@ class Initializer(viewsets.ViewSet):
         if trucks.exists():
             TruckEntity.objects.all().delete()
         truck = TruckEntity()
-
         truck.save()
         serializer = Serializer(truck, many=False)
-        truckJSON = serializer.data
-        return JsonResponse(data=truckJSON, status=200)
+        return JsonResponse(data=serializer.data, status=200)
     
     def truck(self, request):
         try:
-            truck = TruckEntity.objects.all()#get(pk=ID)
+            truck = TruckEntity.objects.all()
             if truck:
                 serializer = Serializer(truck, many=True)
                 data = {

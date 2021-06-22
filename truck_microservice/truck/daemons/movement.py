@@ -1,7 +1,7 @@
 # library imports
 import json
 from threading import Thread
-from ..serializer import ConvoySerializer
+from ..serializer import AdminSerializer
 
 from paho.mqtt.client import Client, MQTTv311
 
@@ -95,7 +95,7 @@ class Movement(Thread):
         try:
             truck = TruckEntity.objects.get(pk=ID)
             if truck:
-                serializer = ConvoySerializer(truck, many=False)
+                serializer = AdminSerializer(truck, many=False)
                 truckJSON = serializer.data
             else:
                 return False
