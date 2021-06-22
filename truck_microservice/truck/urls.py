@@ -45,4 +45,7 @@ urlpatterns = [
         'post': 'startBullying',
         'put': 'updateAfterBullying',
     })),
+    path('test', Mutation.as_view({
+        'get': 'checkRequestTimes',
+    }))
 ]

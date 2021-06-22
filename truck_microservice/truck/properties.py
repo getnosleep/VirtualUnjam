@@ -17,7 +17,7 @@ USERNAME_BROKER = 'testUser'
 PASSWORD_BROKER = 'test'
 TOPIC_HEARTBEAT = 'truckChannel'
 TOPIC_MONITOR = 'monitorChannel'
-DURATION_BROKER = 0.025
+DURATION_BROKER = 0.1
 
 # Network specific settings: Request settings -> fixed
 MAX_TIMEOUT = 0.5
