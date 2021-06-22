@@ -1,5 +1,5 @@
 """[Docstring] Declares heartbeat thread."""
-from ..initializer import initialize
+from ..models import TruckEntity
 from .callbacks import Callbacks
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
@@ -37,7 +37,7 @@ class Subscriber(Thread):
         self.__client__.loop_start()
 
         while not self.__client__.is_connected() and self.__running__:
-            time.sleep(0.025)
+            time.sleep(10)
     
     def stop(self) -> bool: # does not work correctly yet
         """[Docstring] Function stopping subscription."""
@@ -64,12 +64,16 @@ class Subscriber(Thread):
 def __onStart__():
     global __initialized__
     if not __initialized__:
-        initialize()
+        trucks = TruckEntity.objects.all()
+        if trucks.exists():
+            TruckEntity.objects.all().delete()
+        truck = TruckEntity()
+        truck.save()
         __initialized__ = True
 
 def startService():
     # Initialization when a truck is startet
-    __onStart__()
+    # __onStart__()
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber
