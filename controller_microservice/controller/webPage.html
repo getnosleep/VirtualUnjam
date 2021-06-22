@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Virtuel Unjam</title>
+        <script src="doch.js"></script>
+    <style>
+      table, th {
+       border: 3px solid black;
+       height: 40px;
+       }
+    </style>
+
+    </head>
+    <body>
+    <header>
+        <p text="Virtuel Unjam"/>
+    </header>
+    <table style="width:80% ">
+            <thead>
+            <tr>
+                <th>truckpos</th>
+                <th>speed</th>
+                <th>distance</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td >{{pos}}</td>
+                <td >{{speed}}</td>
+                <td >{{distance}}</td>
+            </tr>
+            <tr>
+                <td >{{pos1}}</td>
+                <td >{{speed1}}</td>
+                <td >{{distance1}}</td>
+            </tr>
+            <tr>
+                <td >{{pos2}}</td>
+                <td >{{speed2}}</td>
+                <td >{{distance2}}</td>
+            </tr>
+
+            </tbody>
+
+        </table>
+    <button onclick=sendit()>send JS </button>
+
+    </body>
+    </html>

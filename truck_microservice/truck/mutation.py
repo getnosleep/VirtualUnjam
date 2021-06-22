@@ -1,11 +1,13 @@
 # library imports
 from threading import Thread
-from .daemons.bully import finishBullying, bully
-from .exceptions.invalid_input import AccelerationException, NoMemberException, TruckBrokenException
-from django.core.exceptions import ValidationError
+import time
+from django.http.response import JsonResponse
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponse
+
+# functional imports
+from .daemons.bully import finishBullying, bully
 
 # property imports
 from .properties import ID
@@ -13,19 +15,19 @@ from .properties import ID
 # persistence layer imports
 from .models import TruckEntity
 
+# extern requests
+from .extern_api.addresses import join
+from .extern_api.trucks import convoyRequest, joinBehind
+
+# exception imports
+from django.core.exceptions import ValidationError
+from .exceptions.invalid_input import AccelerationException, NoMemberException, TruckBrokenException
+
 # dirty imports
 from .daemons.subscriber import subscription
 
-# extern requests
-from .extern_api.addresses import join
-
-# error messages
-ERR_MSG_VALIDATION = 'Your input wasn\'t valid.'
-ERR_MSG_ACCESSABILITY = 'Truck not accessible'
-
-LEADER_POSITION = 1
-
 class Mutation(viewsets.ViewSet):
+# CONVOY
     def joinConvoy(self, request):
         try:
             truck = TruckEntity.objects.get(pk=ID)
@@ -48,7 +50,11 @@ class Mutation(viewsets.ViewSet):
                     truck.leadingTruckAddress = truckLeader
                     truck.full_clean()
                     truck.save()
-                    return HttpResponse(status=200)
+
+                if truckInFront:
+                    informTruckInFront = joinBehind(truckInFront)
+
+                return HttpResponse(status=200)
             elif response and response.status_code:
                 return HttpResponse('Currently this truck can\'t join the convoy', status=400)
             else:
@@ -60,6 +66,18 @@ class Mutation(viewsets.ViewSet):
         except Exception as e:
             return HttpResponse('Joining not possible.', status=500)
 
+    def joinBehind(self, request):
+        try:
+            truck = TruckEntity.objects.get(pk=ID)
+            if truck.position:
+                data = JSONParser().parse(request)
+                newTruckBehind = data['backTruckAddress']
+                truck.backTruckAddress = newTruckBehind
+                truck.save()
+            return HttpResponse(status=200)
+        except Exception as e:
+            return HttpResponse(status=500)
+
     def leaveConvoy(self, request):
         try:
             truck = TruckEntity.objects.get(pk=ID)
@@ -70,7 +88,7 @@ class Mutation(viewsets.ViewSet):
             truck.polling = False
             truck.closing = False
 
-            # Maybe unwanted, but nice to see
+            # TODO Maybe unwanted, but nice to see
             truck.targetSpeed = .0
             truck.acceleration = -1.0
             
@@ -82,6 +100,8 @@ class Mutation(viewsets.ViewSet):
         except Exception as e:
             return HttpResponse('Leaving not possible.', status=500)
 
+
+# INTACT
     def repair(self, request):
         try:
             truck = TruckEntity.objects.get(pk=ID)
@@ -106,6 +126,8 @@ class Mutation(viewsets.ViewSet):
         except Exception as e:
             return HttpResponse('Destroying not possible.', status=500)
 
+
+# ACCELERATE
     def accelerate(self, request):
         try:
             truck = TruckEntity.objects.get(pk=ID)
@@ -139,9 +161,11 @@ class Mutation(viewsets.ViewSet):
         except Exception as e:
             return HttpResponse('Acceleration settings are currently not possible.', status=500)
 
+
+# BULLY
     def startBullying(self, request):
         try:
-            truck = TruckEntity.objects.get(ID)
+            truck = TruckEntity.objects.get(pk=ID)
             if truck.position:
                 data = JSONParser().parse(request)
                 newTruckBehind = data['backTruckAddress']
@@ -164,7 +188,7 @@ class Mutation(viewsets.ViewSet):
             newTruckInFront = data['frontTruckAddress']
             frontTruckPosition = data['frontTruckPosition']
 
-            truck = TruckEntity.objects.get(ID)
+            truck = TruckEntity.objects.get(pk=ID)
             truckBehind = truck.backTruckAddress
             oldPosition = truck.position
             newPosition = frontTruckPosition + 1
@@ -179,9 +203,26 @@ class Mutation(viewsets.ViewSet):
             truck.save()
 
             # TODO eben checken ob der noch auf ne Variable verwiesen werden muss
-            Thread(finishBullying(truckBehind, newLeader, oldPosition, newPosition), daemon=True)
+            close = Thread(finishBullying(truckBehind, newLeader, oldPosition, newPosition), daemon=True)
+            close.start()
+
             return HttpResponse(status=200)
         except NoMemberException as e:
             return HttpResponse(e.message, status=404)
         except Exception as e:
             return HttpResponse(status=500)
+
+# TEST
+    def checkRequestTimes(self, request):
+        start = time.time()
+        response = convoyRequest('127.0.0.1:1032')
+        end = time.time()
+        diff = 1000 * (end - start)
+
+        data = {
+            'start': start,
+            'end': end,
+            'differenceInMs': diff,
+        }
+        return JsonResponse(data, status=200)
+        

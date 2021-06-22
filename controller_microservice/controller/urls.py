@@ -18,6 +18,9 @@ urlpatterns = [
 
     path('monitor', Monitor.as_view({
         'get': 'dataStacker',
+    })),
+    path('web', Monitor.as_view({
+        'get': 'web',
     }))
 
 ]

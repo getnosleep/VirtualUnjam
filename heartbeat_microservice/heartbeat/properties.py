@@ -3,7 +3,7 @@ from paho.mqtt.client import MQTTv311
 
 # Network Identification: MQTT Broker (self) -> fixed
 ID = 'heartbeatPublisher'
-INTERVAL = 0.025
+INTERVAL = 0.1
 ADDRESS = '127.0.0.1'
 PORT = 1028
 USERNAME = 'testUser'
