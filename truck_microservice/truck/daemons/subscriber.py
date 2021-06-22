@@ -1,9 +1,12 @@
 """[Docstring] Declares heartbeat thread."""
+from ..initializer import initialize
 from .callbacks import Callbacks
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
 from ..properties import ADDRESS_BROKER, PORT_BROKER, TOPIC_HEARTBEAT, USERNAME_BROKER, PASSWORD_BROKER
 import time
+
+__initialized__ = False
 
 class Subscriber(Thread):
     """[Docstring] Declares thread, subscribing to heartbeat broker."""
@@ -57,10 +60,18 @@ class Subscriber(Thread):
     def getCount(self) -> float:
         """[Docstring] Function serving current heatbeat."""
         return Callbacks.heartbeat
+    
+def __onStart__():
+    global __initialized__
+    if not __initialized__:
+        initialize()
+        __initialized__ = True
 
-def startSubscription():
+def startService():
+    # Initialization when a truck is startet
+    __onStart__()
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber
 
-subscription = startSubscription()
+subscription = startService()

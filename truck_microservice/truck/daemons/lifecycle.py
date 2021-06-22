@@ -39,8 +39,8 @@ class Lifecycle(Thread):
             if backTruck:
                 self.__accessTruckBehind__(backTruck)
             if frontTruck:
-                poll = self.__accessTruckInFront__(frontTruck)
-                if poll:
+                accessible = self.__accessTruckInFront__(frontTruck)
+                if not accessible:
                     bully()
 
     def __accessTruckBehind__(self, backTruck):
@@ -53,18 +53,18 @@ class Lifecycle(Thread):
     def __accessTruckInFront__(self, frontTruck):
         truckInFront = convoyRequest(frontTruck)
         if truckInFront and truckInFront.status_code == 200:
-            truck = truckInFront.json()
-            serialized = ConvoySerializer(data=truck)
-            if serialized.is_valid():
-                serialized.save()
-            return False
-        else:
-            truck = TruckEntity.objects.get(pk=ID)
-            TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
-            truck.frontTruckAddress = None
-            truck.polling = True
-            truck.save()
-            return True
+            if self.__truckAlignment__(truckInFront.json()):
+                return True
+        truck = TruckEntity.objects.get(pk=ID)
+        TruckEntity.objects.filter(address=truck.frontTruckAddress).delete()
+        truck.frontTruckAddress = None
+        truck.polling = True
+        truck.save()
+        return False
+
+    def __truckAlignment__(self, truck):
+        # TODO hier muss der Movement-Abgleich hin
+        return False
 
 def alive():
     lifecycle = Lifecycle()

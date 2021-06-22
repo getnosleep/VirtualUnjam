@@ -10,21 +10,24 @@ from .properties import ID
 from .models import TruckEntity
 from .serializer import Serializer
 
+def initialize():
+    trucks = TruckEntity.objects.all()
+    if trucks.exists():
+        TruckEntity.objects.all().delete()
+    truck = TruckEntity()
+
+    truck.save()
+    serializer = Serializer(truck, many=False)
+    return serializer.data
+
 class Initializer(viewsets.ViewSet):
     def init(self, request):
-        trucks = TruckEntity.objects.all()
-        if trucks.exists():
-            TruckEntity.objects.all().delete()
-        truck = TruckEntity()
-
-        truck.save()
-        serializer = Serializer(truck, many=False)
-        truckJSON = serializer.data
+        truckJSON = initialize()
         return JsonResponse(data=truckJSON, status=200)
     
     def truck(self, request):
         try:
-            truck = TruckEntity.objects.all()#get(pk=ID)
+            truck = TruckEntity.objects.all()
             if truck:
                 serializer = Serializer(truck, many=True)
                 data = {
