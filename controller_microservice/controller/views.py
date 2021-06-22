@@ -1,4 +1,5 @@
 # Create your views here.
+import json
 import re
 import requests
 
@@ -18,8 +19,10 @@ class Mutation(viewsets.ViewSet):
     def jonConvoy(self, request):
         try:
             requestData = JSONParser().parse(request)
+            truck = Callbacks.truckDictionary[requestData['id']]
+            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.post('http://' + requestData.truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.post('http://' + truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -30,8 +33,10 @@ class Mutation(viewsets.ViewSet):
     def leaveConvoy(self, request):
         try:
             requestData = JSONParser().parse(request)
+            truck = Callbacks.truckDictionary[requestData['id']]
+            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + requestData.truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.delete('http://' + truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -42,8 +47,10 @@ class Mutation(viewsets.ViewSet):
     def repair(self, request):
         try:
             requestData = JSONParser().parse(request)
+            truck = Callbacks.truckDictionary[requestData['id']]
+            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.post('http://' + requestData.truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.post('http://' + truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -54,8 +61,10 @@ class Mutation(viewsets.ViewSet):
     def destroy(self, request):
         try:
             requestData = JSONParser().parse(request)
+            truck = Callbacks.truckDictionary[requestData['id']]
+            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + requestData.truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.delete('http://' + truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -66,8 +75,14 @@ class Mutation(viewsets.ViewSet):
     def accelerate(self, request):
         try:
             requestData = JSONParser().parse(request)
+            truck = Callbacks.truckDictionary[requestData['id']]
+            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + requestData.truckAddress + '/truck/accelerate', None, headers=headers, timeout=MAX_TIMEOUT)
+            data = {
+                'targetSpeed': requestData['targetSpeed'],
+                'acceleration': requestData['acceleration']
+            }
+            val = requests.delete('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
