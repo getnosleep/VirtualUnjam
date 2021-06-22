@@ -5,15 +5,18 @@ from paho.mqtt.client import MQTTMessage
 class Callbacks:
     """[Docstring] Declares callback functions and holds actual heartbeat."""
 
-    truckDictionary = {}
+    truckDictionary: dict = {}
     
     @staticmethod
     def on_message(client, userdata, msg: MQTTMessage) -> None:
         """[Docstring] Declares functions, handling message callback."""
+        sortedTrucksList = {}
+        sortedTrucksDict = {}
         payload = msg.payload
         truckDict = json.loads(payload.decode('utf-8'))
-
-        # Auflistung nach ID -> Reihenfolge nach position
-
-        position = truckDict['position']
-        Callbacks.truckDictionary[position] = truckDict
+        trucksList = list(Callbacks.truckDictionary.values())
+        trucksList.append(truckDict)
+        sortedTrucksList = sorted(trucksList, key=lambda k: k['position'])
+        for truck in sortedTrucksList:
+            sortedTrucksDict[truck['id']] = truck
+        Callbacks.truckDictionary = sortedTrucksDict
