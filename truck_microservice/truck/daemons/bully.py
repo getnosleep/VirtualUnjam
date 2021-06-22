@@ -16,6 +16,10 @@ from ..extern_api.trucks import bullyAcknowledgement, pollRequest, startBullying
 def sort(dictionary: dict):
     return {key: value for key, value in sorted(dictionary.items(), key=lambda item: item[1])}
 
+def startBullyAlgorithm():
+    bully = BullyAlgorithm()
+    bully.start()
+
 def finishBullying(truckBehind, leader, oldPosition, newPosition):
     # Inform the Truck behind
     acknowledgement = bullyAcknowledgement(truckBehind, leader, newPosition)

@@ -30,15 +30,15 @@ urlpatterns = [
         'post': 'joinConvoy',
         'delete': 'leaveConvoy',
     })),
+    path('intact', Mutation.as_view({
+        'post': 'repair',
+        'delete': 'destroy',
+    })),
     path('accelerate', Mutation.as_view({
         'post': 'accelerate',
     })),
     path('bully', Mutation.as_view({
         'post': 'startBullying',
         'put': 'updateAfterBullying',
-    })),
-    path('intact', Mutation.as_view({
-        'post': 'repair',
-        'delete': 'destroy',
     })),
 ]

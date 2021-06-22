@@ -1,5 +1,6 @@
 # library imports
 import requests
+import json
 from requests.exceptions import Timeout
 
 # property imports
@@ -11,7 +12,8 @@ def convoyRequest(address):
     try:
         # Naja, hier muss man nochmal was machen
         data = {'truckId': ID, 'address': ADDRESS_SELF}
-        return requests.get('http://' + address + '/api/truck', data=data, timeout=MAX_TIMEOUT)
+        headers = {'content-type': 'application/json'}
+        return requests.post('http://' + address + '/api/truck', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
 
@@ -30,7 +32,8 @@ def accelerate(address, targetSpeed, acceleration, heartbeatTick):
             'acceleration': acceleration,
             'heartbeatTick': heartbeatTick,
         }
-        return requests.post('http://' + address + '/api/accelerate', timeout=MAX_TIMEOUT)
+        headers = {'content-type': 'application/json'}
+        return requests.post('http://' + address + '/api/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
 
@@ -42,7 +45,8 @@ def bullyAcknowledgement(address, leader, position):
             'frontTruckAddress': ADDRESS_SELF,
             'frontTruckPosition': position,
         }
-        return requests.put('http://' + address + '/api/bully', timeout=MAX_TIMEOUT)
+        headers = {'content-type': 'application/json'}
+        return requests.put('http://' + address + '/api/bully', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
 
@@ -52,7 +56,8 @@ def startBullying(address):
         data = {
             'backTruckAddress': ADDRESS_SELF,
         }
-        return requests.post('http://' + address + '/api/bully', data=data, timeout=MAX_TIMEOUT)
+        headers = {'content-type': 'application/json'}
+        return requests.post('http://' + address + '/api/bully', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
 

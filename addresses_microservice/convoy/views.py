@@ -1,13 +1,11 @@
+from codecs import register
 from django.http import HttpResponse, JsonResponse
-from requests import status_codes
-from requests.api import post
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 
 class ConvoyViewSet(viewsets.ViewSet):
     # {POSITION: ADDRESS_SELF}
     registered = {}
-    
     def register(self, request):
         """
             POST: Registrates the requesting truck
@@ -23,13 +21,35 @@ class ConvoyViewSet(viewsets.ViewSet):
         try:
             data = JSONParser().parse(request)
             address = data['address']
-
-            if address and not address in self.registered.values():
-                position = len(self.registered) + 1
-                self.registered[position] = address
+            if address:
                 
+                if address in self.registered.values():
+                    keys = list(self.registered.keys())
+                    values = list(self.registered.values())
+                    position = keys[values.index(address)]
+                else:
+                    position = len(self.registered) + 1
+                    self.registered[position] = address
+                
+                keys = list(self.registered.keys())
+                values = list(self.registered.values())
+                index = values.index(address)
+
+                try:
+                    print(values[index+1])
+                    print(len(values))
+                except:
+                    pass
+
+                truckInFront = values[index-1] if (index-1) >= 0 else None
+                truckBehind = values[index+1] if (index+1) < len(values) else None
+                truckLeader = values[0]
+
                 data = {
-                    'position': position
+                    'position': position,
+                    'truckInFront': truckInFront,
+                    'truckBehind': truckBehind,
+                    'truckLeader': truckLeader
                 }
                 return JsonResponse(data, status=200)
             else:
