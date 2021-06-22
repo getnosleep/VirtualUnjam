@@ -26,22 +26,22 @@ urlpatterns = [
 
     # Mutations
     path('convoy', Mutation.as_view({
-        'post': 'joinConvoy',
+        'post': 'joinConvoy', # ADMIN
         'put': 'joinBehind',
-        'delete': 'leaveConvoy',
+        'delete': 'leaveConvoy', # ADMIN
     })),
     path('intact', Mutation.as_view({
-        'post': 'repair',
-        'delete': 'destroy',
+        'post': 'repair', # ADMIN
+        'delete': 'destroy', # ADMIN
     })),
     path('accelerate', Mutation.as_view({
-        'post': 'accelerate',
+        'post': 'accelerate', # ADMIN
     })),
     path('bully', Mutation.as_view({
         'post': 'startBullying',
         'put': 'updateAfterBullying',
     })),
     path('test', Mutation.as_view({
-        'get': 'checkRequestTimes',
+        'get': 'checkRequestTimes', # just dirty shit
     }))
 ]
