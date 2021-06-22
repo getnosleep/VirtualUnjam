@@ -5,8 +5,6 @@ from rest_framework import viewsets
 from django.http.response import JsonResponse, HttpResponse
 from rest_framework.parsers import JSONParser
 
-from zope.pagetemplate.pagetemplatefile import PageTemplateFile
-from zope.pagetemplate.pagetemplate import PageTemplate
 from django.template import Template, Context
 
 # dirty imports
@@ -78,12 +76,13 @@ class Monitor(viewsets.ViewSet):
 
     def web(self, request):
             template = """
+            {% load static %}
             <!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>Virtuel Unjam</title>
-        <script src="doch.js"></script>
+        <script src="{% static 'doch.js' %}"></script>
     <style>
       table, th {
        border: 3px solid black;
@@ -131,6 +130,9 @@ class Monitor(viewsets.ViewSet):
     </html>
             """
 
+            for key, value in Callbacks.truckDictionary.items():
+                print(key,value)
+
             t = Template(template)
             c = Context({"pos": 1,
                          "speed": 20,
@@ -143,12 +145,6 @@ class Monitor(viewsets.ViewSet):
                          "distance2": 12123462,
                          })
             print(t.render(c))
-            # pt = mypt()
-            # pt.write(template)
-            # pt=pt(truckdata=truckdata()).strip()
-            # print(pt)
-            # my_pt = PageTemplateFile("webPage.html")
-            # my_pt = my_pt(truckdata=truckdata()).strip()
             return HttpResponse(t.render(c), status=200)
 
 
@@ -189,8 +185,3 @@ class truckdata(object):
     def getDistance(self) :return "150374.0654204"
 
 
-class mypt(PageTemplate):
-    def pt_getContext(self, args=(), options={}, **kw):
-       rval = PageTemplate.pt_getContext(self, args=args)
-       options.update(rval)
-       return options
