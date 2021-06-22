@@ -1,7 +1,7 @@
 """[Docstring] Defines which api calls respective."""
 from django.urls import path
 
-from .views import Monitor
+from .views import Mutation, Monitor
 
 urlpatterns = [
     # Initialization
@@ -21,6 +21,19 @@ urlpatterns = [
     })),
     path('web', Monitor.as_view({
         'get': 'web',
+    })),
+
+    # Mutations
+    path('convoy', Mutation.as_view({
+        'post': 'joinConvoy', # ADMIN
+        'delete': 'leaveConvoy', # ADMIN
+    })),
+    path('intact', Mutation.as_view({
+        'post': 'repair', # ADMIN
+        'delete': 'destroy', # ADMIN
+    })),
+    path('accelerate', Mutation.as_view({
+        'post': 'accelerate', # ADMIN
     }))
 
 ]

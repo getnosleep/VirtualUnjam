@@ -1,5 +1,6 @@
 # Create your views here.
 import re
+import requests
 
 from rest_framework import viewsets
 from django.http.response import JsonResponse, HttpResponse
@@ -10,6 +11,69 @@ from django.template import Template, Context
 # dirty imports
 from .daemons.callbacks import Callbacks
 from .daemons.subscriber import subscription
+from .properties import MAX_TIMEOUT
+
+class Mutation(viewsets.ViewSet):
+
+    def jonConvoy(self, request):
+        try:
+            requestData = JSONParser().parse(request)
+            headers = {'content-type': 'application/json'}
+            val = requests.post('http://' + requestData.truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
+
+    def leaveConvoy(self, request):
+        try:
+            requestData = JSONParser().parse(request)
+            headers = {'content-type': 'application/json'}
+            val = requests.delete('http://' + requestData.truckAddress + '/truck/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
+
+    def repair(self, request):
+        try:
+            requestData = JSONParser().parse(request)
+            headers = {'content-type': 'application/json'}
+            val = requests.post('http://' + requestData.truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
+
+    def destroy(self, request):
+        try:
+            requestData = JSONParser().parse(request)
+            headers = {'content-type': 'application/json'}
+            val = requests.delete('http://' + requestData.truckAddress + '/truck/intact', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
+
+    def accelerate(self, request):
+        try:
+            requestData = JSONParser().parse(request)
+            headers = {'content-type': 'application/json'}
+            val = requests.delete('http://' + requestData.truckAddress + '/truck/accelerate', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
 
 class Monitor(viewsets.ViewSet):
 
@@ -61,8 +125,6 @@ class Monitor(viewsets.ViewSet):
         except Exception as e:
             pass
         return HttpResponse(success, status=status)
-
-
 
     def truckAdresses(self, request):
         try:
