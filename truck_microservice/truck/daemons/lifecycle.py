@@ -19,13 +19,13 @@ class Lifecycle(Thread):
 
     def run(self):
         self.__convoyUpdate__()
-        self.__pollingCheck__()
+        # self.__pollingCheck__()
 
     def __requestTruck__(self, trucksAddress):
         try:
             otherTruck = convoyRequest(trucksAddress)
             if otherTruck.status_code == 200:
-                truck = JSONParser().parse(otherTruck)
+                truck = otherTruck.json()
                 if truck['position']:
                     return truck
         except:
@@ -68,15 +68,18 @@ class Lifecycle(Thread):
         elif leader:
             # No thread needed
             print('I am the leader')
-            self.__accessTruckBehind__(backTruck)
+            # self.__accessTruckBehind__(backTruck)
         else:
             # Here we need Threads
             print('I need instructions what to do')
-            behind = Thread(self.__accessTruckBehind__(backTruck))
-            front = Thread(self.__accessTruckInFront__(frontTruck))
+            # behind = Thread(self.__accessTruckBehind__(backTruck))
+            # front = Thread(self.__accessTruckInFront__(frontTruck))
 
-            behind.join()
-            front.join()
+            # behind.start()
+            # front.start()
+
+            # behind.join()
+            # front.join()
             pass
 
     def __pollingCheck__(self):

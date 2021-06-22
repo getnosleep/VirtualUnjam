@@ -26,8 +26,12 @@ urlpatterns = [
     })),
 
     # Mutations
+    # path('leader', Mutation.as_view({
+    #     'post', 'leaderHandshake',
+    # })),
     path('convoy', Mutation.as_view({
         'post': 'joinConvoy',
+        'put': 'joinBehind',
         'delete': 'leaveConvoy',
     })),
     path('intact', Mutation.as_view({

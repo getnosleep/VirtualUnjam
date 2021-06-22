@@ -7,8 +7,9 @@ from requests.exceptions import Timeout
 from ..properties import ID, ADDRESS_SELF, MAX_TIMEOUT
 
 """Intern convoy requests:"""
+
+# get:truck
 def convoyRequest(address):
-    """@returns the status of the requested truck"""
     try:
         # Naja, hier muss man nochmal was machen
         data = {'truckId': ID, 'address': ADDRESS_SELF}
@@ -17,15 +18,44 @@ def convoyRequest(address):
     except Timeout:
         return False
 
+# get:poll
 def pollRequest(address):
-    """@returns the status of the requested truck"""
     try:
         return requests.get('http://' + address + '/api/poll', timeout=MAX_TIMEOUT)
     except Timeout:
         return False
 
+# post:leader
+# def greetAsLeader(address):
+#     try:
+#         data = {
+#             'leader': ADDRESS_SELF,
+#         }
+#         headers = {'content-type': 'application/json'}
+#         return requests.post('http://' + address + '/api/leader', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+#     except Timeout:
+#         return False
+
+# put:convoy
+def joinBehind(address):
+    try:
+        data = {
+            'backTruckAddress': ADDRESS_SELF,
+        }
+        headers = {'content-type': 'application/json'}
+        return requests.put('http://' + address + '/api/convoy', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+    except Timeout:
+        return False
+
+# post:intact
+def crashTruck(address):
+    try:
+        return requests.delete('http://' + address + '/api/intact', timeout=MAX_TIMEOUT)
+    except Timeout:
+        return False
+
+# post:accelerate
 def accelerate(address, targetSpeed, acceleration, heartbeatTick):
-    """@returns the status of the requested truck"""
     try:
         data = {
             'targetSpeed': targetSpeed,
@@ -37,8 +67,19 @@ def accelerate(address, targetSpeed, acceleration, heartbeatTick):
     except Timeout:
         return False
 
+# post:bully
+def startBullying(address):
+    try:
+        data = {
+            'backTruckAddress': ADDRESS_SELF,
+        }
+        headers = {'content-type': 'application/json'}
+        return requests.post('http://' + address + '/api/bully', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+    except Timeout:
+        return False
+
+# put:bully
 def bullyAcknowledgement(address, leader, position):
-    """@returns the status of the requested truck"""
     try:
         data = {
             'newLeader': leader,
@@ -49,16 +90,3 @@ def bullyAcknowledgement(address, leader, position):
         return requests.put('http://' + address + '/api/bully', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
-
-def startBullying(address):
-    """@returns the status of the requested truck"""
-    try:
-        data = {
-            'backTruckAddress': ADDRESS_SELF,
-        }
-        headers = {'content-type': 'application/json'}
-        return requests.post('http://' + address + '/api/bully', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
-    except Timeout:
-        return False
-
-    # Hier muessen noch die Mutations mit bei, wie bspw. Ich bin neuer Truck hinter dir, oder Ich leave den Convoy vor dir oder ich bin Fuehrer. Akzeptier das oder geh kaputt...

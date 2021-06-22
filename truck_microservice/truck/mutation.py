@@ -1,5 +1,6 @@
 # library imports
 from threading import Thread
+from .extern_api.trucks import joinBehind
 from .daemons.bully import finishBullying, bully
 from .exceptions.invalid_input import AccelerationException, NoMemberException, TruckBrokenException
 from django.core.exceptions import ValidationError
@@ -48,7 +49,11 @@ class Mutation(viewsets.ViewSet):
                     truck.leadingTruckAddress = truckLeader
                     truck.full_clean()
                     truck.save()
-                    return HttpResponse(status=200)
+
+                if truckInFront:
+                    informTruckInFront = joinBehind(truckInFront)
+
+                return HttpResponse(status=200)
             elif response and response.status_code:
                 return HttpResponse('Currently this truck can\'t join the convoy', status=400)
             else:
@@ -59,6 +64,18 @@ class Mutation(viewsets.ViewSet):
             return HttpResponse(e.message, status=404)
         except Exception as e:
             return HttpResponse('Joining not possible.', status=500)
+
+    def joinBehind(self, request):
+        try:
+            truck = TruckEntity.objects.get(pk=ID)
+            if truck.position:
+                data = JSONParser().parse(request)
+                newTruckBehind = data['backTruckAddress']
+                truck.backTruckAddress = newTruckBehind
+                truck.save()
+            return HttpResponse(status=200)
+        except Exception as e:
+            return HttpResponse(status=500)
 
     def leaveConvoy(self, request):
         try:
@@ -141,7 +158,7 @@ class Mutation(viewsets.ViewSet):
 
     def startBullying(self, request):
         try:
-            truck = TruckEntity.objects.get(ID)
+            truck = TruckEntity.objects.get(pk=ID)
             if truck.position:
                 data = JSONParser().parse(request)
                 newTruckBehind = data['backTruckAddress']
@@ -164,7 +181,7 @@ class Mutation(viewsets.ViewSet):
             newTruckInFront = data['frontTruckAddress']
             frontTruckPosition = data['frontTruckPosition']
 
-            truck = TruckEntity.objects.get(ID)
+            truck = TruckEntity.objects.get(pk=ID)
             truckBehind = truck.backTruckAddress
             oldPosition = truck.position
             newPosition = frontTruckPosition + 1
