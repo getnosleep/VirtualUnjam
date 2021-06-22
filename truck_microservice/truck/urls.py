@@ -10,8 +10,7 @@ urlpatterns = [
     # For Development purpose only !!!
     path('05FD548CB946F6AEFD3831FE4F1FD046E1827757E07F877F3A087B0ED98A03BF', Initializer.as_view({
         'get': 'truck',
-        'post': 'recommendedInit',
-        'put': 'specificInit',
+        'post': 'init',
     })),
 
     # Queries
@@ -26,9 +25,6 @@ urlpatterns = [
     })),
 
     # Mutations
-    # path('leader', Mutation.as_view({
-    #     'post', 'leaderHandshake',
-    # })),
     path('convoy', Mutation.as_view({
         'post': 'joinConvoy',
         'put': 'joinBehind',

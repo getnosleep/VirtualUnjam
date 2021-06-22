@@ -169,14 +169,10 @@ class Mutation(viewsets.ViewSet):
             if truck.position:
                 data = JSONParser().parse(request)
                 newTruckBehind = data['backTruckAddress']
-
-                
                 truck.backTruckAddress = newTruckBehind
                 truck.polling = True
                 truck.save()
-
                 bully()
-
             return HttpResponse(status=200)
         except Exception as e:
             return HttpResponse(status=500)
