@@ -16,7 +16,7 @@ from .properties import COUNT, INTERVAL, ID_BROKER, ADDRESS_BROKER, PORT_BROKER,
 
 class Mutation(viewsets.ViewSet):
 
-    def jonConvoy(self, request):
+    def joinConvoy(self, request):
         try:
             requestData = JSONParser().parse(request)
             truck = Callbacks.truckDictionary[requestData['id']]
@@ -36,7 +36,7 @@ class Mutation(viewsets.ViewSet):
             truck = Callbacks.truckDictionary[requestData['id']]
             truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + truckAddress + '/api/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.delete('http://' + truckAddress + '/api/convoy', timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -64,12 +64,14 @@ class Mutation(viewsets.ViewSet):
             truck = Callbacks.truckDictionary[requestData['id']]
             truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + truckAddress + '/api/intact', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.delete('http://' + truckAddress + '/api/intact',timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
                 return HttpResponse(status=400)
         except Exception as e:
+            print("hiersagen")
+            print(e)
             return HttpResponse(e, status=404)
 
     def accelerate(self, request):
@@ -88,8 +90,6 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            print("hier bitter")
-            print(e)
             return HttpResponse(e, status=404)
 
     def inject(self, request):
@@ -115,7 +115,7 @@ class Mutation(viewsets.ViewSet):
     def flatline(self, request):
         try:
             headers = {'content-type': 'application/json'}
-            val = requests.delete('http://' + ADDRESS_HEARTBEAT + '/heartbeat/needle', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.delete('http://' + ADDRESS_HEARTBEAT + '/heartbeat/needle', timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -184,10 +184,15 @@ class Monitor(viewsets.ViewSet):
     <button onclick=sendit()>send JS </button>
     <button onclick=accelerate()>accelerate</button>
     <input type="text" name="accelerateFeld" id="accelerate_Feld" onclick="this.value=' '" value="truckID">
+    <input type="text" name="accelerateFeld" id="target_Feld" onclick="this.value=' '" value="targertSpeed">
     <button onclick=decelerate()>decelerate</button>
+    <input type="text" name="accelerateFeld" id="decelerate_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=destroy()>destroy</button>
+    <input type="text" name="accelerateFeld" id="destroy_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=repair()>repair</button>
+    <input type="text" name="accelerateFeld" id="repair_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=joinConvoy()>joinConvoy</button>
+    <input type="text" name="accelerateFeld" id="join_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=leaveConvoy()>leaveConvoy</button>
     
 
