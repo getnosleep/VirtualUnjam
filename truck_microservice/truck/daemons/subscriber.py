@@ -3,10 +3,8 @@ from ..models import TruckEntity
 from .callbacks import Callbacks
 from paho.mqtt.client import Client, MQTTv311
 from threading import Thread
-from ..properties import ADDRESS_BROKER, PORT_BROKER, TOPIC_HEARTBEAT, USERNAME_BROKER, PASSWORD_BROKER
+from ..properties import ADDRESS_BROKER, PORT_BROKER, TOPIC_HEARTBEAT, USERNAME_BROKER, PASSWORD_BROKER, ADDRESS_SELF
 import time
-
-__initialized__ = False
 
 class Subscriber(Thread):
     """[Docstring] Declares thread, subscribing to heartbeat broker."""
@@ -25,7 +23,7 @@ class Subscriber(Thread):
     def run(self) -> None:
         """[Docstring] Function handling lifetime of a subscriber."""
         self.__running__ = True
-        self.__client__ = Client(client_id="heartbeatSubscriber",
+        self.__client__ = Client(client_id=ADDRESS_SELF,
                                 clean_session=False,
                                 userdata=None,
                                 protocol=MQTTv311,
@@ -60,20 +58,8 @@ class Subscriber(Thread):
     def getCount(self) -> float:
         """[Docstring] Function serving current heatbeat."""
         return Callbacks.heartbeat
-    
-def __onStart__():
-    global __initialized__
-    if not __initialized__:
-        trucks = TruckEntity.objects.all()
-        if trucks.exists():
-            TruckEntity.objects.all().delete()
-        truck = TruckEntity()
-        truck.save()
-        __initialized__ = True
 
 def startService():
-    # Initialization when a truck is startet
-    # __onStart__()
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber

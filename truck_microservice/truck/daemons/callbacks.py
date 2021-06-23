@@ -14,6 +14,7 @@ class Callbacks:
         payload = msg.payload
         tick = int.from_bytes(payload, "big")
         Callbacks.heartbeat = tick
+        print(tick)
         if tick%2 == 0:
             move()
         elif tick%2 == 1:

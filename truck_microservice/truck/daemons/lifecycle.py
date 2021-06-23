@@ -22,12 +22,8 @@ class Lifecycle(Thread):
 
     def __convoyUpdate__(self):
         truck = TruckEntity.objects.get(pk=ID)
-
-        polling = truck.polling
-
         frontTruck = truck.frontTruckAddress
         backTruck = truck.backTruckAddress
-
         leader = not frontTruck and backTruck
         lonely = not (frontTruck or backTruck)
 
@@ -63,9 +59,13 @@ class Lifecycle(Thread):
         truck.save()
         return False
 
-    def __truckAlignment__(self, truck):
+    def __truckAlignment__(self, truckInFront):
         # TODO hier muss der Movement-Abgleich hin
-        return False
+        truck = TruckEntity.objects.get(pk=ID)
+        if truck.polling or truckInFront['polling'] or truckInFront['position'] and truckInFront['position']+1 == truck.position and truckInFront['leadingTruckAddress'] == truck.leadingTruckAddress:
+            return True
+        else:
+            return False
 
 def alive():
     lifecycle = Lifecycle()

@@ -1,5 +1,6 @@
 # library imports
 from threading import Thread
+import time
 
 # property imports
 from ..properties import ID, ADDRESS_SELF
@@ -35,18 +36,22 @@ class BullyAlgorithm(Thread):
         self.tries = 0
     
     def run(self):
-        while not self.failed and not self.success:
+        while not self.failed and not self.success and self.tries < 3:
             self.__bully__()
+            print('waiting')
+            time.sleep(10)
 
     def __bully__(self):
         print('bully')
         registerRequest = registered()
         if registerRequest and registerRequest.status_code == 200:
             addresses = registerRequest.json()
-            frontTruck, position = self.__findPosition__(addresses)
-            if frontTruck == ADDRESS_SELF and position == 1:
+            frontTruck = self.__findPosition__(addresses)
+            if frontTruck == ADDRESS_SELF:
+                print('imma leader now')
                 self.__makeLeader__()
-            elif frontTruck and position:
+            else:
+                print('imma follower')
                 self.__actualizePosition__(frontTruck)
         else:
             self.tries += 1
@@ -59,7 +64,7 @@ class BullyAlgorithm(Thread):
         # Iterate till you find own address
         for pos, address in addresses.items():
             if address == ADDRESS_SELF:
-                return (currentFrontTruck, position)
+                return currentFrontTruck
             
             currentTruckRequest = pollRequest(address)
             # Increment / update for every responding truck
@@ -71,7 +76,7 @@ class BullyAlgorithm(Thread):
         
         # In case of not reacting to own address
         self.failed = True
-        return (None, None)
+        return None
 
     def __makeLeader__(self):
         """Sets leader attributes, gives acknowledgement to truck in back and overwrites the own convoy service position"""
@@ -81,13 +86,13 @@ class BullyAlgorithm(Thread):
         oldPosition = truck.position
         truckBehind = truck.backTruckAddress
 
+        # Close the bully chain
+        success = finishBullying(truckBehind, ADDRESS_SELF, oldPosition, 1)
+
         truck.frontTruckAddress = None
         truck.position = 1
         truck.leadingTruckAddress = ADDRESS_SELF
         truck.save()
-
-        # Close the bully chain
-        success = finishBullying(truckBehind, ADDRESS_SELF, oldPosition, 1)
 
         if success:
             self.success = True
@@ -102,7 +107,7 @@ class BullyAlgorithm(Thread):
 
         # Tell the truck in front to start bullying
         bullyChain = startBullying(frontTruck)
-        if not bullyChain or not bullyChain.status_code == 200:
+        if bullyChain and bullyChain.status_code == 200:
             self.success = True
         else:
             self.tries += 1
