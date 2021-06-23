@@ -16,11 +16,8 @@ class Callbacks:
         tick = int.from_bytes(payload, "big")
         Callbacks.heartbeat = tick
         if tick%3 == 0:
-            print(f'lifecycle\t{tick}')
             startLifecycle()
         elif tick%3 == 1:
-            print(f'drive:\t\t{tick}')
             startDrive()
         elif tick%3 == 2:
-            print(f'movement:\t{tick}')
             startMovement()

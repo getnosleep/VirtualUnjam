@@ -60,6 +60,7 @@ class Drive(Thread):
                 elif sectionFrontTruck >= sectionSelf:
                     # Best case -> correct ordering
                     currentSection = sectionFrontTruck - distanceSelf - lengthFrontTruck
+                    distance = distanceSelf + lengthFrontTruck
                 elif sectionFrontTruck < sectionSelf:
                     # Worst case -> wrong ordering
                     self.__leave__()
@@ -70,6 +71,7 @@ class Drive(Thread):
                 truck.acceleration = accelerationFrontTruck
                 truck.targetSpeed = targetSpeedFrontTruck
                 truck.currentRouteSection = currentSection
+                truck.currentDistance = distance
                 truck.full_clean()
                 truck.save()
                 return True

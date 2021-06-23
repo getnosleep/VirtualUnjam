@@ -84,13 +84,8 @@ class ConvoyViewSet(viewsets.ViewSet):
             oldPosition = data['oldPosition']
             newPosition = data['newPosition']
             truckAddress = data['address']
-
-            print(f'old: {oldPosition}\tnew:{newPosition}\t{truckAddress}')
-
             del self.registered[oldPosition]
             self.registered[newPosition] = truckAddress
-
-            print(self.registered)
             return HttpResponse(status=200)
         except:
             return HttpResponse('Possibly wrong input', status=400)
