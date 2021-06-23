@@ -87,7 +87,7 @@ class Drive(Thread):
                     crashTruck(frontTruckAddress)
                     return False
                 elif close:
-                    targetSpeed = targetSpeedFrontTruck + 5
+                    targetSpeed = targetSpeedFrontTruck + 5 / 3.6
                     if targetSpeed > MAX_SPEED:
                         targetSpeed = MAX_SPEED
                     acceleration = accelerationFrontTruck + 0.5

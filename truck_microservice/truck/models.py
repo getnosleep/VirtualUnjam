@@ -17,7 +17,7 @@ class TruckEntity(models.Model):
     currentRouteSection = models.FloatField(default=.0, validators=[MinValueValidator(.0)])
     currentSpeed = models.FloatField(default=.0, validators=[MinValueValidator(MIN_SPEED), MaxValueValidator(MAX_SPEED)])
     acceleration = models.FloatField(default=.0, validators=[MinValueValidator(MIN_ACCELERATION), MaxValueValidator(MAX_ACCELERATION)])
-    targetRouteSection = models.FloatField(default=2000.0, validators=[MinValueValidator(.0)])
+    targetRouteSection = models.FloatField(default=20000.0, validators=[MinValueValidator(.0)])
     targetSpeed = models.FloatField(default=.0, validators=[MinValueValidator(MIN_SPEED), MaxValueValidator(MAX_SPEED)])
     
     # Convoy
