@@ -1,5 +1,9 @@
 """Some values the truck needs to know about the network (Self, Convoy, Admin-Service, and MQTT)"""
 # Network Identification: As Subscriber of MQTT Broker -> fixed
+<<<<<<< HEAD
+=======
+
+>>>>>>> c3df479a8cd95e79fae016df3ceeb2518a678dca
 
 ID_BROKER = 'monitorSubscriber'
 ADDRESS_BROKER = '127.0.0.1'

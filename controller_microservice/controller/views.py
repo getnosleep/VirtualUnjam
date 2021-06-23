@@ -73,6 +73,7 @@ class Mutation(viewsets.ViewSet):
             return HttpResponse(e.message, status=404)
 
     def accelerate(self, request):
+<<<<<<< HEAD
         try:
             requestData = JSONParser().parse(request)
             truck = Callbacks.truckDictionary[requestData['id']]
@@ -107,6 +108,24 @@ class Mutation(viewsets.ViewSet):
                 return HttpResponse(status=400)
         except Exception as e:
             return HttpResponse(e.message, status=404)
+=======
+        #try:
+        requestData = JSONParser().parse(request)
+        truck = Callbacks.truckDictionary[requestData['id']]
+        truckAddress = truck['address']
+        headers = {'content-type': 'application/json'}
+        data = {
+            'targetSpeed': requestData['targetSpeed'],
+            'acceleration': requestData['acceleration']
+        }
+        val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+        if val.status_code == 200:
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
+        #except Exception as e:
+        #    return HttpResponse(e.message, status=404)
+>>>>>>> c3df479a8cd95e79fae016df3ceeb2518a678dca
 
     def inject(self, request):
         try:
@@ -210,6 +229,7 @@ class Monitor(viewsets.ViewSet):
     <table style="width:80% ">
             <thead>
             <tr>
+                <th>truckid</th>
                 <th>truckpos</th>
                 <th>speed</th>
                 <th>distance</th>
@@ -218,26 +238,32 @@ class Monitor(viewsets.ViewSet):
 
             <tbody>
             <tr>
+                <td >{{id}}</td>
                 <td >{{pos}}</td>
                 <td >{{speed}}</td>
                 <td >{{distance}}</td>
             </tr>
             <tr>
+            
+                <td >{{id1}}</td>
                 <td >{{pos1}}</td>
                 <td >{{speed1}}</td>
                 <td >{{distance1}}</td>
             </tr>
             <tr>
+                <td >{{id2}}</td>
                 <td >{{pos2}}</td>
                 <td >{{speed2}}</td>
                 <td >{{distance2}}</td>
             </tr>
             <tr>
+                <td >{{id3}}</td>
                 <td >{{pos3}}</td>
                 <td >{{speed3}}</td>
                 <td >{{distance3}}</td>
             </tr>
             <tr>
+                <td >{{id4}}</td>
                 <td >{{pos4}}</td>
                 <td >{{speed4}}</td>
                 <td >{{distance4}}</td>
@@ -247,6 +273,13 @@ class Monitor(viewsets.ViewSet):
 
         </table>
     <button onclick=sendit()>send JS </button>
+    <button onclick=accelerate()>accelerate</button>
+    <input type="text" name="accelerateFeld" id="accelerate_Feld" onclick="this.value=' '" value="truckID">
+    <button onclick=decelerate()>decelerate</button>
+    <button onclick=destroy()>destroy</button>
+    <button onclick=repair()>repair</button>
+    <button onclick=joinConvoy()>joinConvoy</button>
+    <button onclick=leaveConvoy()>leaveConvoy</button>
 
     </body>
     </html>
@@ -254,15 +287,17 @@ class Monitor(viewsets.ViewSet):
             truck1=[]
             for value in Callbacks.truckDictionary.values():
                 print(value)
+                truck1.append(value['id'])
                 truck1.append(value['position'])
-                truck1.append(value['currentSpeed'])
+                truck1.append(value['currentSpeed']*3.6)
                 truck1.append(value['currentRouteSection'])
                 print(value['position'])
 
             t = Template(template)
-            c = Context({"pos": truck1[0],
-                         "speed": truck1[1]*3.6,
-                         "distance": truck1[2],
+            c = Context({"id": truck1[0],
+                         "pos": truck1[1],
+                         "speed": truck1[2],
+                         "distance": truck1[3],
                          "pos1": 2,
                          "speed1": 22,
                          "distance1": 123262,
