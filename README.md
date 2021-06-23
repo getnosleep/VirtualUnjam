@@ -1,6 +1,9 @@
-# VirtualUnjam @ https://github.com/getnosleep/VirtualUnjam
+# VirtualUnjam
+
 Microservices for a traffic simulation.
 This project is created as a school project and can be used free.
+
+## @ https://github.com/getnosleep/VirtualUnjam
 
 Different truck-microservices are represented by the 'truck-microservice'. In combination with the Heartbeat Microservice,
 the Address Microservice and a few small hints what to do, the trucks behave intelligent and prevent traffic jams.
