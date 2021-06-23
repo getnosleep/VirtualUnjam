@@ -89,24 +89,6 @@ class Mutation(viewsets.ViewSet):
                 return HttpResponse(status=400)
         except Exception as e:
             return HttpResponse(e.message, status=404)
-    
-    def accelerate(self, request):
-        try:
-            requestData = JSONParser().parse(request)
-            truck = Callbacks.truckDictionary[requestData['id']]
-            truckAddress = truck['address']
-            headers = {'content-type': 'application/json'}
-            data = {
-                'targetSpeed': requestData['targetSpeed'],
-                'acceleration': requestData['acceleration']
-            }
-            val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
-            if val.status_code == 200:
-                return HttpResponse(status=200)
-            else:
-                return HttpResponse(status=400)
-        except Exception as e:
-            return HttpResponse(e.message, status=404)
 
     def inject(self, request):
         try:
