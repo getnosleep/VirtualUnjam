@@ -70,7 +70,7 @@ class Movement(Thread):
         else:
             s, v, targetVelocity = self.__acceleratingVelocity__(s_0, v_0, v_1, a, t)
         
-        print(f'Position: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
+        # print(f'Position: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
 
         if not s or not v:
             # standing still
@@ -112,6 +112,6 @@ class Movement(Thread):
         except:
             raise Exception("Mointoring publish failed")
 
-def move():
+def startMovement():
     movement = Movement()
     movement.start()

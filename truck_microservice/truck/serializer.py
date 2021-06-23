@@ -42,6 +42,7 @@ class ConvoySerializer(serializers.ModelSerializer):
             'targetRouteSection',
             'targetSpeed',
 
+            'leadingTruckAddress',
             'position',
             'polling',
             'broken',

@@ -59,9 +59,9 @@ class Subscriber(Thread):
         """[Docstring] Function serving current heatbeat."""
         return Callbacks.heartbeat
 
-def startService():
+def startBackgroundService():
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber
 
-subscription = startService()
+subscription = startBackgroundService()
