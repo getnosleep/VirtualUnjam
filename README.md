@@ -1,4 +1,4 @@
-# VirtualUnjam
+# VirtualUnjam @ https://github.com/getnosleep/VirtualUnjam
 Microservices for a traffic simulation.
 This project is created as a school project and can be used free.
 
@@ -11,11 +11,11 @@ the Address Microservice and a few small hints what to do, the trucks behave int
 
 ## PIP packages to install
   - django
-  - django-cors-headers
   - djangorestframework
   - django-rest-swagger
   - paho-mqtt
   - validation
+
 
 
 # How to start this project?
@@ -23,8 +23,7 @@ the Address Microservice and a few small hints what to do, the trucks behave int
   - Mosquitto mqtt-broker settings are set to 'Port 1883'. Either use this port or change the settings in tyhe 'properties.py's in this project
 
 2. To install the needed pip packages, 'cd' to the 'requirements' file and start:
-    `pip3 install -r requirements` (Linux)
-    `python -m pip install -r requirements` (Windows)
+    `pip3 install -r requirements`
 
 3. Copy the trucks microservice as many times as you want to have represented a truck in the system. This step is needed, because every truck has it's own database.
   - Change the 'properties.py' of every truck, so that it has a unique id and address/port
