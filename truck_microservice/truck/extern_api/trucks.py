@@ -39,7 +39,7 @@ def crashTruck(address):
         return requests.delete('http://' + address + '/api/intact', timeout=MAX_TIMEOUT)
     except Timeout:
         return False
-
+    
 # post:accelerate
 def accelerate(address, targetSpeed, acceleration, heartbeatTick):
     try:
