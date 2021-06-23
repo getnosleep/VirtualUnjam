@@ -13,20 +13,20 @@ from ..extern_api.addresses import overwriteRegistration, registered
 from ..extern_api.trucks import bullyAcknowledgement, pollRequest, startBullying
 
 def finishBullying(truckBehind, leader, oldPosition, newPosition):
+    success = False
+
+    # Inform the Convoy Microservice
+    bullied = overwriteRegistration(oldPosition, newPosition)
+    if bullied and bullied.status_code == 200:
+        success = True
+    
     # Inform the Truck behind
     if truckBehind:
         acknowledgement = bullyAcknowledgement(truckBehind, leader, newPosition)
         if not acknowledgement or not acknowledgement.status_code == 200:
-            truck = TruckEntity.objects.get(ID)
-            truck.backTruckAddress = None
-            truck.save()
+            success = True
     
-    # Inform the Convoy Microservice
-    bullied = overwriteRegistration(oldPosition, newPosition)
-    if bullied and bullied.status_code == 200:
-        return True
-    else:
-        return False
+    return success
 
 class BullyAlgorithm(Thread):
     def __init__(self):
@@ -79,6 +79,7 @@ class BullyAlgorithm(Thread):
         return None
 
     def __makeLeader__(self):
+        print('imma the new leader')
         """Sets leader attributes, gives acknowledgement to truck in back and overwrites the own convoy service position"""
         truck = TruckEntity.objects.get(pk=ID)
 
@@ -88,7 +89,8 @@ class BullyAlgorithm(Thread):
 
         # Close the bully chain
         success = finishBullying(truckBehind, ADDRESS_SELF, oldPosition, 1)
-
+        print('success success success yaaaaaay')
+        truck = TruckEntity.objects.get(pk=ID)
         truck.frontTruckAddress = None
         truck.position = 1
         truck.leadingTruckAddress = ADDRESS_SELF

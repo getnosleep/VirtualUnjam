@@ -70,12 +70,7 @@ class Lifecycle(Thread):
 
     def __truckInFrontAlignment__(self, truckInFront):
         truck = TruckEntity.objects.get(pk=ID)
-        if truck.polling or truckInFront['polling'] or truckInFront['position'] and truckInFront['position']+1 == truck.position and truckInFront['leadingTruckAddress'] == truck.leadingTruckAddress:
-
-            # TODO hier muss der Movement-Abgleich hin -> Geschwindigkeiten und Position berechnen
-
-            return True
-        return False
+        return truck.polling or truckInFront['polling'] or truckInFront['position'] and truckInFront['position'] < truck.position and truckInFront['leadingTruckAddress'] == truck.leadingTruckAddress
 
 def startLifecycle():
     lifecycle = Lifecycle()

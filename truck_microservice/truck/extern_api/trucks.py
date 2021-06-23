@@ -11,9 +11,6 @@ from ..properties import ID, ADDRESS_SELF, MAX_TIMEOUT
 # get:truck
 def convoyRequest(address):
     try:
-        # Naja, hier muss man nochmal was machen
-        # data = {'truckId': ID, 'address': ADDRESS_SELF}
-        # headers = {'content-type': 'application/json'}
         return requests.get('http://' + address + '/api/truck', timeout=MAX_TIMEOUT)#data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False

@@ -44,7 +44,6 @@ class Subscriber(Thread):
         self.__client__.disconnect()
         self.__client__.loop_stop()
         time.sleep(0.100)
-        # return self.__client__.is_alive()
         return not self.__client__.is_connected() # probably better than is_alive, because subscriber threads ends up in clients loop thread
 
     def getClient(self) -> Client:
