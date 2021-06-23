@@ -28,7 +28,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 
     def leaveConvoy(self, request):
         try:
@@ -42,7 +42,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 
     def repair(self, request):
         try:
@@ -56,7 +56,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 
     def destroy(self, request):
         try:
@@ -70,7 +70,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 
     def accelerate(self, request):
         try:
@@ -88,7 +88,9 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            print("hier bitter")
+            print(e)
+            return HttpResponse(e, status=404)
 
     def inject(self, request):
         try:
@@ -108,7 +110,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 
     def flatline(self, request):
         try:
@@ -119,7 +121,7 @@ class Mutation(viewsets.ViewSet):
             else:
                 return HttpResponse(status=400)
         except Exception as e:
-            return HttpResponse(e.message, status=404)
+            return HttpResponse(e, status=404)
 class Monitor(viewsets.ViewSet):
 
     requestlist = []
@@ -152,6 +154,7 @@ class Monitor(viewsets.ViewSet):
                 <th>position</th>
                 <th>id </th>
                 <th>length</th>
+                <th>address</th>
                 <th>broken</th>
                 <th>polling</th>
                 <th>closing</th>

@@ -12,6 +12,7 @@ class AdminSerializer(serializers.ModelSerializer):
             'position',
             'id',
             'length',
+            'address',
 
             'broken',
             'polling',
