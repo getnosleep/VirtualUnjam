@@ -52,7 +52,7 @@ class Movement(Thread):
             return [s, v, False]
 
     def __calculateSpeed__(self):
-        t = 2 * DURATION_BROKER # twice, because only the first of two subscribes is for movement calculation. The other one is for lifecycle updates
+        t = 3 * DURATION_BROKER # three times -> because only one of three heartbeats are for movement calculation. The other ones are for lifecycle updates and driving checks
 
         # placeholder
         targetVelocity = False

@@ -30,7 +30,7 @@ class TruckEntity(models.Model):
 
     # Computed
     def closing(self):
-        return self.distance > self.currentDistance and self.position
+        return self.distance > self.currentDistance and self.position and not self.leadingTruckAddress == ADDRESS_SELF
 
     def accelerating(self):
         return self.acceleration > .0

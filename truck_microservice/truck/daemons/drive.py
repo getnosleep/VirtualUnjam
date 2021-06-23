@@ -2,7 +2,7 @@
 from threading import Thread
 
 # property imports
-from ..properties import ID
+from ..properties import ID, MIN_ACCELERATION, MIN_SPEED
 
 # persistence layer imports
 from ..models import TruckEntity
@@ -15,18 +15,32 @@ class Drive(Thread):
         Thread.__init__(self)
 
     def run(self):
-        self.__convoyUpdate__()
+        if self.__selfCheck__():
+            self.__closingCheck__()
 
-    def __convoyUpdate__(self):
+    def __selfCheck__(self):
+        truckOk = True
         truck = TruckEntity.objects.get(pk=ID)
-        return self.__speedCheckTruckInFront__(truck.frontTruckAddress)
+        if truck.broken:
+            truck.currentDistance = .0
+            if truck.currentSpeed > 0:
+                truck.acceleration = MIN_ACCELERATION
+                truck.targetSpeed = MIN_SPEED
+            truck.leadingTruckAddress = None
+            truck.frontTruckAddress = None
+            truck.backTruckAddress = None
+            truck.position = None
+            truck.polling = False
+            truck.full_clean()
+            truck.save()
+            truckOk = False
+        return truckOk
 
-    def __speedCheckTruckInFront__(self, frontTruck):
-        if frontTruck:
-            truckInFront = convoyRequest(frontTruck)
-            if truckInFront and truckInFront.status_code == 200:
-                return True
-        return False
+    def __closingCheck__(self):
+        truck = TruckEntity.objects.get(pk=ID)
+        frontTruckAddress = truck.frontTruckAddress
+        
+        pass
 
 def startDrive():
     drive = Drive()
