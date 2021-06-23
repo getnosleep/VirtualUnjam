@@ -110,6 +110,16 @@ class Mutation(viewsets.ViewSet):
         except Exception as e:
             return HttpResponse(e.message, status=404)
 
+    def flatline(self, request):
+        try:
+            headers = {'content-type': 'application/json'}
+            val = requests.delete('http://' + ADDRESS_HEARTBEAT + '/heartbeat/needle', None, headers=headers, timeout=MAX_TIMEOUT)
+            if val.status_code == 200:
+                return HttpResponse(status=200)
+            else:
+                return HttpResponse(status=400)
+        except Exception as e:
+            return HttpResponse(e.message, status=404)
 class Monitor(viewsets.ViewSet):
 
     requestlist = []
