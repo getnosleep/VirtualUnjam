@@ -34,6 +34,9 @@ urlpatterns = [
     })),
     path('accelerate', Mutation.as_view({
         'post': 'accelerate', # ADMIN
+    })),
+    path('inject', Mutation.as_view({
+        'post': 'inject', # ADMIN
     }))
 
 ]

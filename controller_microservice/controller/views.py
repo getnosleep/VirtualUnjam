@@ -12,7 +12,7 @@ from django.template import Template, Context
 # dirty imports
 from .daemons.callbacks import Callbacks
 from .daemons.subscriber import subscription
-from .properties import MAX_TIMEOUT
+from .properties import COUNT, INTERVAL, ID_BROKER, ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER, TOPIC_TRUCKS, DURATION_BROKER, MAX_TIMEOUT, ADDRESS_HEARTBEAT 
 
 class Mutation(viewsets.ViewSet):
 
@@ -110,21 +110,24 @@ class Mutation(viewsets.ViewSet):
 
     def inject(self, request):
         try:
-            requestData = JSONParser().parse(request)
-            truck = Callbacks.truckDictionary[requestData['id']]
-            truckAddress = truck['address']
             headers = {'content-type': 'application/json'}
             data = {
-                'targetSpeed': requestData['targetSpeed'],
-                'acceleration': requestData['acceleration']
+                "interval": INTERVAL,
+                "count": COUNT,
+                "broker_address": ADDRESS_BROKER,
+                "broker_port": PORT_BROKER,
+                "broker_username": USERNAME_BROKER,
+                "broker_password": PASSWORD_BROKER,
+                "broker_channel": TOPIC_TRUCKS
             }
-            val = requests.post('http://' + truckAddress + '/truck/accelerate', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.post('http://' + ADDRESS_HEARTBEAT + '/heartbeat/needle', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
                 return HttpResponse(status=400)
         except Exception as e:
             return HttpResponse(e.message, status=404)
+
 class Monitor(viewsets.ViewSet):
 
     requestlist = []
