@@ -1,7 +1,7 @@
 # library imports
-from rest_framework import viewsets
-from rest_framework.renderers import JSONRenderer
+from threading import Thread
 from django.http import HttpResponse, JsonResponse
+from rest_framework import viewsets
 
 # property imports
 from .properties import ID
@@ -10,26 +10,23 @@ from .properties import ID
 from .models import TruckEntity
 from .serializer import Serializer
 
-class Initializer(viewsets.ViewSet):
-    def init(self, request):
+class Init(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+
+    def run(self):
         trucks = TruckEntity.objects.all()
         if trucks.exists():
             TruckEntity.objects.all().delete()
         truck = TruckEntity()
         truck.save()
-        serializer = Serializer(truck, many=False)
-        return JsonResponse(data=serializer.data, status=200)
-    
-    def truck(self, request):
-        try:
-            truck = TruckEntity.objects.all()
-            if truck:
-                serializer = Serializer(truck, many=True)
-                data = {
-                    'trucks': serializer.data
-                }
-                return JsonResponse(data, status=200)
-            else:
-                return HttpResponse('Has the truck already been initialized?', status=404)
-        except Exception as e:
-            return HttpResponse('Erronimo => Maybe the Serializer', status=500)
+
+def initialize():
+    init = Init()
+    init.start()
+
+class Initializer(viewsets.ViewSet):
+    def init(self, request):
+        initialize()
+        return HttpResponse(status=200)
+
