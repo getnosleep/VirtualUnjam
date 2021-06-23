@@ -33,7 +33,6 @@ class Movement(Thread):
         v = a * t + v_0
 
         # If we get really curious about this, we should calculate the accelerating velocities by interpolation on a torque-curve
-        # => no linear acceleration and a regulation for over- and undershooting that'd require complex numbers (++++ Oh man, I love 'control engineering' ++++)
 
         # prevent overacceleration/-deceleration
         if (a > 0.0 and v > v_1) or (a < 0.0 and v < v_1):
@@ -70,10 +69,10 @@ class Movement(Thread):
         else:
             s, v, targetVelocity = self.__acceleratingVelocity__(s_0, v_0, v_1, a, t)
         
-        print(f'\t\t\t\t\t\t\t\tPosition: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}')
+        print(f'\t\t\t\t\t\t\t\tPosition: {truck.position}\tSpeed: {v * 3.6}\tDistance: {s}') # No comment xD -> JUST FOR THE PROF
 
         if not s or not v:
-            # standing still
+            # still standing truck
             return False
 
         if self.__leaveConvoyFlank__(truck.position, s, s_1):

@@ -58,11 +58,11 @@ class Drive(Thread):
                 if sectionFrontTruck <= distanceSelf + lengthFrontTruck:
                     return False
                 elif sectionFrontTruck >= sectionSelf:
-                    # Best case -> correct ordering
+                    # Best case -> correct ordering of the trucks
                     currentSection = sectionFrontTruck - distanceSelf - lengthFrontTruck
                     distance = distanceSelf + lengthFrontTruck
                 elif sectionFrontTruck < sectionSelf:
-                    # Worst case -> wrong ordering
+                    # Worst case -> wrong ordering of the trucks
                     self.__leave__()
                     return False
                 

@@ -6,7 +6,6 @@ from paho.mqtt.client import MQTTMessage
 
 class Callbacks:
     """[Docstring] Declares callback functions and holds actual heartbeat."""
-
     heartbeat: float
     
     @staticmethod
@@ -15,6 +14,8 @@ class Callbacks:
         payload = msg.payload
         tick = int.from_bytes(payload, "big")
         Callbacks.heartbeat = tick
+
+        # Update routine
         if tick%3 == 0:
             startLifecycle()
         elif tick%3 == 1:

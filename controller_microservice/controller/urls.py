@@ -1,11 +1,8 @@
 """[Docstring] Defines which api calls respective."""
 from django.urls import path
-
 from .views import Mutation, Monitor
 
 urlpatterns = [
-    # Initialization
-
     # Queries
     path('web', Monitor.as_view({
         'get': 'web',
@@ -26,6 +23,5 @@ urlpatterns = [
     path('inject', Mutation.as_view({
         'post': 'inject',
         'delete': 'flatline'
-    }))
-
+    })),
 ]

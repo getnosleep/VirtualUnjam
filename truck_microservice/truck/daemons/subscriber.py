@@ -8,7 +8,6 @@ import time
 
 class Subscriber(Thread):
     """[Docstring] Declares thread, subscribing to heartbeat broker."""
-
     def __init__(self, brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str) -> None:
         """[Docstring] Constructing subscriber thread."""
         Thread.__init__(self, daemon=True)
@@ -59,6 +58,14 @@ class Subscriber(Thread):
         return Callbacks.heartbeat
 
 def startBackgroundService():
+    # startup initialization -> dirty
+    trucks = TruckEntity.objects.all()
+    if trucks.exists():
+        TruckEntity.objects.all().delete()
+    truck = TruckEntity()
+    truck.save()
+
+    # running the subscriber
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber

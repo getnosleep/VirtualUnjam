@@ -1,6 +1,6 @@
 # library imports
 from rest_framework import viewsets
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 
 # property imports
 from .properties import ID

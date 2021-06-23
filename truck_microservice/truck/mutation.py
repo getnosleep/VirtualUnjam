@@ -1,7 +1,5 @@
 # library imports
 from threading import Thread
-import time
-from django.http.response import JsonResponse
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from django.http import HttpResponse
@@ -10,7 +8,7 @@ from django.http import HttpResponse
 from .daemons.bully import finishBullying, bully
 
 # property imports
-from .properties import ADDRESS_SELF, ID
+from .properties import ID
 
 # persistence layer imports
 from .models import TruckEntity
@@ -23,7 +21,7 @@ from .extern_api.trucks import convoyRequest, joinBehind
 from django.core.exceptions import ValidationError
 from .exceptions.invalid_input import AccelerationException, NoMemberException, TruckBrokenException
 
-# dirty imports
+# dirty imports => needed to start the subscriber daemon of a truck ... just trust me :)
 from .daemons.subscriber import subscription
 
 class Mutation(viewsets.ViewSet):
@@ -88,7 +86,7 @@ class Mutation(viewsets.ViewSet):
             truck.polling = False
             truck.closing = False
 
-            # TODO Maybe unwanted, but nice to see
+            # Maybe unwanted, but nice to see => a leaving truck has to stop :D
             truck.targetSpeed = .0
             truck.acceleration = -1.0
             
@@ -137,7 +135,7 @@ class Mutation(viewsets.ViewSet):
             data = JSONParser().parse(request)
             if not truck.position or truck.leadingTruckAddress == truck.address or truck.leadingTruckAddress == data['self']:
                 acc = data['acceleration']
-                vel = data['targetSpeed'] / 3.6
+                vel = data['targetSpeed'] / 3.6 # m/s to km/h
 
                 if acc > .0 and vel > truck.currentSpeed or acc < .0 and vel < truck.currentSpeed:
                     truck.acceleration = acc
@@ -197,27 +195,11 @@ class Mutation(viewsets.ViewSet):
             truck.polling = False
             truck.save()
 
-            # TODO eben checken ob der noch auf ne Variable verwiesen werden muss
+            # Thread -> otherwise it might be a dead end and all the requests in this streak will be declined
             close = Thread(finishBullying(truckBehind, newLeader, oldPosition, newPosition), daemon=True)
             close.start()
-
             return HttpResponse(status=200)
         except NoMemberException as e:
             return HttpResponse(e.message, status=404)
         except Exception as e:
             return HttpResponse(status=500)
-
-# TEST
-    def checkRequestTimes(self, request):
-        start = time.time()
-        response = convoyRequest('127.0.0.1:1032')
-        end = time.time()
-        diff = 1000 * (end - start)
-
-        data = {
-            'start': start,
-            'end': end,
-            'differenceInMs': diff,
-        }
-        return JsonResponse(data, status=200)
-        

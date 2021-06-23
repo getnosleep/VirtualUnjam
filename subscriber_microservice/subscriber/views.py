@@ -1,5 +1,3 @@
-# Create your views here.
-"""[Docstring] Holds microservice's views."""
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from .service import Service
@@ -8,10 +6,8 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.request import Request
 
-# Create your views here.
 class Initializer(viewsets.ViewSet):
     """[Docstring] Declares view, handling respective api calls."""
-    
     def initializeSubscription(self: viewsets.ViewSet, request: Request, pk=None) -> Response:
         """[Docstring] Declares functions, starting the subscription."""
         try:
@@ -42,7 +38,6 @@ class Initializer(viewsets.ViewSet):
 
 class Monitor(viewsets.ViewSet):
     """[Docstring] Declares view, handling respective api calls."""
-
     def monitorHeartbeats(self: viewsets.ViewSet, request: Request, pk=None) -> Response:
         """[Docstring] Declares functions, monitoring the heartbeat."""
         try:

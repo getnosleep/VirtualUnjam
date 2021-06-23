@@ -1,10 +1,9 @@
 # Create your views here.
 import json
-import re
 import requests
 
 from rest_framework import viewsets
-from django.http.response import JsonResponse, HttpResponse
+from django.http.response import HttpResponse
 from rest_framework.parsers import JSONParser
 
 from django.template import Template, Context
@@ -15,14 +14,12 @@ from .daemons.subscriber import subscription
 from .properties import COUNT, INTERVAL, ID_BROKER, ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_BROKER, TOPIC_TRUCKS, DURATION_BROKER, MAX_TIMEOUT, ADDRESS_HEARTBEAT 
 
 class Mutation(viewsets.ViewSet):
-
     def joinConvoy(self, request):
         try:
             requestData = JSONParser().parse(request)
             truck = Callbacks.truckDictionary[requestData['id']]
             truckAddress = truck['address']
-            headers = {'content-type': 'application/json'}
-            val = requests.post('http://' + truckAddress + '/api/convoy', None, headers=headers, timeout=MAX_TIMEOUT)
+            val = requests.post('http://' + truckAddress + '/api/convoy', timeout=MAX_TIMEOUT)
             if val.status_code == 200:
                 return HttpResponse(status=200)
             else:
@@ -217,5 +214,4 @@ class Monitor(viewsets.ViewSet):
             t = Template(template)
             c = Context({"da": Callbacks.truckDictionary
                          })
-            #print(t.render(c))
             return HttpResponse(t.render(c), status=200)

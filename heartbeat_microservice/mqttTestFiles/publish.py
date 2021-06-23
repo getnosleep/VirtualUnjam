@@ -1,12 +1,9 @@
 """[Docstring] Declares functions, handling mqtt subscription."""
-"""[Docstring] Declares functions, handling mqtt subscription."""
-import sys
 from time import sleep
 import paho.mqtt.client as mqtt
 
 class MqttPublishService:
     """[Docstring] Declares functions, handling mqtt subscription."""
-
     countPub: float
 
     @staticmethod

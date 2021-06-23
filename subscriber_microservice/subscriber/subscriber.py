@@ -42,15 +42,14 @@ class Subscriber(Thread):
         """[Docstring] Function starting subscription."""
         self.run()
     
-    def stop(self) -> bool: # does not work correctly yet
+    def stop(self) -> bool:
         """[Docstring] Function stopping subscription."""
         self.__running__ = False
         self.__client__.unsubscribe(self.__brokerChannel__, 0)
         self.__client__.disconnect()
         self.__client__.loop_stop()
         time.sleep(0.100)
-        # return self.__client__.is_alive()
-        return not self.__client__.is_connected() # probably better than is_alive, because subscriber threads ends up in clients loop thread
+        return not self.__client__.is_connected()
 
     def getClient(self) -> Client:
         """[Docstring] Function serving thread's client."""

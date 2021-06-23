@@ -1,11 +1,8 @@
 """[Docstring] Declares functions, handling mqtt subscription."""
-from string import hexdigits
 import paho.mqtt.client as mqtt
-from struct import pack, unpack
 
 class MqttSubscribeService:
     """[Docstring] Declares functions, handling mqtt subscription."""
-    
     countSub: float
 
     @staticmethod

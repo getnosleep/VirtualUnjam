@@ -7,7 +7,7 @@ from .query import Query
 from .mutation import Mutation
 
 urlpatterns = [
-    # For Development purpose only !!!
+    # If the truck isn't initializing on start -> for development purpose :D
     path('05FD548CB946F6AEFD3831FE4F1FD046E1827757E07F877F3A087B0ED98A03BF', Initializer.as_view({
         'post': 'init',
     })),
@@ -40,7 +40,4 @@ urlpatterns = [
         'post': 'startBullying',
         'put': 'updateAfterBullying',
     })),
-    path('test', Mutation.as_view({
-        'get': 'checkRequestTimes', # just dirty shit
-    }))
 ]

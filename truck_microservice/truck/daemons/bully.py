@@ -13,6 +13,7 @@ from ..extern_api.addresses import overwriteRegistration, registered
 from ..extern_api.trucks import bullyAcknowledgement, pollRequest, startBullying
 
 def sortDict(dictionary: dict):
+    """Lambdas made some cringe and stupid thing some times, so this dirty thing was developed"""
     sortedDictionary = {}
     keys = list(dictionary.keys())
     keys.sort()
@@ -22,7 +23,7 @@ def sortDict(dictionary: dict):
 
 def finishBullying(truckBehind, leader, oldPosition, newPosition):
     success = False
-    # Inform the Convoy Microservice
+    # Inform the Address Microservice
     bullied = overwriteRegistration(oldPosition, newPosition)
     if bullied and bullied.status_code == 200:
         success = True
