@@ -181,7 +181,7 @@ class Monitor(viewsets.ViewSet):
             </tbody>
 
         </table>
-    <button onclick=sendit()>send JS </button>
+    <button onclick=hartInitialization()>Heartbeat Initialization</button>
     <button onclick=accelerate()>accelerate</button>
     <input type="text" name="accelerateFeld" id="accelerate_Feld" onclick="this.value=' '" value="truckID">
     <input type="text" name="accelerateFeld" id="target_Feld" onclick="this.value=' '" value="targertSpeed">
@@ -194,6 +194,11 @@ class Monitor(viewsets.ViewSet):
     <button onclick=joinConvoy()>joinConvoy</button>
     <input type="text" name="accelerateFeld" id="join_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=leaveConvoy()>leaveConvoy</button>
+    <input type="text" name="accelerateFeld" id="leave_Feld" onclick="this.value=' '" value="truckID">
+    <br>
+    passwort:
+    <input type="password" name="PasswortFeld" id="leave_Feld" onclick="this.value=' '" value="passwort">
+    
     
 
 
@@ -210,17 +215,6 @@ class Monitor(viewsets.ViewSet):
                 print(value['position'])
 
             t = Template(template)
-            #c = Context({"id": truck1[0],
-            #             "pos": truck1[1],
-            #             "speed": truck1[2],
-            #             "distance": truck1[3],
-            #             "pos1": 2,
-            #             "speed1": 22,
-            #             "distance1": 123262,
-            #             "pos2": 3,
-            #             "speed2": 502,
-            #             "distance2": 12123462,
-            #             })
             c = Context({"da": Callbacks.truckDictionary
                          })
             #print(t.render(c))

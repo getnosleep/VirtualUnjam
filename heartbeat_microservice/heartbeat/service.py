@@ -27,7 +27,7 @@ class Service:
     def stopHeartbeat() -> bool:
         """[Docstring] Declares functions, stopping currently running heartbeats."""
         Service.heartbeatThread.stop()
-        return Service.heartbeatThread.is_alive()
+        return not Service.heartbeatThread.is_alive()
 
     @staticmethod
     def monitorHeartbeat() -> float:
