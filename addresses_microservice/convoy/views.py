@@ -86,7 +86,8 @@ class ConvoyViewSet(viewsets.ViewSet):
             truckAddress = data['address']
 
             print(f'old: {oldPosition}\tnew:{newPosition}\t{truckAddress}')
-            self.registered.pop(oldPosition)
+
+            del self.registered[oldPosition]
             self.registered[newPosition] = truckAddress
 
             print(self.registered)
