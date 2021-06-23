@@ -44,7 +44,6 @@ class Subscriber(Thread):
         self.__client__.disconnect()
         self.__client__.loop_stop()
         time.sleep(0.100)
-        # return self.__client__.is_alive()
         return not self.__client__.is_connected() # probably better than is_alive, because subscriber threads ends up in clients loop thread
 
     def getClient(self) -> Client:
@@ -59,9 +58,9 @@ class Subscriber(Thread):
         """[Docstring] Function serving current heatbeat."""
         return Callbacks.heartbeat
 
-def startService():
+def startBackgroundService():
     subscriber = Subscriber(ADDRESS_BROKER, PORT_BROKER, USERNAME_BROKER, PASSWORD_BROKER, TOPIC_HEARTBEAT)
     subscriber.start()
     return subscriber
 
-subscription = startService()
+subscription = startBackgroundService()

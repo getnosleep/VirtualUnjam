@@ -24,15 +24,15 @@ class Lifecycle(Thread):
         truck = TruckEntity.objects.get(pk=ID)
         frontTruck = truck.frontTruckAddress
         backTruck = truck.backTruckAddress
-        leader = not frontTruck and backTruck
-        lonely = not (frontTruck or backTruck)
+
+        leader = not truck.frontTruckAddress and truck.address == truck.leadingTruckAddress
+        lonely = not (truck.frontTruckAddress or truck.backTruckAddress)
 
         if lonely:
             pass
         elif leader:
             self.__accessTruckBehind__(backTruck)
         else:
-            # TODO ggf. parallelisieren
             if backTruck:
                 self.__accessTruckBehind__(backTruck)
             if frontTruck:
@@ -40,15 +40,24 @@ class Lifecycle(Thread):
 
     def __accessTruckBehind__(self, backTruck):
         truckBehind = convoyRequest(backTruck)
-        if not truckBehind or not truckBehind.status_code == 200:
-            truck = TruckEntity.objects.get(pk=ID)
-            truck.backTruckAddress = None
-            truck.save()
+        if truckBehind and truckBehind.status_code == 200:
+            if self.__truckBehindAlignment__(truckBehind.json()):
+                return True
+        truck = TruckEntity.objects.get(pk=ID)
+        truck.backTruckAddress = None
+        truck.save()
+        return False
+    
+    def __truckBehindAlignment__(self, truckBehind):
+        truck = TruckEntity.objects.get(pk=ID)
+        if truckBehind['position']:
+            return True
+        return False
 
     def __accessTruckInFront__(self, frontTruck):
         truckInFront = convoyRequest(frontTruck)
         if truckInFront and truckInFront.status_code == 200:
-            if self.__truckAlignment__(truckInFront.json()):
+            if self.__truckInFrontAlignment__(truckInFront.json()):
                 return True
         
         truck = TruckEntity.objects.get(pk=ID)
@@ -59,14 +68,10 @@ class Lifecycle(Thread):
         truck.save()
         return False
 
-    def __truckAlignment__(self, truckInFront):
-        # TODO hier muss der Movement-Abgleich hin
+    def __truckInFrontAlignment__(self, truckInFront):
         truck = TruckEntity.objects.get(pk=ID)
-        if truck.polling or truckInFront['polling'] or truckInFront['position'] and truckInFront['position']+1 == truck.position and truckInFront['leadingTruckAddress'] == truck.leadingTruckAddress:
-            return True
-        else:
-            return False
+        return truck.polling or truckInFront['polling'] or truckInFront['position'] and truckInFront['position'] < truck.position and truckInFront['leadingTruckAddress'] == truck.leadingTruckAddress
 
-def alive():
+def startLifecycle():
     lifecycle = Lifecycle()
     lifecycle.start()

@@ -12,21 +12,26 @@ from ..models import TruckEntity
 from ..extern_api.addresses import overwriteRegistration, registered
 from ..extern_api.trucks import bullyAcknowledgement, pollRequest, startBullying
 
+def sortDict(dictionary: dict):
+    sortedDictionary = {}
+    keys = list(dictionary.keys())
+    keys.sort()
+    for key in keys:
+        sortedDictionary[key] = dictionary[key]
+    return sortedDictionary
+
 def finishBullying(truckBehind, leader, oldPosition, newPosition):
-    # Inform the Truck behind
-    if truckBehind:
-        acknowledgement = bullyAcknowledgement(truckBehind, leader, newPosition)
-        if not acknowledgement or not acknowledgement.status_code == 200:
-            truck = TruckEntity.objects.get(ID)
-            truck.backTruckAddress = None
-            truck.save()
-    
+    success = False
     # Inform the Convoy Microservice
     bullied = overwriteRegistration(oldPosition, newPosition)
     if bullied and bullied.status_code == 200:
-        return True
-    else:
-        return False
+        success = True
+    # Inform the Truck behind
+    if truckBehind:
+        acknowledgement = bullyAcknowledgement(truckBehind, leader, newPosition)
+        if acknowledgement and acknowledgement.status_code == 200:
+            success = True
+    return success
 
 class BullyAlgorithm(Thread):
     def __init__(self):
@@ -38,29 +43,25 @@ class BullyAlgorithm(Thread):
     def run(self):
         while not self.failed and not self.success and self.tries < 3:
             self.__bully__()
-            print('waiting')
             time.sleep(10)
 
     def __bully__(self):
-        print('bully')
         registerRequest = registered()
         if registerRequest and registerRequest.status_code == 200:
             addresses = registerRequest.json()
             frontTruck = self.__findPosition__(addresses)
             if frontTruck == ADDRESS_SELF:
-                print('imma leader now')
                 self.__makeLeader__()
             else:
-                print('imma follower')
                 self.__actualizePosition__(frontTruck)
         else:
             self.tries += 1
 
-    def __findPosition__(self, addresses: dict):
+    def __findPosition__(self, unsortedAddresses: dict):
         """@returns the address of the truck in front and the position of own truck"""
+        addresses = sortDict(unsortedAddresses)
         currentFrontTruck = ADDRESS_SELF
         position = 1
-        
         # Iterate till you find own address
         for pos, address in addresses.items():
             if address == ADDRESS_SELF:
@@ -79,6 +80,7 @@ class BullyAlgorithm(Thread):
         return None
 
     def __makeLeader__(self):
+        print('imma the new leader')
         """Sets leader attributes, gives acknowledgement to truck in back and overwrites the own convoy service position"""
         truck = TruckEntity.objects.get(pk=ID)
 
@@ -88,7 +90,8 @@ class BullyAlgorithm(Thread):
 
         # Close the bully chain
         success = finishBullying(truckBehind, ADDRESS_SELF, oldPosition, 1)
-
+        print('success success success yaaaaaay')
+        truck = TruckEntity.objects.get(pk=ID)
         truck.frontTruckAddress = None
         truck.position = 1
         truck.leadingTruckAddress = ADDRESS_SELF

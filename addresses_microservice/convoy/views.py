@@ -85,12 +85,13 @@ class ConvoyViewSet(viewsets.ViewSet):
             newPosition = data['newPosition']
             truckAddress = data['address']
 
-            if self.registered[oldPosition] == truckAddress and self.registered[newPosition] and oldPosition >= newPosition:
-                self.registered.pop(oldPosition)
-                self.registered[newPosition] = truckAddress
-                return HttpResponse(status=200)
-            else:
-                return HttpResponse('You have no permission to do this', status=401)
+            print(f'old: {oldPosition}\tnew:{newPosition}\t{truckAddress}')
+
+            del self.registered[oldPosition]
+            self.registered[newPosition] = truckAddress
+
+            print(self.registered)
+            return HttpResponse(status=200)
         except:
             return HttpResponse('Possibly wrong input', status=400)
         

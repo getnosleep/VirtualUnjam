@@ -9,11 +9,8 @@ class Heartbeat(Thread):
     def __init__(self, interval: float, count: int, brokerAddress: str, brokerPort: int, brokerUsername: str, brokerPassword: str, brokerChannel: str) -> None:
         """[Docstring] Constructing heartbeat thread."""
         Thread.__init__(self)
-        #Thread.daemon = True # nope
-        #Thread.__init__(self, daemon=True) # nope
-        #self.daemon = True # nope
         self.__running__: bool = False
-        self.__interval__: float = interval # desired value is 0.020 seconds
+        self.__interval__: float = interval
         self.__count__: int = count
         self.__client__: Client
         self.__brokerAddress__: str = brokerAddress

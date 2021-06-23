@@ -11,9 +11,6 @@ from ..properties import ID, ADDRESS_SELF, MAX_TIMEOUT
 # get:truck
 def convoyRequest(address):
     try:
-        # Naja, hier muss man nochmal was machen
-        # data = {'truckId': ID, 'address': ADDRESS_SELF}
-        # headers = {'content-type': 'application/json'}
         return requests.get('http://' + address + '/api/truck', timeout=MAX_TIMEOUT)#data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
     except Timeout:
         return False
@@ -24,17 +21,6 @@ def pollRequest(address):
         return requests.get('http://' + address + '/api/poll', timeout=MAX_TIMEOUT)
     except Timeout:
         return False
-
-# post:leader
-# def greetAsLeader(address):
-#     try:
-#         data = {
-#             'leader': ADDRESS_SELF,
-#         }
-#         headers = {'content-type': 'application/json'}
-#         return requests.post('http://' + address + '/api/leader', data=json.dumps(data), headers=headers, timeout=MAX_TIMEOUT)
-#     except Timeout:
-#         return False
 
 # put:convoy
 def joinBehind(address):
