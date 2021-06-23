@@ -52,61 +52,27 @@ class Drive(Thread):
                                 
                 truck = TruckEntity.objects.get(pk=ID)
 
-                speedSelf = truck.currentSpeed
                 sectionSelf = truck.currentRouteSection
                 distanceSelf = truck.distance
 
-                destroy = False
-                close = False
-                t = 3 * DURATION_BROKER
-
-                if sectionFrontTruck > sectionSelf:
+                if sectionFrontTruck <= distanceSelf + lengthFrontTruck:
+                    return False
+                elif sectionFrontTruck >= sectionSelf:
                     # Best case -> correct ordering
-                    currentDistance = sectionFrontTruck - lengthFrontTruck - sectionSelf
-                    if currentDistance < distanceSelf and currentDistance > .0:
-                        close = False
-                    elif currentDistance > distanceSelf + (speedSelf - speedFrontTruck) * t:
-                        close = True
-                    elif currentDistance <= .0:
-                        destroy = True
+                    currentSection = sectionFrontTruck - distanceSelf - lengthFrontTruck
                 elif sectionFrontTruck < sectionSelf:
                     # Worst case -> wrong ordering
                     self.__leave__()
                     return False
-                else:
-                    currentDistance = 0
-                    if speedSelf * 3.6 > 10 or speedFrontTruck * 3.6 > 10:
-                        destroy = True
-                    close = False
                 
-                if destroy:
-                    truck = TruckEntity.objects.get(pk=ID)
-                    truck.broken = True
-                    truck.full_clean()
-                    truck.save()
-                    crashTruck(frontTruckAddress)
-                    return False
-                elif close:
-                    targetSpeed = targetSpeedFrontTruck + 5 / 3.6
-                    if targetSpeed > MAX_SPEED:
-                        targetSpeed = MAX_SPEED
-                    acceleration = accelerationFrontTruck + 0.5
-                    if acceleration > MAX_ACCELERATION:
-                        acceleration = MAX_ACCELERATION
-                    truck = TruckEntity.objects.get(pk=ID)
-                    truck.targetSpeed = targetSpeed
-                    truck.acceleration = acceleration
-                    truck.full_clean()
-                    truck.save()
-                    return True
-                else:
-                    truck = TruckEntity.objects.get(pk=ID)
-                    # truck.currentSpeed = speedFrontTruck
-                    truck.acceleration = accelerationFrontTruck
-                    truck.targetSpeed = targetSpeedFrontTruck
-                    truck.full_clean()
-                    truck.save()
-                    return True
+                truck = TruckEntity.objects.get(pk=ID)
+                truck.currentSpeed = speedFrontTruck
+                truck.acceleration = accelerationFrontTruck
+                truck.targetSpeed = targetSpeedFrontTruck
+                truck.currentRouteSection = currentSection
+                truck.full_clean()
+                truck.save()
+                return True
         return False
 
     def __leave__(self):

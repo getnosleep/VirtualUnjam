@@ -9,7 +9,6 @@ from .mutation import Mutation
 urlpatterns = [
     # For Development purpose only !!!
     path('05FD548CB946F6AEFD3831FE4F1FD046E1827757E07F877F3A087B0ED98A03BF', Initializer.as_view({
-        'get': 'truck',
         'post': 'init',
     })),
 
@@ -26,16 +25,16 @@ urlpatterns = [
 
     # Mutations
     path('convoy', Mutation.as_view({
-        'post': 'joinConvoy', # ADMIN
+        'post': 'joinConvoy',
         'put': 'joinBehind',
-        'delete': 'leaveConvoy', # ADMIN
+        'delete': 'leaveConvoy',
     })),
     path('intact', Mutation.as_view({
-        'post': 'repair', # ADMIN
-        'delete': 'destroy', # ADMIN
+        'post': 'repair',
+        'delete': 'destroy',
     })),
     path('accelerate', Mutation.as_view({
-        'post': 'accelerate', # ADMIN
+        'post': 'accelerate',
     })),
     path('bully', Mutation.as_view({
         'post': 'startBullying',
