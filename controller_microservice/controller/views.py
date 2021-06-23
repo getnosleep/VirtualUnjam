@@ -175,6 +175,7 @@ class Monitor(viewsets.ViewSet):
     <table style="width:80% ">
             <thead>
             <tr>
+                <th>truckid</th>
                 <th>truckpos</th>
                 <th>speed</th>
                 <th>distance</th>
@@ -183,26 +184,32 @@ class Monitor(viewsets.ViewSet):
 
             <tbody>
             <tr>
+                <td >{{id}}</td>
                 <td >{{pos}}</td>
                 <td >{{speed}}</td>
                 <td >{{distance}}</td>
             </tr>
             <tr>
+            
+                <td >{{id1}}</td>
                 <td >{{pos1}}</td>
                 <td >{{speed1}}</td>
                 <td >{{distance1}}</td>
             </tr>
             <tr>
+                <td >{{id2}}</td>
                 <td >{{pos2}}</td>
                 <td >{{speed2}}</td>
                 <td >{{distance2}}</td>
             </tr>
             <tr>
+                <td >{{id3}}</td>
                 <td >{{pos3}}</td>
                 <td >{{speed3}}</td>
                 <td >{{distance3}}</td>
             </tr>
             <tr>
+                <td >{{id4}}</td>
                 <td >{{pos4}}</td>
                 <td >{{speed4}}</td>
                 <td >{{distance4}}</td>
@@ -213,6 +220,7 @@ class Monitor(viewsets.ViewSet):
         </table>
     <button onclick=sendit()>send JS </button>
     <button onclick=accelerate()>accelerate</button>
+    <input type="text" name="accelerateFeld" id="accelerate_Feld" onclick="this.value=' '" value="truckID">
     <button onclick=decelerate()>decelerate</button>
     <button onclick=destroy()>destroy</button>
     <button onclick=repair()>repair</button>
@@ -225,15 +233,17 @@ class Monitor(viewsets.ViewSet):
             truck1=[]
             for value in Callbacks.truckDictionary.values():
                 print(value)
+                truck1.append(value['id'])
                 truck1.append(value['position'])
                 truck1.append(value['currentSpeed']*3.6)
                 truck1.append(value['currentRouteSection'])
                 print(value['position'])
 
             t = Template(template)
-            c = Context({"pos": truck1[0],
-                         "speed": truck1[1],
-                         "distance": truck1[2],
+            c = Context({"id": truck1[0],
+                         "pos": truck1[1],
+                         "speed": truck1[2],
+                         "distance": truck1[3],
                          "pos1": 2,
                          "speed1": 22,
                          "distance1": 123262,
